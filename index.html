@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aurora Studios</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
     <style>
       body {
-        background-color: #170F28;
+        background-color: #0a0713;
         overflow: hidden;
       }
 
@@ -39,9 +39,9 @@
         height: 100vh;
         width: 100vw;
         background:
-          radial-gradient(ellipse at 30% 20%, rgba(157, 107, 218, 0.1), transparent 50%),
-          radial-gradient(ellipse at 80% 85%, rgba(194, 98, 153, 0.08), transparent 55%),
-          #170F28;
+          radial-gradient(ellipse at 30% 20%, rgba(157, 107, 218, 0.12), transparent 50%),
+          radial-gradient(ellipse at 80% 85%, rgba(194, 98, 153, 0.1), transparent 55%),
+          #0a0713;
         transition: opacity 0.4s ease-in-out;
       }
 
@@ -100,6 +100,7 @@
 
     <div id="app">
       <div class="app-background">
+        <div class="nebula"></div>
         <canvas id="stardust-canvas"></canvas>
       </div>
 
@@ -136,15 +137,24 @@
       </div>
 
       <div id="view-home" class="view" data-view="home">
-        <aside class="home-sidebar">
-          <div class="sidebar-top">
+        <header class="home-topbar">
+          <div class="brand">
+            <div class="brand-mark"><i class="fa-solid fa-star"></i></div>
+            <div class="brand-text">
+              <strong>Aurora Studios</strong>
+            </div>
+          </div>
+
+          <div class="topbar-actions">
+            <div class="topbar-icons">
+              <button id="btn-screenshots" class="btn btn-icon-only" title="Screenshots"><i class="fa-fw fa-solid fa-camera"></i></button>
+              <button id="btn-settings" class="btn btn-icon-only" title="Configurações"><i class="fa-fw fa-solid fa-gear"></i></button>
+            </div>
+
             <div class="account-switcher" id="account-switcher">
               <button type="button" class="user-profile" id="account-switcher-toggle" title="Trocar de conta">
                 <img src="" id="user-avatar" alt="Skin" />
-                <div class="user-details">
-                  <span id="user-name">Jogador</span>
-                  <span class="rank-badge">⭐ Sonhador</span>
-                </div>
+                <span id="user-name">Jogador</span>
                 <i class="fa-solid fa-chevron-down switcher-caret"></i>
               </button>
 
@@ -163,89 +173,50 @@
                 </div>
               </div>
             </div>
-
-            <button id="btn-screenshots" class="btn btn-secondary" title="Screenshots"><i class="fa-fw fa-solid fa-camera"></i></button>
-            <button id="btn-settings" class="btn btn-secondary" title="Configurações"><i class="fa-fw fa-solid fa-gear"></i></button>
           </div>
+        </header>
 
-          <div class="sidebar-middle">
-            <div class="server-banner">
-              <div class="server-banner-content">
-                <span class="server-banner-tag">Servidor Oficial</span>
-                <h3 class="server-banner-name">Aurora Studios</h3>
-                <p class="server-banner-subtitle">Terra dos Sonhos</p>
-              </div>
+        <main class="stage">
+          <div class="stage-inner">
+            <span class="stage-tag">Servidor Oficial</span>
+            <h1 class="stage-title">Aurora Studios</h1>
+            <p class="stage-subtitle">Terra dos Sonhos</p>
+
+            <div class="stage-status">
+              <button type="button" class="status-indicator" id="server-status-indicator" title="Clique para verificar novamente">
+                <div class="status-dot pinging" id="server-status-dot"></div>
+                <span class="status-text" id="server-status-text">Verificando...</span>
+              </button>
+              <span class="player-count" id="player-count"></span>
             </div>
 
-            <div class="server-quick-stats">
-              <div class="quick-stat">
-                <i class="fa-solid fa-cube"></i>
-                <div class="quick-stat-info">
-                  <span class="quick-stat-value">1.20.1</span>
-                  <span class="quick-stat-label">Minecraft</span>
-                </div>
-              </div>
-              <div class="quick-stat">
-                <i class="fa-solid fa-puzzle-piece"></i>
-                <div class="quick-stat-info">
-                  <span class="quick-stat-value">280+</span>
-                  <span class="quick-stat-label">Mods</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="sidebar-bottom">
             <div class="profile-selector-container" id="profile-selector">
               <div class="selected-profile">
+                <i class="fa-solid fa-layer-group"></i>
                 <span id="current-profile-name">Selecionar perfil</span>
                 <i class="fa-solid fa-chevron-down"></i>
               </div>
               <div class="profile-dropdown" id="profile-dropdown"></div>
             </div>
 
-            <div class="server-status">
-              <button type="button" class="status-indicator" id="server-status-indicator" title="Clique para verificar novamente">
-                <div class="status-dot pinging" id="server-status-dot"></div>
-                <span class="status-text" id="server-status-text">Verificando...</span>
-              </button>
-              <div class="player-count" id="player-count"></div>
-            </div>
+            <button id="btn-play" class="btn btn-primary btn-play">
+              <i class="fa-solid fa-play"></i>
+              <span>JOGAR</span>
+            </button>
 
-            <div class="home-stats">
-              <div class="home-stat">
-                <i class="fa-fw fa-solid fa-clock"></i>
-                <div class="home-stat-info">
-                  <span class="home-stat-value" id="stat-total-time">0h</span>
-                  <span class="home-stat-label">Tempo total</span>
-                </div>
+            <div class="progress-container hidden" id="launch-progress-container">
+              <div class="progress-info">
+                <span id="launch-progress-label">Baixando...</span>
+                <span id="launch-progress-percent">0%</span>
               </div>
-              <div class="home-stat">
-                <i class="fa-fw fa-solid fa-gamepad"></i>
-                <div class="home-stat-info">
-                  <span class="home-stat-value" id="stat-launches">0</span>
-                  <span class="home-stat-label">Jogos</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="launch-area">
-              <button id="btn-play">JOGAR</button>
-
-              <div class="progress-container hidden" id="launch-progress-container">
-                <div class="progress-info">
-                  <span id="launch-progress-label">Baixando...</span>
-                  <span id="launch-progress-percent">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                  <div class="progress-bar-fill" id="launch-progress-bar"></div>
-                </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="launch-progress-bar"></div>
               </div>
             </div>
           </div>
-        </aside>
+        </main>
 
-        <main class="home-content">
+        <section class="news-section">
           <div class="news-header">
             <h2>Cantinho dos Sonhos</h2>
             <div class="social-links">
@@ -256,10 +227,8 @@
             </div>
           </div>
 
-          <hr />
-
           <div class="news-list" id="news-list"></div>
-        </main>
+        </section>
       </div>
 
       <div id="view-settings" class="view overlay" data-view="settings">
@@ -272,7 +241,6 @@
             <h2>Configurações</h2>
             <nav>
               <button class="btn nav-btn active" data-tab="game"><i class="fa-fw fa-solid fa-cubes"></i><span>Jogo</span></button>
-              <button class="btn nav-btn" data-tab="mods"><i class="fa-fw fa-solid fa-puzzle-piece"></i><span>Mods</span></button>
               <button class="btn nav-btn" data-tab="packs"><i class="fa-fw fa-solid fa-palette"></i><span>Packs</span></button>
               <button class="btn nav-btn" data-tab="skin"><i class="fa-fw fa-solid fa-shirt"></i><span>Skin</span></button>
               <button class="btn nav-btn" data-tab="account"><i class="fa-fw fa-solid fa-user"></i><span>Conta</span></button>
@@ -349,31 +317,6 @@
                   <div id="java-detected-list" class="java-detected-list"></div>
                   <p id="java-detected-status" class="java-detected-status"></p>
                 </div>
-              </div>
-            </section>
-
-            <section id="tab-mods" class="tab-content">
-              <h3>Mods Opcionais</h3>
-              <p class="mods-description">Selecione os mods opcionais que deseja usar. Alguns mods podem afetar o desempenho.</p>
-
-              <div class="mods-integrity-bar">
-                <button id="btn-verify-integrity" class="btn btn-secondary">
-                  <i class="fa-fw fa-solid fa-shield-halved"></i>
-                  <span>Verificar Integridade</span>
-                </button>
-                <span id="integrity-status" class="integrity-status"></span>
-              </div>
-
-              <div id="mods-list" class="mods-list">
-                <div class="mods-loading">
-                  <i class="fa-solid fa-spinner fa-spin"></i>
-                  <span>Carregando mods...</span>
-                </div>
-              </div>
-
-              <div id="integrity-results" class="integrity-results hidden">
-                <h4>Resultado da Verificação</h4>
-                <div id="integrity-details"></div>
               </div>
             </section>
 

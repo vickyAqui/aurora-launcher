@@ -12,13 +12,11 @@ import { registerBootstrapHandlers } from './handlers/bootstraps'
 import logger from 'electron-log/main'
 import { registerProfilesHandlers } from './handlers/profiles'
 import { registerSkinHandlers } from './handlers/skin'
-import { registerModsHandlers } from './handlers/mods'
 import { registerJavaHandlers } from './handlers/java'
 import { registerScreenshotsHandlers } from './handlers/screenshots'
 import { registerStatsHandlers } from './handlers/stats'
 import { registerPacksHandlers } from './handlers/packs'
 import { registerUpdateHandlers } from './handlers/update'
-import { flushModsVault } from './modsVault'
 
 const APP_TITLE = 'Aurora Studios'
 const BG_COLOR = '#14121c'
@@ -152,7 +150,6 @@ app.whenReady().then(() => {
     registerBootstrapHandlers(mainWindow)
     registerLauncherHandlers(mainWindow)
     registerSettingsHandlers()
-    registerModsHandlers()
     registerJavaHandlers()
     registerScreenshotsHandlers()
     registerStatsHandlers()
@@ -163,19 +160,5 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   app.quit()
-})
-
-let vaultFlushed = false
-app.on('before-quit', (event) => {
-  if (vaultFlushed) return
-  event.preventDefault()
-  vaultFlushed = true
-  const timeout = setTimeout(() => app.quit(), 10000)
-  flushModsVault()
-    .catch(() => undefined)
-    .finally(() => {
-      clearTimeout(timeout)
-      app.quit()
-    })
 })
 

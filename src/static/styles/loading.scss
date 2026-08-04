@@ -8,14 +8,14 @@ div.loading-card {
 
   .spinner {
     font-size: 2.5rem;
-    color: var(--accent-yellow);
-    filter: drop-shadow(0 0 12px rgba(215, 160, 11, 0.4));
+    color: var(--accent-cyan);
+    filter: drop-shadow(0 0 12px rgba(87, 230, 255, 0.4));
     margin-bottom: 1.2rem;
     animation: loadingSpinPulse 2s ease-in-out infinite;
   }
 
   .text {
-    font-family: 'Sansita Swashed', cursive;
+    font-family: var(--font-display);
     font-size: 20px;
     font-weight: 700;
     color: var(--text-main);
@@ -41,11 +41,11 @@ div.loading-card {
 @keyframes loadingSpinPulse {
   0%, 100% {
     transform: scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 12px rgba(215, 160, 11, 0.4));
+    filter: drop-shadow(0 0 12px rgba(87, 230, 255, 0.4));
   }
   50% {
     transform: scale(1.1) rotate(180deg);
-    filter: drop-shadow(0 0 20px rgba(215, 160, 11, 0.6));
+    filter: drop-shadow(0 0 20px rgba(87, 230, 255, 0.6));
   }
 }
 

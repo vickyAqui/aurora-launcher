@@ -4,8 +4,7 @@ import type { Account } from 'eml-lib'
 import type { IGameSettings } from './settings'
 import logger from 'electron-log/main'
 import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
-import { removeDisabledOptionalMods } from './mods'
-import { decryptMods, encryptMods, setActiveVaultSlug } from '../modsVault'
+import { syncModsWithManifest } from './mods'
 import { endSession, startSession } from './stats'
 
 export function registerLauncherHandlers(mainWindow: BrowserWindow) {
@@ -22,10 +21,11 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     }
 
     const slug = profileSlug || DEFAULT_PROFILE.slug
-    setActiveVaultSlug(slug)
-    await decryptMods(slug)
 
     logger.log('Launching')
+
+    const removedStaleMods = await syncModsWithManifest(slug)
+    if (removedStaleMods > 0) logger.log(`Removed ${removedStaleMods} mods not in the modpack.`)
 
     const launcher = new Launcher({
       root: ROOT_DIR,
@@ -33,23 +33,7 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
       account: account,
       minecraft: MINECRAFT,
       cleaning: {
-        enabled: true,
-        ignored: [
-          'crash-reports/',
-          'logs/',
-          'options.txt',
-          'optionsof.txt',
-          'resourcepacks/',
-          'resources/',
-          'saves/',
-          'screenshots/',
-          'server.dat',
-          'shaderpacks/',
-          'usercache.json',
-          'player_models/',
-          'config/customplayermodels.json',
-          'config/cpm-server-default.json'
-        ]
+        enabled: false
       },
       java: java,
       memory: {
@@ -82,9 +66,6 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     launcher.on('download_end', (info) => {
       logger.log(`Downloaded ${info.downloaded.amount} files.`)
       mainWindow.webContents.send('game:download_end', info)
-      removeDisabledOptionalMods().then((removed) => {
-        if (removed > 0) logger.log(`Removed ${removed} disabled optional mods.`)
-      })
     })
 
     launcher.on('launch_install_loader', (loader) => {
@@ -174,7 +155,6 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
       logger.log(`Closed with code ${code}.`)
       endSession()
       mainWindow.webContents.send('game:launch_close', code)
-      encryptMods(slug).catch((err) => logger.error('Failed to encrypt mods:', err))
     })
 
     launcher.on('launch_debug', (message) => {

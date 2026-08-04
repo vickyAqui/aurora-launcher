@@ -5,13 +5,13 @@
 
 .login-card {
   width: 380px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur)) saturate(150%);
+  border: 1px solid var(--panel-border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 var(--panel-edge);
   padding: 40px 36px 32px;
   text-align: center;
-  box-shadow: var(--shadow-lg);
   position: relative;
   animation: loginCardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   overflow: hidden;
@@ -19,21 +19,11 @@
   &::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      rgba(215, 160, 11, 0.03) 60deg,
-      transparent 120deg,
-      rgba(157, 107, 218, 0.03) 180deg,
-      transparent 240deg,
-      rgba(194, 98, 153, 0.03) 300deg,
-      transparent 360deg
-    );
-    animation: loginAuraSpin 20s linear infinite;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: var(--panel-shine);
     pointer-events: none;
   }
 
@@ -41,8 +31,9 @@
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: var(--radius-lg);
-    background: radial-gradient(ellipse at 50% 0%, rgba(215, 160, 11, 0.06), transparent 60%);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(180, 139, 240, 0.1), transparent 60%),
+      radial-gradient(ellipse at 100% 100%, rgba(244, 196, 48, 0.06), transparent 50%);
     pointer-events: none;
   }
 
@@ -63,9 +54,10 @@
   }
 
   h1 {
-    font-family: 'Sansita Swashed', cursive;
+    font-family: var(--font-display);
     font-size: 28px;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: 0.04em;
     margin-bottom: 4px;
     color: var(--text-main);
     animation: loginTitleShimmer 3s ease-in-out infinite;
@@ -75,16 +67,15 @@
     display: inline-block;
     margin-bottom: 14px;
     padding: 4px 12px;
-    border-radius: 999px;
-    font-family: 'Quicksand', sans-serif;
+    border-radius: var(--btn-radius);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--accent-yellow);
-    background: rgba(215, 160, 11, 0.1);
-    border: 1px solid rgba(215, 160, 11, 0.15);
-    animation: loginChipPulse 4s ease-in-out infinite;
+    color: var(--accent-cyan);
+    background: var(--accent-cyan-soft);
+    border: 1px solid rgba(87, 230, 255, 0.25);
   }
 
   .subtitle {
@@ -128,8 +119,8 @@
     input {
       width: 100%;
       padding: 12px 14px;
-      border-radius: var(--btn-radius);
       border: 1px solid var(--border-subtle);
+      border-radius: var(--btn-radius);
       background: rgba(255, 255, 255, 0.03);
       color: var(--text-main);
       font-family: inherit;
@@ -143,27 +134,29 @@
       }
 
       &:focus {
-        border-color: rgba(215, 160, 11, 0.35);
-        background: rgba(215, 160, 11, 0.04);
-        box-shadow: 0 0 0 3px rgba(215, 160, 11, 0.08);
+        outline: none;
+        border-color: rgba(124, 108, 255, 0.55);
+        background: rgba(124, 108, 255, 0.06);
+        box-shadow: 0 0 0 3px rgba(124, 108, 255, 0.12);
       }
     }
 
     button {
       width: 100%;
-      padding: 12px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 13px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: var(--btn-radius);
-      background: linear-gradient(135deg, var(--primary) 0%, #D075AB 100%);
-      color: #ffffff;
-      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, var(--accent-violet-strong) 0%, var(--accent-violet) 45%, var(--accent-cyan) 130%);
+      color: #fff;
+      font-family: var(--font-display);
       font-size: 14px;
-      font-weight: 800;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       cursor: pointer;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-primary);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
-      overflow: hidden;
 
       &::after {
         content: '';
@@ -180,8 +173,8 @@
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(215, 160, 11, 0.2);
         filter: brightness(1.08);
+        box-shadow: 0 10px 28px rgba(124, 108, 255, 0.45), inset 0 1px 0 var(--panel-edge);
       }
 
       &:active {
@@ -219,17 +212,7 @@
   }
 }
 
-@keyframes loginAuraSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 @keyframes loginTitleShimmer {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.85; }
-}
-
-@keyframes loginChipPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(215, 160, 11, 0); }
-  50% { box-shadow: 0 0 0 4px rgba(215, 160, 11, 0.06); }
 }

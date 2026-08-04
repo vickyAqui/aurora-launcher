@@ -64,11 +64,9 @@ export function initHome() {
 
   const updateStats = async () => {
     const totalTimeEl = document.getElementById('stat-total-time')
-    const launchesEl = document.getElementById('stat-launches')
     try {
       const playStats = await stats.get()
       if (totalTimeEl) totalTimeEl.innerText = formatPlayTime(playStats.totalPlayTimeMs)
-      if (launchesEl) launchesEl.innerText = playStats.launches.toLocaleString('pt-BR')
     } catch (err) {
       logger.error('Error loading stats:', err)
     }
@@ -118,6 +116,8 @@ export function initHome() {
     }
     if (statusText) statusText.innerHTML = 'Verificando...'
     if (playerCount) playerCount.innerHTML = ''
+    const statOnline = document.getElementById('stat-online')
+    if (statOnline) statOnline.innerText = '—'
 
     const status = selectedProfile ? await server.getStatus(selectedProfile.ip, selectedProfile.port || 25565) : null
 
@@ -131,6 +131,7 @@ export function initHome() {
       if (playerCount) {
         playerCount.innerHTML = `<i class="fa-fw fa-solid fa-users"></i>&nbsp;&nbsp;${status.players.online.toLocaleString()} / ${status.players.max.toLocaleString()}`
       }
+      if (statOnline) statOnline.innerText = status.players.online.toLocaleString()
     } else {
       if (statusDot) {
         statusDot.classList.remove('pinging', 'online')
@@ -138,6 +139,7 @@ export function initHome() {
       }
       if (statusText) statusText.innerHTML = 'Offline'
       if (playerCount) playerCount.innerHTML = ''
+      if (statOnline) statOnline.innerText = '0'
     }
   }
 

@@ -1,52 +1,74 @@
 :root {
   color-scheme: dark;
 
-  /* Cores extraídas da imagem galaxy */
+  /* Fundos — noite profunda (Aurora Celestial) */
+  --bg-dark: #050014;
+  --bg-deep: #03010e;
+  --bg-elevated: #140b33;
 
-  /* Fundos — tons escuros da imagem */
-  --bg-dark: #170F28;
-  --bg-elevated: #221640;
+  /* Superfícies — painéis quase opacos */
+  --surface: #150c38;
+  --surface-hover: #1e1247;
+  --surface-soft: rgba(21, 12, 56, 0.72);
 
-  /* Superfícies */
-  --surface: #2C1B49;
-  --surface-hover: #3A265D;
+  /* Accent — dupla celestial (violeta + ciano) */
+  --accent-violet: #8a7cff;
+  --accent-violet-strong: #6b5bff;
+  --accent-cyan: #57e6ff;
+  --accent-cyan-soft: rgba(87, 230, 255, 0.12);
 
-  /* Accent — cores vibrantes da imagem */
-  --accent-yellow: #D7A00B;
-  --accent-green: #00c53d;
-  --accent-pink: #C26299;
-  --accent-violet: #9D6BDA;
-  --accent-cyan: #8FCAE7;
+  /* Primário */
+  --primary: #7c6cff;
+  --primary-hover: #9689ff;
+  --primary-soft: rgba(124, 108, 255, 0.16);
+  --accent: #7c6cff;
+  --accent-soft: rgba(124, 108, 255, 0.16);
 
-  /* Primário e accent (atalhos) */
-  --primary: #C26299;
-  --primary-hover: #D075AB;
-  --primary-soft: rgba(194, 98, 153, 0.14);
-  --accent: #C26299;
-  --accent-soft: rgba(194, 98, 153, 0.14);
+  /* Semântico (status) */
+  --accent-green: #2BE080;
+  --accent-pink: #E08AC0;
+  --accent-yellow: #F4C430;
 
   /* Texto */
-  --text-main: #F0E5F8;
-  --text-muted: #A99BC4;
+  --text-main: #f2efff;
+  --text-muted: #a89fd1;
 
-  /* Glassmorphism */
-  --glass-bg: rgba(23, 15, 40, 0.55);
-  --glass-border: rgba(255, 255, 255, 0.07);
-  --glass-blur: 16px;
+  /* Fontes */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Quicksand', sans-serif;
+
+  /* Painéis (Aurora Celestial) */
+  --panel-bg: rgba(19, 11, 48, 0.9);
+  --panel-bg-soft: rgba(19, 11, 48, 0.72);
+  --panel-border: rgba(255, 255, 255, 0.09);
+  --panel-border-strong: rgba(255, 255, 255, 0.16);
+  --panel-edge: rgba(255, 255, 255, 0.12);
+  --panel-blur: 18px;
+  --panel-shine: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.03) 22%,
+    rgba(255, 255, 255, 0) 48%
+  );
 
   /* Bordas */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.16);
 
   /* Sombras */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+  --shadow-primary: 0 8px 28px rgba(124, 108, 255, 0.4);
+  --shadow-panel: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 var(--panel-edge);
+
+  /* Raio — contido e consistente */
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --btn-radius: 10px;
 
   /* Layout */
-  --sidebar-width: 340px;
-  --btn-radius: 12px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 8px;
+  --sidebar-width: 232px;
+  --topbar-height: 64px;
 }

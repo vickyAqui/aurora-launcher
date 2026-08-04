@@ -119,12 +119,6 @@ declare global {
       system: {
         getInfo: () => Promise<ISystemInfo>
       }
-      mods: {
-        getModpack: () => Promise<any>
-        setOptional: (modName: string, enabled: boolean) => Promise<boolean>
-        verifyIntegrity: () => Promise<any>
-        deleteMod: (filename: string) => Promise<boolean>
-      }
       java: {
         detect: () => Promise<IDetectedJava[]>
       }
@@ -246,13 +240,6 @@ export const settings = {
 
 export const system = {
   getInfo: () => window.api.system.getInfo()
-}
-
-export const mods = {
-  getModpack: async () => await window.api.mods.getModpack(),
-  setOptional: async (modName: string, enabled: boolean) => await window.api.mods.setOptional(modName, enabled),
-  verifyIntegrity: async () => await window.api.mods.verifyIntegrity(),
-  deleteMod: async (filename: string) => await window.api.mods.deleteMod(filename)
 }
 
 export const java = {

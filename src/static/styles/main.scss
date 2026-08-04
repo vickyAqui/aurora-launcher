@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-body);
   background: var(--bg-dark);
   color: var(--text-main);
   height: 100vh;
@@ -15,7 +15,7 @@ body {
 }
 
 ::selection {
-  background: rgba(215, 160, 11, 0.25);
+  background: rgba(124, 108, 255, 0.3);
   color: var(--text-main);
 }
 
@@ -36,10 +36,13 @@ a {
   height: 100%;
 }
 
+/* --- FUNDO: NOITE + AURORA --- */
 .app-background {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 15% 20%, #2C1B49 0%, #0e0820 50%, #060410 100%);
+  background: radial-gradient(circle at 18% 22%, #1c1140 0%, #0a0520 46%, #03010e 100%);
+  background-size: cover;
+  background-position: center;
   z-index: -1;
   overflow: hidden;
 
@@ -49,28 +52,36 @@ a {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 0;
+    z-index: 2;
   }
 
-  &::after {
-    content: '';
+  .nebula {
     position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 25% 15%, rgba(157, 107, 218, 0.08), transparent 50%),
-      radial-gradient(ellipse at 85% 85%, rgba(194, 98, 153, 0.06), transparent 55%);
+    width: 88vw;
+    height: 88vw;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(124, 108, 255, 0.16) 0%, rgba(87, 230, 255, 0.06) 34%, transparent 66%);
+    filter: blur(64px);
     pointer-events: none;
     z-index: 1;
-    animation: bgPulse 8s ease-in-out infinite alternate;
+    animation: nebulaPulse 14s ease-in-out infinite alternate;
   }
 }
 
-@keyframes bgPulse {
-  0% { opacity: 1; }
-  100% { opacity: 0.7; }
+@keyframes nebulaPulse {
+  from {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
 }
 
-/* --- Views Management --- */
+/* --- VIEWS MANAGEMENT --- */
 .view {
   position: absolute;
   inset: 0;
@@ -87,8 +98,8 @@ a {
   }
 
   &.overlay {
-    background: rgba(6, 3, 14, 0.8);
-    backdrop-filter: blur(10px);
+    background: rgba(4, 2, 14, 0.82);
+    backdrop-filter: blur(8px);
     justify-content: center;
     align-items: center;
     z-index: 100;
@@ -111,6 +122,26 @@ a {
   display: none !important;
 }
 
+/* --- PANEL --- */
+.panel {
+  position: relative;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow-panel);
+  border-radius: var(--radius-lg);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 38%;
+    background: var(--panel-shine);
+    pointer-events: none;
+    border-radius: inherit;
+  }
+}
 
 /* --- GLOBAL BUTTON SYSTEM --- */
 
@@ -119,17 +150,17 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 10px 18px;
 
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
 
   border-radius: var(--btn-radius);
-  border: 1px solid transparent;
+  border: 1px solid var(--panel-border);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 
   user-select: none;
   position: relative;
@@ -142,15 +173,23 @@ a {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #D075AB 100%);
+  background: linear-gradient(135deg, var(--accent-violet-strong) 0%, var(--accent-violet) 45%, var(--accent-cyan) 130%);
   color: #ffffff;
   font-weight: 800;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: var(--shadow-primary);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--panel-shine);
+    pointer-events: none;
+  }
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(194, 98, 153, 0.3);
+    box-shadow: 0 12px 34px rgba(124, 108, 255, 0.5);
     filter: brightness(1.08);
   }
 
@@ -160,13 +199,14 @@ a {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
   color: var(--text-main);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--border-hover);
+    background: rgba(255, 255, 255, 0.09);
+    border-color: var(--panel-border-strong);
     text-decoration: none;
     transform: translateY(-1px);
   }
@@ -174,12 +214,12 @@ a {
 
 /* Danger Button */
 .btn-danger {
-  background: rgba(194, 98, 153, 0.1);
-  border: 1px solid rgba(194, 98, 153, 0.25);
-  color: #e84090;
+  background: rgba(224, 138, 192, 0.12);
+  border: 1px solid rgba(224, 138, 192, 0.3);
+  color: #f0b0d8;
 
   &:hover:not(:disabled) {
-    background: rgba(194, 98, 153, 0.2);
+    background: rgba(224, 138, 192, 0.22);
     border-color: var(--accent-pink);
     color: #ffffff;
     transform: translateY(-1px);
@@ -188,20 +228,22 @@ a {
 
 /* Icon Button */
 .btn-icon-only {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   padding: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--btn-radius);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-muted);
-  border: 1px solid var(--border-subtle);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--panel-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--border-hover);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--panel-border-strong);
     color: var(--text-main);
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 }
 
@@ -220,16 +262,16 @@ a {
 
 /* Brand Button: Microsoft */
 .btn-microsoft {
-  background: rgba(12, 8, 28, 0.85);
+  background: rgba(8, 5, 20, 0.85);
   color: #ffffff;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--panel-border);
   box-shadow: var(--shadow-sm);
   width: 100%;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    background: rgba(20, 14, 40, 0.95);
-    border-color: var(--border-hover);
+    background: rgba(16, 10, 34, 0.95);
+    border-color: var(--panel-border-strong);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     transform: translateY(-2px);
   }
@@ -241,13 +283,14 @@ a {
 
 /* --- FOCUS STATES --- */
 :focus-visible {
-  outline: 2px solid rgba(215, 160, 11, 0.4);
+  outline: 2px solid rgba(124, 108, 255, 0.5);
   outline-offset: 2px;
 }
 
 /* --- SCROLLBAR GLOBAL --- */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -255,11 +298,11 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
   transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.18);
 }

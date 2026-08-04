@@ -134,12 +134,6 @@ contextBridge.exposeInMainWorld('api', {
   system: {
     getInfo: (): Promise<ISystemInfo> => ipcRenderer.invoke('system:info')
   },
-  mods: {
-    getModpack: (): Promise<any> => ipcRenderer.invoke('mods:get-modpack'),
-    setOptional: (modName: string, enabled: boolean): Promise<boolean> => ipcRenderer.invoke('mods:set-optional', modName, enabled),
-    verifyIntegrity: (): Promise<any> => ipcRenderer.invoke('mods:verify-integrity'),
-    deleteMod: (filename: string): Promise<boolean> => ipcRenderer.invoke('mods:delete-mod', filename)
-  },
   java: {
     detect: (): Promise<IDetectedJava[]> => ipcRenderer.invoke('java:detect')
   },

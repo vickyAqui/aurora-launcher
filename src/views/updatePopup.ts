@@ -5,6 +5,29 @@ import { formatRemaining, formatSpeed } from '../format'
 
 let checked = false
 
+const DISMISSED_KEY = 'aurora:update-dismissed-version'
+
+function getDismissedVersion(): string {
+  return localStorage.getItem(DISMISSED_KEY) ?? ''
+}
+
+function dismissVersion(version: string): void {
+  const current = getDismissedVersion()
+  if (compareVersions(version, current) > 0) {
+    localStorage.setItem(DISMISSED_KEY, version)
+  }
+}
+
+function compareVersions(a: string, b: string): number {
+  const pa = a.split('.').map((n) => parseInt(n, 10) || 0)
+  const pb = b.split('.').map((n) => parseInt(n, 10) || 0)
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const diff = (pa[i] ?? 0) - (pb[i] ?? 0)
+    if (diff !== 0) return diff
+  }
+  return 0
+}
+
 interface PopupElements {
   overlay: HTMLElement
   title: HTMLElement
@@ -55,7 +78,7 @@ function showAvailable(version: string) {
   e.message.innerText = `A versão ${version} está disponível!\nDeseja baixar e instalar agora?`
   e.progress.classList.add('hidden')
   renderButtons(e, [
-    { text: 'Agora não', type: 'cancel' },
+    { text: 'Agora não', type: 'cancel', action: () => dismissVersion(version) },
     { text: 'Baixar agora', type: 'ok', action: () => startDownload() }
   ])
   e.overlay.classList.remove('hidden')
@@ -127,7 +150,9 @@ export async function autoCheckForUpdate() {
   try {
     const res = await update.check()
     if (res.ok && res.updateAvailable && res.version) {
-      showAvailable(res.version)
+      if (compareVersions(res.version, getDismissedVersion()) > 0) {
+        showAvailable(res.version)
+      }
     }
   } catch (err) {
     logger.error('Update check failed:', err)
