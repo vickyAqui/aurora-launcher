@@ -7,9 +7,16 @@ export function registerServerHandlers() {
     try {
       const server = new ServerStatus(ip, port, 'modern', 774)
       const status = await server.getStatus()
-      return status
+      if (status) return status
     } catch (err) {
-      logger.error('Failed to get server status:', err)
+      logger.error('Failed to get modern server status:', err)
+    }
+
+    try {
+      const server = new ServerStatus(ip, port, '1.6', -1, 3)
+      return await server.getStatus()
+    } catch (err) {
+      logger.error('Failed to get legacy server status:', err)
       return null
     }
   })

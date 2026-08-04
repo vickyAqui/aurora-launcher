@@ -23,7 +23,7 @@ const DEFAULT_SKINS: ISkin[] = [
 
 export function registerSkinHandlers() {
   ipcMain.handle('skin:reload', async (_event, account?: Account) => {
-    if (!skin && account) {
+    if (account) {
       skin = new Skin(account)
       await skin.reload()
     } else if (skin) {

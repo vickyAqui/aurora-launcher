@@ -1,8 +1,8 @@
 {
-  "name": "eml-template",
-  "productName": "EML Template",
-  "author": "GoldFrite",
-  "description": "Template launcher with EML Lib",
+  "name": "aurora-studios-launcher",
+  "productName": "Aurora Studios",
+  "author": "Aurora Studios <contato@aurorastudios.com.br>",
+  "description": "Launcher oficial da Aurora Studios",
   "private": true,
   "version": "1.2.0",
   "license": "MIT",
@@ -12,12 +12,13 @@
     "build": "tsc && vite build",
     "release:win": "npm run build && electron-builder --win",
     "release:mac": "npm run build && electron-builder --mac",
-    "release:lin": "npm run build && electron-builder --linux"
+    "release:lin": "npm run build && electron-builder --linux",
+    "modpack:publish": "node scripts/publish-modpack.mjs"
   },
   "build": {
-    "appId": "com.eml.template",
-    "productName": "EML Template",
-    "copyright": "Copyright © 2026 EML",
+    "appId": "com.aurorastudios.launcher",
+    "productName": "Aurora Studios",
+    "copyright": "Copyright © 2026 Aurora Studios",
     "directories": {
       "output": "release",
       "buildResources": "build"
@@ -39,13 +40,14 @@
       "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
     ],
     "publish": {
-      "provider": "generic",
-      "url": "https://emlproject.pages.dev/"
+      "provider": "github",
+      "owner": "vickyAqui",
+      "repo": "aurora-launcher"
     },
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico",
-      "legalTrademarks": "EML Project"
+      "legalTrademarks": "Aurora Studios"
     },
     "nsis": {
       "oneClick": false,
@@ -53,10 +55,10 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "EML Template",
+      "shortcutName": "Aurora Studios",
       "deleteAppDataOnUninstall": true,
       "artifactName": "${productName}-Setup-${version}.${ext}",
-      "uninstallDisplayName": "EML Template"
+      "uninstallDisplayName": "Aurora Studios"
     },
     "mac": {
       "target": [
@@ -96,14 +98,13 @@
     },
     "linux": {
       "target": [
-        "AppImage",
-        "deb",
-        "rpm"
+        "AppImage"
       ],
       "icon": "build/icon.png",
       "category": "Game",
-      "description": "Template launcher with EML Lib",
-      "artifactName": "${productName}-${version}.${ext}"
+      "description": "Launcher oficial da Aurora Studios",
+      "artifactName": "${productName}-${version}.${ext}",
+      "maintainer": "Aurora Studios <contato@aurorastudios.com.br>"
     }
   },
   "dependencies": {

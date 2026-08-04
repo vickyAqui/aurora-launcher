@@ -4,15 +4,52 @@ div.loading-card {
   align-items: center;
   justify-content: center;
   height: 100%;
+  animation: loadingFadeIn 0.6s ease both;
 
   .spinner {
-    font-size: 2rem;
-    color: #ffffff;
-    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    color: var(--accent-yellow);
+    filter: drop-shadow(0 0 12px rgba(215, 160, 11, 0.4));
+    margin-bottom: 1.2rem;
+    animation: loadingSpinPulse 2s ease-in-out infinite;
   }
 
   .text {
-    opacity: 0.8;
+    font-family: 'Sansita Swashed', cursive;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+    animation: loadingTextPulse 2s ease-in-out infinite;
+    background: linear-gradient(135deg, var(--text-main), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 
+@keyframes loadingFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes loadingSpinPulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 12px rgba(215, 160, 11, 0.4));
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
+    filter: drop-shadow(0 0 20px rgba(215, 160, 11, 0.6));
+  }
+}
+
+@keyframes loadingTextPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}

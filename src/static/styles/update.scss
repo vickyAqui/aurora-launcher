@@ -4,27 +4,64 @@ div.maintenance-card {
   align-items: center;
   justify-content: center;
   height: 100%;
+  animation: updateFadeIn 0.6s ease both;
 
   h3 {
-    font-size: 21px;
+    font-family: 'Sansita Swashed', cursive;
+    font-size: 24px;
+    color: var(--text-main);
+    margin-bottom: 4px;
   }
 
   .up {
-    font-size: 2rem;
-    color: #ffffff;
+    font-size: 2.5rem;
+    color: var(--accent-yellow);
+    filter: drop-shadow(0 0 12px rgba(215, 160, 11, 0.3));
     margin-bottom: 1rem;
+    animation: updateSparkle 2s ease-in-out infinite;
   }
 
   .text {
-    opacity: 1;
     color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+}
+
+@keyframes updateFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes updateSparkle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 12px rgba(215, 160, 11, 0.3));
+  }
+  25% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 20px rgba(215, 160, 11, 0.6));
+  }
+  75% {
+    transform: scale(1.1) rotate(-5deg);
   }
 }
 
 .progress-container {
-  margin-top: 20px;
-  height: 40px;
-  min-width: 250px;
+  margin-top: 16px;
+  height: 36px;
+  min-width: 260px;
 
   &.hidden {
     display: none;
@@ -34,26 +71,43 @@ div.maintenance-card {
     display: flex;
     justify-content: space-between;
     font-size: 11px;
-    margin-bottom: 5px;
+    font-weight: 700;
+    margin-bottom: 6px;
     color: var(--text-muted);
   }
 
   .progress-bar-bg {
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
     overflow: hidden;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: updateProgressShine 2s ease-in-out infinite;
+    }
   }
 
   .progress-bar-fill {
     height: 100%;
     width: 0%;
-    background: var(--primary);
+    background: linear-gradient(90deg, var(--accent-yellow), var(--accent-green));
+    border-radius: 999px;
+    transition: width 0.3s ease;
 
     &.indeterminate {
-      width: 30% !important;
+      width: 35% !important;
       animation: indeterminate-shimmer 1.5s infinite cubic-bezier(0.65, 0.05, 0.36, 1);
       will-change: transform;
     }
   }
+}
+
+@keyframes updateProgressShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }

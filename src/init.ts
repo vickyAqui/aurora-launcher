@@ -1,5 +1,6 @@
-import { setBlockingView, setUser, setView } from './state'
-import { auth, background, bootstraps, maintenance, skin } from './ipc'
+import { setBlockingView, setView } from './state'
+import { auth, background, bootstraps, maintenance } from './ipc'
+import { activateAccount } from './account'
 import logger from 'electron-log/renderer'
 
 const DEFAULT_BACKGROUND = '/src/static/images/bg.png'
@@ -94,9 +95,7 @@ export async function bootstrap() {
     if (bgElement) bgElement.style.backgroundImage = `url('${bgUrl}')`
 
     if (session.success) {
-      const [__, skins, capes, avatar] = await Promise.all([skin.reload(session.account), skin.getSkin(), skin.getCape(), skin.getAvatar()])
-
-      setUser(session.account, { skins, capes, avatar })
+      await activateAccount(session.account)
       setView('home')
     } else {
       setView('login')

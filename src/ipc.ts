@@ -1,5 +1,10 @@
 import type { IGameSettings, ISystemInfo } from '../electron/handlers/settings'
-import type { IAuthResponse } from '../electron/handlers/auth'
+import type { IAuthResponse, IAccountSummary } from '../electron/handlers/auth'
+import type { IDetectedJava } from '../electron/handlers/java'
+import type { IScreenshot } from '../electron/handlers/screenshots'
+import type { IPlayStats } from '../electron/handlers/stats'
+import type { IPackEntry } from '../electron/handlers/packs'
+import type { UpdateStatus } from '../electron/handlers/update'
 import type {
   Account,
   BootstrapsEvents,
@@ -26,8 +31,11 @@ declare global {
     api: {
       auth: {
         login: () => Promise<IAuthResponse>
+        loginCrack: (username: string) => Promise<IAuthResponse>
         refresh: () => Promise<IAuthResponse>
-        logout: () => Promise<{ success: boolean }>
+        list: () => Promise<{ success: boolean; accounts: IAccountSummary[] }>
+        select: (id: string) => Promise<IAuthResponse>
+        logout: () => Promise<{ success: boolean; accounts: IAccountSummary[] }>
       }
       skin: {
         reload: (account?: Account) => Promise<void | null>
@@ -111,12 +119,47 @@ declare global {
       system: {
         getInfo: () => Promise<ISystemInfo>
       }
+      mods: {
+        getModpack: () => Promise<any>
+        setOptional: (modName: string, enabled: boolean) => Promise<boolean>
+        verifyIntegrity: () => Promise<any>
+        deleteMod: (filename: string) => Promise<boolean>
+      }
+      java: {
+        detect: () => Promise<IDetectedJava[]>
+      }
+      screenshots: {
+        list: () => Promise<IScreenshot[]>
+        openFolder: () => Promise<boolean>
+        reveal: (filePath: string) => Promise<boolean>
+        delete: (filePath: string) => Promise<boolean>
+      }
+      stats: {
+        get: () => Promise<IPlayStats>
+      }
+      packs: {
+        list: () => Promise<{ resourcePacks: IPackEntry[]; shaderPacks: IPackEntry[]; resourcePacksDir: string; shaderPacksDir: string }>
+        setResourcePack: (name: string, enabled: boolean) => Promise<boolean>
+        setShaderPack: (name: string, enabled: boolean) => Promise<boolean>
+        openFolder: (dirPath: string) => Promise<boolean>
+        delete: (packPath: string) => Promise<boolean>
+      }
+      update: {
+        check: () => Promise<{ ok: boolean; dev?: boolean; message?: string }>
+        download: () => Promise<{ ok: boolean; message?: string }>
+        install: () => Promise<{ ok: boolean }>
+        status: (callback: (value: UpdateStatus) => void) => void
+        progress: (callback: (value: number) => void) => void
+      }
     }
   }
 }
 
 export const auth = {
   login: async () => await window.api.auth.login(),
+  loginCrack: async (username: string) => await window.api.auth.loginCrack(username),
+  list: async () => await window.api.auth.list(),
+  select: async (id: string) => await window.api.auth.select(id),
   logout: async () => await window.api.auth.logout(),
   refresh: async () => await window.api.auth.refresh()
 }
@@ -205,4 +248,40 @@ export const system = {
   getInfo: () => window.api.system.getInfo()
 }
 
+export const mods = {
+  getModpack: async () => await window.api.mods.getModpack(),
+  setOptional: async (modName: string, enabled: boolean) => await window.api.mods.setOptional(modName, enabled),
+  verifyIntegrity: async () => await window.api.mods.verifyIntegrity(),
+  deleteMod: async (filename: string) => await window.api.mods.deleteMod(filename)
+}
 
+export const java = {
+  detect: async () => await window.api.java.detect()
+}
+
+export const screenshots = {
+  list: async () => await window.api.screenshots.list(),
+  openFolder: async () => await window.api.screenshots.openFolder(),
+  reveal: async (filePath: string) => await window.api.screenshots.reveal(filePath),
+  delete: async (filePath: string) => await window.api.screenshots.delete(filePath)
+}
+
+export const stats = {
+  get: async () => await window.api.stats.get()
+}
+
+export const packs = {
+  list: async () => await window.api.packs.list(),
+  setResourcePack: async (name: string, enabled: boolean) => await window.api.packs.setResourcePack(name, enabled),
+  setShaderPack: async (name: string, enabled: boolean) => await window.api.packs.setShaderPack(name, enabled),
+  openFolder: async (dirPath: string) => await window.api.packs.openFolder(dirPath),
+  delete: async (packPath: string) => await window.api.packs.delete(packPath)
+}
+
+export const update = {
+  check: () => window.api.update.check(),
+  download: () => window.api.update.download(),
+  install: () => window.api.update.install(),
+  status: (callback: (value: any) => void) => window.api.update.status(callback),
+  progress: (callback: (value: number) => void) => window.api.update.progress(callback)
+}

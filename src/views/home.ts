@@ -1,8 +1,9 @@
 import { setView, getUser } from '../state'
-import { game, news, server, settings, profiles } from '../ipc'
+import { game, news, server, settings, profiles, stats } from '../ipc'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import logger from 'electron-log/renderer'
+import { openScreenshots } from './screenshots'
 
 marked.use({
   renderer: {
@@ -41,6 +42,7 @@ export function initHome() {
   const progressPercent = document.getElementById('launch-progress-percent')
   const statusDot = document.getElementById('server-status-dot')
   const statusText = document.getElementById('server-status-text')
+  const statusIndicator = document.getElementById('server-status-indicator')
   const playerCount = document.getElementById('player-count')
   const newsList = document.getElementById('news-list')
   const profileSelector = document.getElementById('profile-selector')
@@ -51,6 +53,26 @@ export function initHome() {
   let allProfiles: any[] = []
   let totalToDownload = 0
   let totalDownloadedByType: { type: string; size: number }[] = []
+
+  const formatPlayTime = (ms: number) => {
+    const totalMinutes = Math.floor(ms / 60000)
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
+    if (hours > 0) return `${hours}h ${minutes}m`
+    return `${minutes}m`
+  }
+
+  const updateStats = async () => {
+    const totalTimeEl = document.getElementById('stat-total-time')
+    const launchesEl = document.getElementById('stat-launches')
+    try {
+      const playStats = await stats.get()
+      if (totalTimeEl) totalTimeEl.innerText = formatPlayTime(playStats.totalPlayTimeMs)
+      if (launchesEl) launchesEl.innerText = playStats.launches.toLocaleString('pt-BR')
+    } catch (err) {
+      logger.error('Error loading stats:', err)
+    }
+  }
 
   const loadProfiles = async () => {
     allProfiles = await profiles.get()
@@ -94,7 +116,7 @@ export function initHome() {
       statusDot.classList.remove('online', 'offline')
       statusDot.classList.add('pinging')
     }
-    if (statusText) statusText.innerHTML = 'Pinging...'
+    if (statusText) statusText.innerHTML = 'Verificando...'
     if (playerCount) playerCount.innerHTML = ''
 
     const status = selectedProfile ? await server.getStatus(selectedProfile.ip, selectedProfile.port || 25565) : null
@@ -121,13 +143,37 @@ export function initHome() {
 
   const loadNews = async () => {
     if (!newsList) return
-    newsList.innerHTML = '<div style="text-align:center; padding: 20px; color: #888;">Loading news...</div>'
+    newsList.innerHTML = '<div style="text-align:center; padding: 20px; color: #c4b8c8;">Carregando novidades...</div>'
     const feed = await news.getNews()
 
     newsList.innerHTML = ''
 
     if (!feed || feed.length === 0) {
-      newsList.innerHTML = '<div style="text-align:center; color: #888;">No news available.</div>'
+      const defaultArticle = `
+        <article class="news-article">
+          <div class="article-meta">
+            <div class="author">
+              <i class="fa-solid fa-star" style="color: var(--stardust-yellow)"></i>
+              <span>Aurora Studios Team</span>
+            </div>
+            <span class="separator">•</span>
+            <span class="date">${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+            <span class="separator">•</span>
+            <div class="tags-container">
+              <span class="tag update">Servidor</span>
+              <span class="tag event">Novo Universo</span>
+            </div>
+          </div>
+
+          <h3>✦ Bem-vindo à Terra dos Sonhos ✦</h3>
+
+          <div class="article-content">
+            <p>O launcher oficial da Aurora Studios foi totalmente renovado com a estética <strong>Terra dos Sonhos</strong>!</p>
+            <p>Explore nosso universo espacial mágico repleto de estrelas amarelas reluzentes, eventos estelares e muito mais.</p>
+          </div>
+        </article>
+      `
+      newsList.innerHTML = defaultArticle
       return
     }
 
@@ -166,6 +212,10 @@ export function initHome() {
   loadProfiles()
   updateServerStatus()
   loadNews()
+  updateStats()
+
+  statusIndicator?.addEventListener('click', () => updateServerStatus())
+  setInterval(updateServerStatus, 60000)
 
   const setIndeterminate = (active: boolean) => {
     if (!progressBar || !progressPercent) return
@@ -181,6 +231,11 @@ export function initHome() {
 
   settingsBtn?.addEventListener('click', () => {
     setView('settings')
+  })
+
+  const screenshotsBtn = document.getElementById('btn-screenshots')
+  screenshotsBtn?.addEventListener('click', () => {
+    openScreenshots()
   })
 
   playBtn?.addEventListener('click', async () => {
@@ -221,13 +276,13 @@ Ready to launch the game with the following settings:
 
   game.launchComputeDownload(() => {
     setIndeterminate(true)
-    if (progressLabel) progressLabel.innerText = 'Preparing download...'
+    if (progressLabel) progressLabel.innerText = 'Preparando download...'
     if (progressPercent) progressPercent.innerText = ''
   })
   game.launchDownload((download) => {
     setIndeterminate(false)
     totalToDownload = download.total.size
-    if (progressLabel) progressLabel.innerText = `Downloading files...`
+    if (progressLabel) progressLabel.innerText = `Baixando arquivos...`
   })
   game.downloadProgress((progress) => {
     if (!totalDownloadedByType.find((t) => t.type === progress.type)) {
@@ -238,30 +293,30 @@ Ready to launch the game with the following settings:
     if (progressBar && progressLabel && progressPercent) {
       const downloadedSum = totalDownloadedByType.reduce((acc, curr) => acc + curr.size, 0)
       progressBar.style.width = `${Math.min((downloadedSum / totalToDownload) * 100, 100)}%`
-      progressLabel.innerText = `Downloading ${progress.type === 'JAVA' ? 'Java' : 'game files'}...`
+      progressLabel.innerText = `Baixando ${progress.type === 'JAVA' ? 'Java' : 'arquivos do jogo'}...`
       progressPercent.innerText = `${Math.round(Math.min((downloadedSum / totalToDownload) * 100, 100))}%`
     }
   })
   game.launchInstallLoader(() => {
     setIndeterminate(true)
-    if (progressLabel) progressLabel.innerText = 'Extracting files...'
+    if (progressLabel) progressLabel.innerText = 'Extraindo arquivos...'
     if (progressPercent) progressPercent.innerText = ''
   })
   game.launchExtractNatives(() => {
     setIndeterminate(true)
-    if (progressLabel) progressLabel.innerText = 'Extracting files...'
+    if (progressLabel) progressLabel.innerText = 'Extraindo arquivos...'
   })
   game.launchCopyAssets(() => {
     setIndeterminate(true)
-    if (progressLabel) progressLabel.innerText = 'Extracting files...'
+    if (progressLabel) progressLabel.innerText = 'Extraindo arquivos...'
   })
   game.launchPatchLoader(() => {
     setIndeterminate(true)
-    if (progressLabel) progressLabel.innerText = 'Finalizing setup...'
+    if (progressLabel) progressLabel.innerText = 'Finalizando...'
   })
   game.launchLaunch(() => {
     setIndeterminate(true)
-    if (progressLabel) progressLabel.innerText = 'Launching game...'
+    if (progressLabel) progressLabel.innerText = 'Abrindo o Minecraft...'
   })
   game.launched(() => {
     setTimeout(() => {
@@ -270,6 +325,10 @@ Ready to launch the game with the following settings:
       if (progressBar) progressBar.style.width = '0%'
       if (progressPercent) progressPercent.innerText = ''
     }, 10000)
+  })
+
+  game.launchClose(() => {
+    updateStats()
   })
 }
 

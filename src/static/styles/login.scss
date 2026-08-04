@@ -8,37 +8,228 @@
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  padding: 40px;
+  border-radius: var(--radius-lg);
+  padding: 40px 36px 32px;
   text-align: center;
   box-shadow: var(--shadow-lg);
+  position: relative;
+  animation: loginCardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(215, 160, 11, 0.03) 60deg,
+      transparent 120deg,
+      rgba(157, 107, 218, 0.03) 180deg,
+      transparent 240deg,
+      rgba(194, 98, 153, 0.03) 300deg,
+      transparent 360deg
+    );
+    animation: loginAuraSpin 20s linear infinite;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    background: radial-gradient(ellipse at 50% 0%, rgba(215, 160, 11, 0.06), transparent 60%);
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
   .logo {
     width: 80px;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 
   h1 {
-    font-size: 24px;
-    margin-bottom: 5px;
+    font-family: 'Sansita Swashed', cursive;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-main);
+    animation: loginTitleShimmer 3s ease-in-out infinite;
+  }
+
+  .brand-chip {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-yellow);
+    background: rgba(215, 160, 11, 0.1);
+    border: 1px solid rgba(215, 160, 11, 0.15);
+    animation: loginChipPulse 4s ease-in-out infinite;
   }
 
   .subtitle {
     color: var(--text-muted);
-    font-size: 14px;
-    margin-bottom: 30px;
+    font-size: 13px;
+    margin-bottom: 24px;
+    line-height: 1.5;
   }
 
-  /* .btn-microsoft is now defined in main.scss/Global Buttons */
+  .login-divider {
+    margin: 18px 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 38%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+  }
+
+  .login-crack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--btn-radius);
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      &::placeholder {
+        color: var(--text-muted);
+        opacity: 0.6;
+      }
+
+      &:focus {
+        border-color: rgba(215, 160, 11, 0.35);
+        background: rgba(215, 160, 11, 0.04);
+        box-shadow: 0 0 0 3px rgba(215, 160, 11, 0.08);
+      }
+    }
+
+    button {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--btn-radius);
+      background: linear-gradient(135deg, var(--primary) 0%, #D075AB 100%);
+      color: #ffffff;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.5s ease, height 0.5s ease;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(215, 160, 11, 0.2);
+        filter: brightness(1.08);
+      }
+
+      &:active {
+        transform: translateY(0);
+        &::after {
+          width: 300px;
+          height: 300px;
+        }
+      }
+    }
+  }
 
   .login-footer {
     margin-top: 20px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.3);
+    font-size: 11px;
+    color: var(--text-muted);
 
     a {
-      font-weight: 600;
+      font-weight: 700;
+      color: var(--accent-cyan);
     }
   }
+}
+
+@keyframes loginCardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes loginAuraSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes loginTitleShimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+@keyframes loginChipPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(215, 160, 11, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(215, 160, 11, 0.06); }
 }

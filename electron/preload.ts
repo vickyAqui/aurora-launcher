@@ -1,6 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { IGameSettings, ISystemInfo } from './handlers/settings'
-import type { IAuthResponse } from './handlers/auth'
+import type { IAuthResponse, IAccountSummary } from './handlers/auth'
+import type { IDetectedJava } from './handlers/java'
+import type { IPackEntry } from './handlers/packs'
+import type { IPlayStats } from './handlers/stats'
+import type { IScreenshot } from './handlers/screenshots'
 import type {
   Account,
   BootstrapsEvents,
@@ -25,8 +29,11 @@ console.log('Preload script loaded')
 contextBridge.exposeInMainWorld('api', {
   auth: {
     login: (): Promise<IAuthResponse> => ipcRenderer.invoke('auth:login'),
+    loginCrack: (username: string): Promise<IAuthResponse> => ipcRenderer.invoke('auth:login-crack', username),
     refresh: (): Promise<IAuthResponse> => ipcRenderer.invoke('auth:refresh'),
-    logout: (): Promise<{ success: boolean }> => ipcRenderer.invoke('auth:logout')
+    list: (): Promise<{ success: boolean; accounts: IAccountSummary[] }> => ipcRenderer.invoke('auth:list'),
+    select: (id: string): Promise<IAuthResponse> => ipcRenderer.invoke('auth:select', id),
+    logout: (): Promise<{ success: boolean; accounts: IAccountSummary[] }> => ipcRenderer.invoke('auth:logout')
   },
   profiles: {
     get: (): Promise<any[]> => ipcRenderer.invoke('profiles:get')
@@ -126,6 +133,38 @@ contextBridge.exposeInMainWorld('api', {
   },
   system: {
     getInfo: (): Promise<ISystemInfo> => ipcRenderer.invoke('system:info')
+  },
+  mods: {
+    getModpack: (): Promise<any> => ipcRenderer.invoke('mods:get-modpack'),
+    setOptional: (modName: string, enabled: boolean): Promise<boolean> => ipcRenderer.invoke('mods:set-optional', modName, enabled),
+    verifyIntegrity: (): Promise<any> => ipcRenderer.invoke('mods:verify-integrity'),
+    deleteMod: (filename: string): Promise<boolean> => ipcRenderer.invoke('mods:delete-mod', filename)
+  },
+  java: {
+    detect: (): Promise<IDetectedJava[]> => ipcRenderer.invoke('java:detect')
+  },
+  screenshots: {
+    list: (): Promise<IScreenshot[]> => ipcRenderer.invoke('screenshots:list'),
+    openFolder: (): Promise<boolean> => ipcRenderer.invoke('screenshots:open_folder'),
+    reveal: (filePath: string): Promise<boolean> => ipcRenderer.invoke('screenshots:reveal', filePath),
+    delete: (filePath: string): Promise<boolean> => ipcRenderer.invoke('screenshots:delete', filePath)
+  },
+  stats: {
+    get: (): Promise<IPlayStats> => ipcRenderer.invoke('stats:get')
+  },
+  packs: {
+    list: (): Promise<{ resourcePacks: IPackEntry[]; shaderPacks: IPackEntry[]; resourcePacksDir: string; shaderPacksDir: string }> =>
+      ipcRenderer.invoke('packs:list'),
+    setResourcePack: (name: string, enabled: boolean): Promise<boolean> => ipcRenderer.invoke('packs:set_resource_pack', name, enabled),
+    setShaderPack: (name: string, enabled: boolean): Promise<boolean> => ipcRenderer.invoke('packs:set_shader_pack', name, enabled),
+    openFolder: (dirPath: string): Promise<boolean> => ipcRenderer.invoke('packs:open_folder', dirPath),
+    delete: (packPath: string): Promise<boolean> => ipcRenderer.invoke('packs:delete', packPath)
+  },
+  update: {
+    check: (): Promise<{ ok: boolean; dev?: boolean; message?: string }> => ipcRenderer.invoke('update:check'),
+    download: (): Promise<{ ok: boolean; message?: string }> => ipcRenderer.invoke('update:download'),
+    install: (): Promise<{ ok: boolean }> => ipcRenderer.invoke('update:install'),
+    status: (callback: (value: any) => void) => ipcRenderer.on('update:status', (_event, value) => callback(value)),
+    progress: (callback: (value: number) => void) => ipcRenderer.on('update:progress', (_event, value) => callback(value))
   }
 })
-

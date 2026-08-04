@@ -17,6 +17,7 @@ export interface ISystemInfo {
 
 export interface IGameSettings {
   java: string
+  javaPath: string
   memory: {
     min: number
     max: number
@@ -31,6 +32,7 @@ export interface IGameSettings {
 
 export const DEFAULT_SETTINGS: IGameSettings = {
   java: 'bundled',
+  javaPath: '',
   memory: {
     min: 1,
     max: 4

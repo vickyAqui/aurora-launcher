@@ -1,24 +1,52 @@
 :root {
-  /* Colors */
-  --primary: #ff5722;
-  --primary-hover: #e64a19;
+  color-scheme: dark;
 
+  /* Cores extraídas da imagem galaxy */
 
-  --bg-dark: #121212;
-  --text-main: #ffffff;
-  --text-muted: #aaaaaa;
+  /* Fundos — tons escuros da imagem */
+  --bg-dark: #170F28;
+  --bg-elevated: #221640;
+
+  /* Superfícies */
+  --surface: #2C1B49;
+  --surface-hover: #3A265D;
+
+  /* Accent — cores vibrantes da imagem */
+  --accent-yellow: #D7A00B;
+  --accent-green: #00c53d;
+  --accent-pink: #C26299;
+  --accent-violet: #9D6BDA;
+  --accent-cyan: #8FCAE7;
+
+  /* Primário e accent (atalhos) */
+  --primary: #C26299;
+  --primary-hover: #D075AB;
+  --primary-soft: rgba(194, 98, 153, 0.14);
+  --accent: #C26299;
+  --accent-soft: rgba(194, 98, 153, 0.14);
+
+  /* Texto */
+  --text-main: #F0E5F8;
+  --text-muted: #A99BC4;
 
   /* Glassmorphism */
-  --glass-bg: rgba(30, 30, 30, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: 12px;
+  --glass-bg: rgba(23, 15, 40, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-blur: 16px;
 
-  /* Shadows */
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+  /* Bordas */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+
+  /* Sombras */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 
   /* Layout */
-  --sidebar-width: 400px;
-
-  /* UI System */
-  --btn-radius: 5px;
+  --sidebar-width: 340px;
+  --btn-radius: 12px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
 }

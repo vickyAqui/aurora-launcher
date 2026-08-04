@@ -1,23 +1,55 @@
 import { ipcMain, BrowserWindow, app } from 'electron'
 import { Launcher } from 'eml-lib'
-import type { Account, IProfile } from 'eml-lib'
+import type { Account } from 'eml-lib'
 import type { IGameSettings } from './settings'
 import logger from 'electron-log/main'
-import { ADMINTOOL_URL } from '../const'
+import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
+import { removeDisabledOptionalMods } from './mods'
+import { decryptMods, encryptMods, setActiveVaultSlug } from '../modsVault'
+import { endSession, startSession } from './stats'
 
 export function registerLauncherHandlers(mainWindow: BrowserWindow) {
-  ipcMain.handle('game:launch', (_event, payload: { account: Account; settings: IGameSettings; profileSlug: string }) => {
+  ipcMain.handle('game:launch', async (_event, payload: { account: Account; settings: IGameSettings; profileSlug: string }) => {
     const { account, settings, profileSlug } = payload
-    const java = settings.java === 'system' ? { install: 'manual' as const, absolutePath: 'java' } : { install: 'auto' as const }
+
+    let java: { install: 'auto' } | { install: 'manual'; absolutePath: string }
+    if (settings.java === 'system') {
+      java = { install: 'manual' as const, absolutePath: 'java' }
+    } else if (settings.java === 'path' && settings.javaPath) {
+      java = { install: 'manual' as const, absolutePath: settings.javaPath }
+    } else {
+      java = { install: 'auto' as const }
+    }
+
+    const slug = profileSlug || DEFAULT_PROFILE.slug
+    setActiveVaultSlug(slug)
+    await decryptMods(slug)
+
     logger.log('Launching')
 
     const launcher = new Launcher({
-      url: ADMINTOOL_URL,
-      root: 'goldfrite',
-      profile: { slug: profileSlug },
+      root: ROOT_DIR,
+      profile: { slug: profileSlug || DEFAULT_PROFILE.slug },
       account: account,
+      minecraft: MINECRAFT,
       cleaning: {
-        enabled: false
+        enabled: true,
+        ignored: [
+          'crash-reports/',
+          'logs/',
+          'options.txt',
+          'optionsof.txt',
+          'resourcepacks/',
+          'resources/',
+          'saves/',
+          'screenshots/',
+          'server.dat',
+          'shaderpacks/',
+          'usercache.json',
+          'player_models/',
+          'config/customplayermodels.json',
+          'config/cpm-server-default.json'
+        ]
       },
       java: java,
       memory: {
@@ -50,6 +82,9 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     launcher.on('download_end', (info) => {
       logger.log(`Downloaded ${info.downloaded.amount} files.`)
       mainWindow.webContents.send('game:download_end', info)
+      removeDisabledOptionalMods().then((removed) => {
+        if (removed > 0) logger.log(`Removed ${removed} disabled optional mods.`)
+      })
     })
 
     launcher.on('launch_install_loader', (loader) => {
@@ -123,6 +158,7 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     launcher.on('launch_launch', (info) => {
       logger.log(`Launching Minecraft ${info.version} (${info.type}${info.loaderVersion ? ` ${info.loaderVersion}` : ''})...`)
       mainWindow.webContents.send('game:launch_launch', info)
+      startSession()
       if (settings.launcherAction === 'close') {
         setTimeout(() => app.quit(), 5000)
       } else if (settings.launcherAction === 'hide') {
@@ -136,7 +172,9 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     })
     launcher.on('launch_close', (code) => {
       logger.log(`Closed with code ${code}.`)
+      endSession()
       mainWindow.webContents.send('game:launch_close', code)
+      encryptMods(slug).catch((err) => logger.error('Failed to encrypt mods:', err))
     })
 
     launcher.on('launch_debug', (message) => {
@@ -147,10 +185,9 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     })
 
     try {
-      launcher.launch()
+      await launcher.launch()
     } catch (err) {
       logger.error('Launcher error:', err)
     }
   })
 }
-
