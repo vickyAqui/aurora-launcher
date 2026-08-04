@@ -167,7 +167,7 @@ async function main() {
   await deleteAssets(release)
 
   for (const file of files) {
-    await uploadAsset(release.id, file.full, file.name)
+    await uploadAsset(release.id, file.full, file.rel)
   }
   await uploadAsset(release.id, jsonPath, 'modpack.json')
 

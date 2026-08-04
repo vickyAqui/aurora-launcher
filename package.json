@@ -13,7 +13,8 @@
     "release:win": "npm run build && electron-builder --win",
     "release:mac": "npm run build && electron-builder --mac",
     "release:lin": "npm run build && electron-builder --linux",
-    "modpack:publish": "node scripts/publish-modpack.mjs"
+    "modpack:publish": "node scripts/publish-modpack.mjs",
+    "modpack:update": "node scripts/update-modpack.mjs"
   },
   "build": {
     "appId": "com.aurorastudios.launcher",
@@ -42,7 +43,8 @@
     "publish": {
       "provider": "github",
       "owner": "vickyAqui",
-      "repo": "aurora-launcher"
+      "repo": "aurora-launcher",
+      "releaseType": "release"
     },
     "win": {
       "target": "nsis",
