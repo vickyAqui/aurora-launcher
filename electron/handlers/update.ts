@@ -9,6 +9,13 @@ export type UpdateStatus =
   | { state: 'downloaded'; version: string }
   | { state: 'error'; message: string }
 
+export interface UpdateProgress {
+  percent: number
+  transferred: number
+  total: number
+  bytesPerSecond: number
+}
+
 export function registerUpdateHandlers(mainWindow: BrowserWindow) {
   const send = (channel: string, ...args: unknown[]) => {
     if (!mainWindow.isDestroyed()) mainWindow.webContents.send(channel, ...args)
@@ -20,7 +27,17 @@ export function registerUpdateHandlers(mainWindow: BrowserWindow) {
   autoUpdater.on('checking-for-update', () => send('update:status', { state: 'checking' } satisfies UpdateStatus))
   autoUpdater.on('update-available', (info) => send('update:status', { state: 'available', version: info.version } satisfies UpdateStatus))
   autoUpdater.on('update-not-available', () => send('update:status', { state: 'up-to-date' } satisfies UpdateStatus))
-  autoUpdater.on('download-progress', (progress) => send('update:progress', progress.percent))
+  autoUpdater.on('download-progress', (progress) =>
+    send(
+      'update:progress',
+      {
+        percent: progress.percent,
+        transferred: progress.transferred,
+        total: progress.total,
+        bytesPerSecond: progress.bytesPerSecond
+      } satisfies UpdateProgress
+    )
+  )
   autoUpdater.on('update-downloaded', (info) => send('update:status', { state: 'downloaded', version: info.version } satisfies UpdateStatus))
   autoUpdater.on('error', (err) => {
     logger.error('Update error:', err)

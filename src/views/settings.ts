@@ -8,6 +8,8 @@ import type { IDetectedJava } from '../../electron/handlers/java'
 import type { IPackEntry } from '../../electron/handlers/packs'
 import shared from '../shared'
 import logger from 'electron-log/renderer'
+import { formatRemaining, formatSpeed } from '../format'
+import type { UpdateProgress } from '../../electron/handlers/update'
 
 const resolutionList = [
   { label: 'Auto (default)', value: '854x480', width: 854, height: 480 },
@@ -710,9 +712,9 @@ function initUpdateCheck() {
     }
   })
 
-  update.progress((percent) => {
+  update.progress((progress: UpdateProgress) => {
     setBusy(true)
-    setStatus(`Baixando... ${percent.toFixed(0)}%`)
+    setStatus(`Baixando... ${progress.percent.toFixed(0)}% · faltam ${formatRemaining(progress.transferred, progress.total)} · ${formatSpeed(progress.bytesPerSecond)}`)
   })
 
   checkBtn.addEventListener('click', async () => {

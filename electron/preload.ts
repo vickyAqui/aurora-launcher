@@ -169,8 +169,8 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.on('update:status', listener)
       return () => ipcRenderer.removeListener('update:status', listener)
     },
-    progress: (callback: (value: number) => void) => {
-      const listener = (_event: unknown, value: number) => callback(value)
+    progress: (callback: (value: { percent: number; transferred: number; total: number; bytesPerSecond: number }) => void) => {
+      const listener = (_event: unknown, value: { percent: number; transferred: number; total: number; bytesPerSecond: number }) => callback(value)
       ipcRenderer.on('update:progress', listener)
       return () => ipcRenderer.removeListener('update:progress', listener)
     }

@@ -4,7 +4,7 @@ import type { IDetectedJava } from '../electron/handlers/java'
 import type { IScreenshot } from '../electron/handlers/screenshots'
 import type { IPlayStats } from '../electron/handlers/stats'
 import type { IPackEntry } from '../electron/handlers/packs'
-import type { UpdateStatus } from '../electron/handlers/update'
+import type { UpdateStatus, UpdateProgress } from '../electron/handlers/update'
 import type {
   Account,
   BootstrapsEvents,
@@ -149,7 +149,7 @@ declare global {
         download: () => Promise<{ ok: boolean; message?: string }>
         install: () => Promise<{ ok: boolean }>
         status: (callback: (value: UpdateStatus) => void) => () => void
-        progress: (callback: (value: number) => void) => () => void
+        progress: (callback: (value: UpdateProgress) => void) => () => void
       }
     }
   }
@@ -283,5 +283,5 @@ export const update = {
   download: () => window.api.update.download(),
   install: () => window.api.update.install(),
   status: (callback: (value: UpdateStatus) => void) => window.api.update.status(callback),
-  progress: (callback: (value: number) => void) => window.api.update.progress(callback)
+  progress: (callback: (value: UpdateProgress) => void) => window.api.update.progress(callback)
 }

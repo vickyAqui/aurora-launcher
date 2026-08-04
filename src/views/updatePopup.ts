@@ -1,6 +1,7 @@
 import logger from 'electron-log/renderer'
 import { update } from '../ipc'
-import type { UpdateStatus } from '../../electron/handlers/update'
+import type { UpdateProgress, UpdateStatus } from '../../electron/handlers/update'
+import { formatRemaining, formatSpeed } from '../format'
 
 let checked = false
 
@@ -70,9 +71,10 @@ function startDownload() {
   renderButtons(e, [])
   e.overlay.classList.remove('hidden')
 
-  const offProgress = update.progress((percent) => {
-    e.percent.innerText = `${percent.toFixed(0)}%`
-    e.bar.style.width = `${percent}%`
+  const offProgress = update.progress((progress: UpdateProgress) => {
+    e.percent.innerText = `${progress.percent.toFixed(0)}%`
+    e.bar.style.width = `${progress.percent}%`
+    e.label.innerText = `Faltam ${formatRemaining(progress.transferred, progress.total)} · ${formatSpeed(progress.bytesPerSecond)}`
   })
   const offStatus = update.status((status: UpdateStatus | null) => {
     if (!status) return
