@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bg" cx="68%" cy="34%" r="80%">
+      <stop offset="0%" stop-color="#1a0f3d"/>
+      <stop offset="34%" stop-color="#0c0624"/>
+      <stop offset="70%" stop-color="#050014"/>
+      <stop offset="100%" stop-color="#03010e"/>
+    </radialGradient>
+
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f6f3ff" stop-opacity="0.85"/>
+      <stop offset="22%" stop-color="#aeb6ff" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#8a7cff" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#8a7cff" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="arm" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#57e6ff" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#8a7cff" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#57e6ff" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="nebulaCyan" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#57e6ff" stop-opacity="0.14"/>
+      <stop offset="60%" stop-color="#3a6bd6" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#3a6bd6" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="nebulaViolet" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8a7cff" stop-opacity="0.12"/>
+      <stop offset="55%" stop-color="#6b5bff" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#6b5bff" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="vignette" cx="50%" cy="44%" r="72%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="55%" stop-color="#000000" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.5"/>
+    </radialGradient>
+
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+    <filter id="softCore" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+    <filter id="softDust" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="46"/>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+
+  <!-- Nebulas (subtle color washes) -->
+  <circle cx="1780" cy="300" r="460" fill="url(#nebulaCyan)"/>
+  <circle cx="380" cy="840" r="520" fill="url(#nebulaViolet)"/>
+  <circle cx="140" cy="140" r="380" fill="url(#nebulaViolet)"/>
+
+  <!-- Main spiral galaxy (upper right) -->
+  <g transform="translate(1400 372) rotate(-22)">
+    <g filter="url(#soft)" opacity="0.8">
+      <ellipse cx="0" cy="0" rx="560" ry="196" fill="none" stroke="url(#arm)" stroke-width="30" transform="rotate(18)"/>
+      <ellipse cx="0" cy="0" rx="470" ry="164" fill="none" stroke="url(#arm)" stroke-width="24" transform="rotate(32)"/>
+      <ellipse cx="0" cy="0" rx="390" ry="136" fill="none" stroke="url(#arm)" stroke-width="19" transform="rotate(46)"/>
+      <ellipse cx="0" cy="0" rx="315" ry="110" fill="none" stroke="url(#arm)" stroke-width="15" transform="rotate(60)"/>
+      <ellipse cx="0" cy="0" rx="245" ry="85" fill="none" stroke="url(#arm)" stroke-width="11" transform="rotate(74)"/>
+      <ellipse cx="0" cy="0" rx="175" ry="61" fill="none" stroke="url(#arm)" stroke-width="8" transform="rotate(88)"/>
+    </g>
+    <circle cx="0" cy="0" r="130" fill="url(#core)" filter="url(#softCore)"/>
+  </g>
+
+  <!-- Small distant galaxy (lower left) -->
+  <g transform="translate(430 810) rotate(14)" opacity="0.5">
+    <g filter="url(#soft)">
+      <ellipse cx="0" cy="0" rx="190" ry="66" fill="none" stroke="url(#arm)" stroke-width="12" transform="rotate(24)"/>
+      <ellipse cx="0" cy="0" rx="150" ry="52" fill="none" stroke="url(#arm)" stroke-width="9" transform="rotate(40)"/>
+      <ellipse cx="0" cy="0" rx="110" ry="38" fill="none" stroke="url(#arm)" stroke-width="7" transform="rotate(56)"/>
+    </g>
+    <circle cx="0" cy="0" r="45" fill="url(#core)" filter="url(#softCore)"/>
+  </g>
+
+  <!-- Static stars -->
+  <g fill="#ffffff">
+    <circle cx="90" cy="210" r="1.1" opacity="0.5"/>
+    <circle cx="210" cy="120" r="1.6" opacity="0.7"/>
+    <circle cx="330" cy="60" r="1" opacity="0.4"/>
+    <circle cx="470" cy="180" r="1.3" opacity="0.55"/>
+    <circle cx="560" cy="90" r="0.9" opacity="0.4"/>
+    <circle cx="640" cy="250" r="1.4" opacity="0.6"/>
+    <circle cx="750" cy="140" r="1" opacity="0.45"/>
+    <circle cx="880" cy="70" r="1.5" opacity="0.7"/>
+    <circle cx="1010" cy="180" r="1.1" opacity="0.5"/>
+    <circle cx="1150" cy="95" r="1.3" opacity="0.6"/>
+    <circle cx="1270" cy="210" r="0.9" opacity="0.4"/>
+    <circle cx="1350" cy="120" r="1.5" opacity="0.65"/>
+    <circle cx="1520" cy="160" r="1" opacity="0.45"/>
+    <circle cx="1680" cy="90" r="1.4" opacity="0.6"/>
+    <circle cx="1810" cy="150" r="1.2" opacity="0.55"/>
+    <circle cx="70" cy="420" r="1.3" opacity="0.55"/>
+    <circle cx="180" cy="520" r="1" opacity="0.45"/>
+    <circle cx="290" cy="470" r="1.5" opacity="0.7"/>
+    <circle cx="380" cy="600" r="0.9" opacity="0.4"/>
+    <circle cx="520" cy="560" r="1.2" opacity="0.55"/>
+    <circle cx="610" cy="700" r="1.4" opacity="0.6"/>
+    <circle cx="720" cy="620" r="1" opacity="0.45"/>
+    <circle cx="840" cy="730" r="1.3" opacity="0.55"/>
+    <circle cx="950" cy="650" r="1.1" opacity="0.5"/>
+    <circle cx="1060" cy="780" r="1.4" opacity="0.6"/>
+    <circle cx="1170" cy="700" r="0.9" opacity="0.4"/>
+    <circle cx="1290" cy="800" r="1.5" opacity="0.7"/>
+    <circle cx="1400" cy="720" r="1" opacity="0.45"/>
+    <circle cx="1500" cy="830" r="1.2" opacity="0.55"/>
+    <circle cx="1630" cy="760" r="1.4" opacity="0.6"/>
+    <circle cx="1740" cy="880" r="1" opacity="0.45"/>
+    <circle cx="1850" cy="800" r="1.3" opacity="0.55"/>
+    <circle cx="110" cy="950" r="1.1" opacity="0.5"/>
+    <circle cx="240" cy="1010" r="1.5" opacity="0.65"/>
+    <circle cx="360" cy="920" r="0.9" opacity="0.4"/>
+    <circle cx="500" cy="1020" r="1.2" opacity="0.55"/>
+    <circle cx="700" cy="950" r="1.1" opacity="0.5"/>
+    <circle cx="920" cy="990" r="1.4" opacity="0.6"/>
+    <circle cx="1120" cy="940" r="1" opacity="0.45"/>
+    <circle cx="1340" cy="1000" r="1.3" opacity="0.55"/>
+    <circle cx="1580" cy="960" r="1.1" opacity="0.5"/>
+    <circle cx="1900" cy="1030" r="1.2" opacity="0.55"/>
+  </g>
+
+  <!-- A few larger glowing stars -->
+  <g>
+    <circle cx="210" cy="120" r="7" fill="url(#starGlow)"/>
+    <circle cx="880" cy="70" r="8" fill="url(#starGlow)"/>
+    <circle cx="1170" cy="700" r="6" fill="url(#starGlow)"/>
+    <circle cx="1290" cy="800" r="9" fill="url(#starGlow)"/>
+    <circle cx="240" cy="1010" r="7" fill="url(#starGlow)"/>
+    <circle cx="1400" cy="720" r="6" fill="url(#starGlow)"/>
+    <circle cx="90" cy="210" r="6" fill="url(#starGlow)"/>
+  </g>
+
+  <!-- Vignette for text contrast -->
+  <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

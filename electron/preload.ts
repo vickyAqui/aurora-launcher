@@ -12,7 +12,6 @@ import type {
   DownloaderEvents,
   FilesManagerEvents,
   IAvatar,
-  IBackground,
   IBootstraps,
   ICape,
   IMaintenance,
@@ -108,9 +107,6 @@ contextBridge.exposeInMainWorld('api', {
   news: {
     getNews: (): Promise<INews[]> => ipcRenderer.invoke('news:get_news'),
     getCategories: (): Promise<any[]> => ipcRenderer.invoke('news:get_categories')
-  },
-  background: {
-    get: (): Promise<IBackground | null> => ipcRenderer.invoke('background:get')
   },
   maintenance: {
     get: (): Promise<IMaintenance | null> => ipcRenderer.invoke('maintenance:get')

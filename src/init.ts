@@ -1,9 +1,8 @@
 import { setBlockingView, setView } from './state'
-import { auth, background, bootstraps, maintenance } from './ipc'
+import { auth, bootstraps, maintenance } from './ipc'
 import { activateAccount } from './account'
 import logger from 'electron-log/renderer'
 
-const DEFAULT_BACKGROUND = '/src/static/images/bg.png'
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   day: '2-digit',
   month: '2-digit',
@@ -12,19 +11,9 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
   minute: '2-digit'
 }
 
-function preloadImage(url: string): Promise<void> {
-  return new Promise((resolve) => {
-    const img = new Image()
-    img.src = url
-    img.onload = () => resolve()
-    img.onerror = () => resolve()
-  })
-}
-
 export async function bootstrap() {
   logger.log('Initializing Launcher...')
 
-  const bgElement = document.querySelector('.app-background') as HTMLElement
   const maintenanceDates = document.getElementById('maintenance-dates')!
   const maintenanceReason = document.getElementById('maintenance-reason')!
   const progressBar = document.getElementById('update-progress-bar')
@@ -44,9 +33,7 @@ export async function bootstrap() {
   }
 
   const up = await bootstraps.check()
-  const bg = await background.get()
   const mn = await maintenance.get()
-  const bgUrl = bg?.file?.url ?? DEFAULT_BACKGROUND
 
   if (up.updateAvailable) {
     setIndeterminate(false)
@@ -87,12 +74,7 @@ export async function bootstrap() {
     return
   }
   try {
-    const [_, session] = await Promise.all([
-      preloadImage(bgUrl),
-      auth.refresh(),
-    ])
-
-    if (bgElement) bgElement.style.backgroundImage = `url('${bgUrl}')`
+    const session = await auth.refresh()
 
     if (session.success) {
       await activateAccount(session.account)
@@ -102,7 +84,6 @@ export async function bootstrap() {
     }
   } catch (err) {
     logger.error('Error while initializing launcher:', err)
-    if (bgElement) bgElement.style.backgroundImage = `url('${DEFAULT_BACKGROUND}')`
     setView('login')
   } finally {
     await new Promise((resolve) => setTimeout(resolve, 400))

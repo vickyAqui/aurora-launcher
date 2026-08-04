@@ -36,11 +36,12 @@ a {
   height: 100%;
 }
 
-/* --- FUNDO: NOITE + AURORA --- */
+/* --- FUNDO: GALAXY SVG --- */
 .app-background {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 18% 22%, #1c1140 0%, #0a0520 46%, #03010e 100%);
+  background-color: var(--bg-deep);
+  background-image: url('../images/galaxy.svg');
   background-size: cover;
   background-position: center;
   z-index: -1;
@@ -55,29 +56,13 @@ a {
     z-index: 2;
   }
 
-  .nebula {
+  &::before {
+    content: '';
     position: absolute;
-    width: 88vw;
-    height: 88vw;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(124, 108, 255, 0.16) 0%, rgba(87, 230, 255, 0.06) 34%, transparent 66%);
-    filter: blur(64px);
+    inset: 0;
+    background: radial-gradient(circle at 50% 44%, transparent 52%, rgba(2, 0, 12, 0.34) 100%);
     pointer-events: none;
     z-index: 1;
-    animation: nebulaPulse 14s ease-in-out infinite alternate;
-  }
-}
-
-@keyframes nebulaPulse {
-  from {
-    opacity: 0.75;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.06);
   }
 }
 
