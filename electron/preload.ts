@@ -161,10 +161,18 @@ contextBridge.exposeInMainWorld('api', {
     delete: (packPath: string): Promise<boolean> => ipcRenderer.invoke('packs:delete', packPath)
   },
   update: {
-    check: (): Promise<{ ok: boolean; dev?: boolean; message?: string }> => ipcRenderer.invoke('update:check'),
+    check: (): Promise<{ ok: boolean; dev?: boolean; message?: string; updateAvailable?: boolean; version?: string }> => ipcRenderer.invoke('update:check'),
     download: (): Promise<{ ok: boolean; message?: string }> => ipcRenderer.invoke('update:download'),
     install: (): Promise<{ ok: boolean }> => ipcRenderer.invoke('update:install'),
-    status: (callback: (value: any) => void) => ipcRenderer.on('update:status', (_event, value) => callback(value)),
-    progress: (callback: (value: number) => void) => ipcRenderer.on('update:progress', (_event, value) => callback(value))
+    status: (callback: (value: any) => void) => {
+      const listener = (_event: unknown, value: any) => callback(value)
+      ipcRenderer.on('update:status', listener)
+      return () => ipcRenderer.removeListener('update:status', listener)
+    },
+    progress: (callback: (value: number) => void) => {
+      const listener = (_event: unknown, value: number) => callback(value)
+      ipcRenderer.on('update:progress', listener)
+      return () => ipcRenderer.removeListener('update:progress', listener)
+    }
   }
 })

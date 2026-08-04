@@ -16,6 +16,7 @@ import { initScreenshots } from './views/screenshots'
 import { initAccountSwitcher } from './views/accountSwitcher'
 import { bootstrap } from './init'
 import { initStardustCanvas } from './stardust'
+import { autoCheckForUpdate } from './views/updatePopup'
 
 initStardustCanvas()
 
@@ -25,6 +26,6 @@ initSettings()
 initScreenshots()
 initAccountSwitcher()
 
-bootstrap()
+void bootstrap().then(() => autoCheckForUpdate())
 
 

@@ -145,11 +145,11 @@ declare global {
         delete: (packPath: string) => Promise<boolean>
       }
       update: {
-        check: () => Promise<{ ok: boolean; dev?: boolean; message?: string }>
+        check: () => Promise<{ ok: boolean; dev?: boolean; message?: string; updateAvailable?: boolean; version?: string }>
         download: () => Promise<{ ok: boolean; message?: string }>
         install: () => Promise<{ ok: boolean }>
-        status: (callback: (value: UpdateStatus) => void) => void
-        progress: (callback: (value: number) => void) => void
+        status: (callback: (value: UpdateStatus) => void) => () => void
+        progress: (callback: (value: number) => void) => () => void
       }
     }
   }
@@ -282,6 +282,6 @@ export const update = {
   check: () => window.api.update.check(),
   download: () => window.api.update.download(),
   install: () => window.api.update.install(),
-  status: (callback: (value: any) => void) => window.api.update.status(callback),
+  status: (callback: (value: UpdateStatus) => void) => window.api.update.status(callback),
   progress: (callback: (value: number) => void) => window.api.update.progress(callback)
 }

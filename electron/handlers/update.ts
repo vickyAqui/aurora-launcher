@@ -29,13 +29,16 @@ export function registerUpdateHandlers(mainWindow: BrowserWindow) {
 
   ipcMain.handle('update:check', async () => {
     if (!app.isPackaged) {
-      send('update:status', { state: 'up-to-date' } satisfies UpdateStatus)
-      return { ok: true, dev: true }
+      return { ok: false, dev: true, updateAvailable: false }
     }
 
     try {
-      await autoUpdater.checkForUpdates()
-      return { ok: true }
+      const result = await autoUpdater.checkForUpdates()
+      return {
+        ok: true,
+        updateAvailable: result != null,
+        version: result?.updateInfo?.version
+      }
     } catch (err) {
       logger.error('Update check failed:', err)
       return { ok: false, message: (err as Error).message }

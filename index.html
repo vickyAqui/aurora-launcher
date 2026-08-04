@@ -531,6 +531,23 @@
       </div>
     </div>
 
+    <div id="update-popup" class="dialog-overlay hidden">
+      <div class="dialog-box">
+        <h3 id="update-popup-title">Atualização disponível</h3>
+        <p id="update-popup-message"></p>
+        <div id="update-popup-progress" class="progress-container hidden">
+          <div class="progress-info">
+            <span id="update-popup-label">Baixando atualização...</span>
+            <span id="update-popup-percent">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="update-popup-bar" class="progress-bar-fill"></div>
+          </div>
+        </div>
+        <div id="update-popup-buttons" class="dialog-actions"></div>
+      </div>
+    </div>
+
     <script type="module" src="/src/app.ts"></script>
     <img src="/src/static/images/bg.png" alt="default background preload" style="display: none" />
   </body>
