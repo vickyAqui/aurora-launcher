@@ -179,7 +179,7 @@
     color: var(--text-main);
     padding: 10px 12px;
     outline: none;
-    font-family: 'Quicksand', sans-serif;
+    font-family: var(--font-body);
     font-size: 13px;
     font-weight: 600;
     transition: all 0.2s ease;
@@ -212,7 +212,7 @@
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border-subtle);
     color: var(--text-main);
-    font-family: 'Quicksand', sans-serif;
+    font-family: var(--font-body);
     font-size: 13px;
     font-weight: 600;
     text-align: left;
@@ -280,7 +280,7 @@
     color: var(--text-muted);
     font-size: 13px;
     font-weight: 600;
-    font-family: 'Quicksand', sans-serif;
+    font-family: var(--font-body);
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
