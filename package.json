@@ -4,7 +4,7 @@
   "author": "Aurora Studios <contato@aurorastudios.com.br>",
   "description": "Launcher oficial da Aurora Studios",
   "private": true,
-  "version": "1.3.6",
+  "version": "1.3.7",
   "license": "MIT",
   "main": "dist-electron/main.js",
   "scripts": {
