@@ -18,6 +18,7 @@ import { createReadStream, promises as fs } from 'node:fs'
 import path from 'node:path'
 
 const API = 'https://api.github.com'
+const UPLOADS = 'https://uploads.github.com'
 const token = process.env.GH_TOKEN
 if (!token) {
   console.error('ERROR: GH_TOKEN environment variable is required (GitHub PAT with `repo` scope).')
@@ -116,7 +117,7 @@ async function deleteAssets(release) {
 
 async function uploadAsset(releaseId, filePath, name) {
   const data = await fs.readFile(filePath)
-  const url = `${API}/repos/${repo}/releases/${releaseId}/assets?name=${encodeURIComponent(name)}`
+  const url = `${UPLOADS}/repos/${repo}/releases/${releaseId}/assets?name=${encodeURIComponent(name)}`
   await api(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/octet-stream' },
