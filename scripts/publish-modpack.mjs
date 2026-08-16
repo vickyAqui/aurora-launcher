@@ -118,12 +118,13 @@ async function deleteAssets(release) {
 async function uploadAsset(releaseId, filePath, name) {
   const data = await fs.readFile(filePath)
   const url = `${UPLOADS}/repos/${repo}/releases/${releaseId}/assets?name=${encodeURIComponent(name)}`
-  await api(url, {
+  const asset = await api(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/octet-stream' },
     body: new Uint8Array(data)
   })
   console.log(`Uploaded: ${name}`)
+  return asset
 }
 
 async function main() {
@@ -135,18 +136,27 @@ async function main() {
   console.log(`Scanning ${modpackDir}...`)
   const { folders, files } = await walk(modpackDir)
 
+  const release = await getOrCreateRelease()
+  await deleteAssets(release)
+
+  const uploaded = []
+  for (const file of files) {
+    const asset = await uploadAsset(release.id, file.full, file.name)
+    uploaded.push({ file, asset })
+  }
+
   const modpackFiles = []
   for (const folder of folders) {
     const parent = folder.rel.includes('/') ? `${folder.rel.substring(0, folder.rel.lastIndexOf('/'))}/` : ''
     modpackFiles.push({
       name: folder.name,
       path: parent,
-      url: `${baseUrl}/${folder.rel}`,
+      url: `${baseUrl}/${folder.name}`,
       type: 'FOLDER'
     })
   }
 
-  for (const file of files) {
+  for (const { file, asset } of uploaded) {
     const parent = file.rel.includes('/') ? `${file.rel.substring(0, file.rel.lastIndexOf('/'))}/` : ''
     const size = (await fs.stat(file.full)).size
     const hash = await sha1(file.full)
@@ -155,7 +165,7 @@ async function main() {
       path: parent,
       size,
       sha1: hash,
-      url: `${baseUrl}/${file.rel}`,
+      url: asset.browser_download_url,
       type: 'MOD'
     })
   }
@@ -164,12 +174,6 @@ async function main() {
   await fs.writeFile(jsonPath, JSON.stringify({ files: modpackFiles }, null, 2))
   console.log(`Generated ${jsonPath} (${modpackFiles.length} entries)`)
 
-  const release = await getOrCreateRelease()
-  await deleteAssets(release)
-
-  for (const file of files) {
-    await uploadAsset(release.id, file.full, file.rel)
-  }
   await uploadAsset(release.id, jsonPath, 'modpack.json')
 
   console.log(`\nDone! ${modpackFiles.length} files published to ${baseUrl}/`)
