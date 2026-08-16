@@ -53,7 +53,7 @@ export function registerUpdateHandlers(mainWindow: BrowserWindow) {
       const result = await autoUpdater.checkForUpdates()
       return {
         ok: true,
-        updateAvailable: result != null,
+        updateAvailable: result?.isUpdateAvailable ?? false,
         version: result?.updateInfo?.version
       }
     } catch (err) {
