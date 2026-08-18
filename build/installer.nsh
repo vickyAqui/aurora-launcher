@@ -3,9 +3,7 @@
 !macroend
 
 !macro customInit
-  ; Brand colors and icons
-  !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
-  !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
+  ; Branding only — electron-builder already defines MUI_ICON/MUI_UNICON
 !macroend
 
 !macro customInstallMode
