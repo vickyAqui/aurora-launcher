@@ -7,7 +7,7 @@ Built with **Electron + Vite**, powered by [EML Lib](https://github.com/Electron
 ![Aurora Studios](.github/assets/screenshot.png)
 
 [<p align="center"><img src="https://img.shields.io/badge/platforms-Windows,_macOS,_Linux-0077DA?style=for-the-badge&color=0077DA">](#plataformas)
-[<img src="https://img.shields.io/badge/version-1.3.8-7c6cff?style=for-the-badge&color=7c6cff">](package.json)</p>
+[<img src="https://img.shields.io/badge/version-1.3.9-7c6cff?style=for-the-badge&color=7c6cff">](package.json)</p>
 
 ---
 
