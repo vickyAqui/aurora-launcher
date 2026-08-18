@@ -2,6 +2,7 @@ import { setBlockingView, setView } from './state'
 import { auth, bootstraps, maintenance } from './ipc'
 import { activateAccount } from './account'
 import logger from 'electron-log/renderer'
+import { setIndeterminate } from './progress'
 
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   day: '2-digit',
@@ -20,23 +21,11 @@ export async function bootstrap() {
   const progressLabel = document.getElementById('update-progress-label')
   const progressPercent = document.getElementById('update-progress-percent')
 
-  const setIndeterminate = (active: boolean) => {
-    if (!progressBar || !progressPercent) return
-
-    if (active) {
-      progressBar.classList.add('indeterminate')
-      progressPercent.style.display = 'none'
-    } else {
-      progressBar.classList.remove('indeterminate')
-      progressPercent.style.display = 'block'
-    }
-  }
-
   const up = await bootstraps.check()
   const mn = await maintenance.get()
 
   if (up.updateAvailable) {
-    setIndeterminate(false)
+    setIndeterminate(progressBar, progressPercent, false)
     progressBar!.style.width = '0%'
     progressLabel!.innerText = 'Preparing update...'
     progressPercent!.innerText = '0%'
@@ -49,7 +38,7 @@ export async function bootstrap() {
       progressBar!.style.width = `${percent}%`
     })
     bootstraps.downloadEnd(async () => {
-      setIndeterminate(true)
+      setIndeterminate(progressBar, progressPercent, true)
       progressLabel!.innerText = `Installing...`
       await bootstraps.install()
     })

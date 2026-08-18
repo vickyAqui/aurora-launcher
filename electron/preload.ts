@@ -42,52 +42,146 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.invoke('game:launch', payload)
     },
 
-    launchComputeDownload: (callback: () => void) => ipcRenderer.on('game:launch_compute_download', (_event) => callback()),
+    launchComputeDownload: (callback: () => void) => {
+      const listener = (_event: unknown) => callback()
+      ipcRenderer.on('game:launch_compute_download', listener)
+      return () => ipcRenderer.removeListener('game:launch_compute_download', listener)
+    },
 
-    launchDownload: (callback: (value: LauncherEvents['launch_download'][0]) => void) =>
-      ipcRenderer.on('game:launch_download', (_event, value) => callback(value)),
-    downloadProgress: (callback: (value: DownloaderEvents['download_progress'][0]) => void) =>
-      ipcRenderer.on('game:download_progress', (_event, value) => callback(value)),
-    downloadError: (callback: (value: DownloaderEvents['download_error'][0]) => void) =>
-      ipcRenderer.on('game:download_error', (_event, value) => callback(value)),
-    downloadEnd: (callback: (value: DownloaderEvents['download_end'][0]) => void) =>
-      ipcRenderer.on('game:download_end', (_event, value) => callback(value)),
+    launchDownload: (callback: (value: LauncherEvents['launch_download'][0]) => void) => {
+      const listener = (_event: unknown, value: LauncherEvents['launch_download'][0]) => callback(value)
+      ipcRenderer.on('game:launch_download', listener)
+      return () => ipcRenderer.removeListener('game:launch_download', listener)
+    },
+    downloadProgress: (callback: (value: DownloaderEvents['download_progress'][0]) => void) => {
+      const listener = (_event: unknown, value: DownloaderEvents['download_progress'][0]) => callback(value)
+      ipcRenderer.on('game:download_progress', listener)
+      return () => ipcRenderer.removeListener('game:download_progress', listener)
+    },
+    downloadError: (callback: (value: DownloaderEvents['download_error'][0]) => void) => {
+      const listener = (_event: unknown, value: DownloaderEvents['download_error'][0]) => callback(value)
+      ipcRenderer.on('game:download_error', listener)
+      return () => ipcRenderer.removeListener('game:download_error', listener)
+    },
+    downloadEnd: (callback: (value: DownloaderEvents['download_end'][0]) => void) => {
+      const listener = (_event: unknown, value: DownloaderEvents['download_end'][0]) => callback(value)
+      ipcRenderer.on('game:download_end', listener)
+      return () => ipcRenderer.removeListener('game:download_end', listener)
+    },
 
-    launchInstallLoader: (callback: (value: LauncherEvents['launch_install_loader'][0]) => void) =>
-      ipcRenderer.on('game:launch_install_loader', (_event, value) => callback(value)),
+    launchInstallLoader: (callback: (value: LauncherEvents['launch_install_loader'][0]) => void) => {
+      const listener = (_event: unknown, value: LauncherEvents['launch_install_loader'][0]) => callback(value)
+      ipcRenderer.on('game:launch_install_loader', listener)
+      return () => ipcRenderer.removeListener('game:launch_install_loader', listener)
+    },
 
-    launchExtractNatives: (callback: () => void) => ipcRenderer.on('game:launch_extract_natives', (_event) => callback()),
-    extractProgress: (callback: (value: FilesManagerEvents['extract_progress'][0]) => void) =>
-      ipcRenderer.on('game:extract_progress', (_event, value) => callback(value)),
-    extractEnd: (callback: (value: FilesManagerEvents['extract_end'][0]) => void) =>
-      ipcRenderer.on('game:extract_end', (_event, value) => callback(value)),
-    launchCopyAssets: (callback: () => void) => ipcRenderer.on('game:launch_copy_assets', (_event) => callback()),
-    copyProgress: (callback: (value: FilesManagerEvents['copy_progress'][0]) => void) =>
-      ipcRenderer.on('game:copy_progress', (_event, value) => callback(value)),
-    copyEnd: (callback: (value: FilesManagerEvents['copy_end'][0]) => void) => ipcRenderer.on('game:copy_end', (_event, value) => callback(value)),
-    launchPatchLoader: (callback: () => void) => ipcRenderer.on('game:launch_patch_loader', (_event) => callback()),
-    patchProgress: (callback: (value: PatcherEvents['patch_progress'][0]) => void) =>
-      ipcRenderer.on('game:patch_progress', (_event, value) => callback(value)),
-    patchError: (callback: (value: PatcherEvents['patch_error'][0]) => void) =>
-      ipcRenderer.on('game:patch_error', (_event, value) => callback(value)),
-    patchEnd: (callback: (value: PatcherEvents['patch_end'][0]) => void) => ipcRenderer.on('game:patch_end', (_event, value) => callback(value)),
-    launchCheckJava: (callback: () => void) => ipcRenderer.on('game:launch_check_java', (_event) => callback()),
-    javaInfo: (callback: (value: JavaEvents['java_info'][0]) => void) => ipcRenderer.on('game:java_info', (_event, value) => callback(value)),
+    launchExtractNatives: (callback: () => void) => {
+      const listener = (_event: unknown) => callback()
+      ipcRenderer.on('game:launch_extract_natives', listener)
+      return () => ipcRenderer.removeListener('game:launch_extract_natives', listener)
+    },
+    extractProgress: (callback: (value: FilesManagerEvents['extract_progress'][0]) => void) => {
+      const listener = (_event: unknown, value: FilesManagerEvents['extract_progress'][0]) => callback(value)
+      ipcRenderer.on('game:extract_progress', listener)
+      return () => ipcRenderer.removeListener('game:extract_progress', listener)
+    },
+    extractEnd: (callback: (value: FilesManagerEvents['extract_end'][0]) => void) => {
+      const listener = (_event: unknown, value: FilesManagerEvents['extract_end'][0]) => callback(value)
+      ipcRenderer.on('game:extract_end', listener)
+      return () => ipcRenderer.removeListener('game:extract_end', listener)
+    },
+    launchCopyAssets: (callback: () => void) => {
+      const listener = (_event: unknown) => callback()
+      ipcRenderer.on('game:launch_copy_assets', listener)
+      return () => ipcRenderer.removeListener('game:launch_copy_assets', listener)
+    },
+    copyProgress: (callback: (value: FilesManagerEvents['copy_progress'][0]) => void) => {
+      const listener = (_event: unknown, value: FilesManagerEvents['copy_progress'][0]) => callback(value)
+      ipcRenderer.on('game:copy_progress', listener)
+      return () => ipcRenderer.removeListener('game:copy_progress', listener)
+    },
+    copyEnd: (callback: (value: FilesManagerEvents['copy_end'][0]) => void) => {
+      const listener = (_event: unknown, value: FilesManagerEvents['copy_end'][0]) => callback(value)
+      ipcRenderer.on('game:copy_end', listener)
+      return () => ipcRenderer.removeListener('game:copy_end', listener)
+    },
+    launchPatchLoader: (callback: () => void) => {
+      const listener = (_event: unknown) => callback()
+      ipcRenderer.on('game:launch_patch_loader', listener)
+      return () => ipcRenderer.removeListener('game:launch_patch_loader', listener)
+    },
+    patchProgress: (callback: (value: PatcherEvents['patch_progress'][0]) => void) => {
+      const listener = (_event: unknown, value: PatcherEvents['patch_progress'][0]) => callback(value)
+      ipcRenderer.on('game:patch_progress', listener)
+      return () => ipcRenderer.removeListener('game:patch_progress', listener)
+    },
+    patchError: (callback: (value: PatcherEvents['patch_error'][0]) => void) => {
+      const listener = (_event: unknown, value: PatcherEvents['patch_error'][0]) => callback(value)
+      ipcRenderer.on('game:patch_error', listener)
+      return () => ipcRenderer.removeListener('game:patch_error', listener)
+    },
+    patchEnd: (callback: (value: PatcherEvents['patch_end'][0]) => void) => {
+      const listener = (_event: unknown, value: PatcherEvents['patch_end'][0]) => callback(value)
+      ipcRenderer.on('game:patch_end', listener)
+      return () => ipcRenderer.removeListener('game:patch_end', listener)
+    },
+    launchCheckJava: (callback: () => void) => {
+      const listener = (_event: unknown) => callback()
+      ipcRenderer.on('game:launch_check_java', listener)
+      return () => ipcRenderer.removeListener('game:launch_check_java', listener)
+    },
+    javaInfo: (callback: (value: JavaEvents['java_info'][0]) => void) => {
+      const listener = (_event: unknown, value: JavaEvents['java_info'][0]) => callback(value)
+      ipcRenderer.on('game:java_info', listener)
+      return () => ipcRenderer.removeListener('game:java_info', listener)
+    },
 
-    launchClean: (callback: () => void) => ipcRenderer.on('game:launch_clean', (_event) => callback()),
-    cleanProgress: (callback: (value: CleanerEvents['clean_progress'][0]) => void) =>
-      ipcRenderer.on('game:clean_progress', (_event, value) => callback(value)),
-    cleanEnd: (callback: (value: CleanerEvents['clean_end'][0]) => void) => ipcRenderer.on('game:clean_end', (_event, value) => callback(value)),
-    launchLaunch: (callback: (value: LauncherEvents['launch_launch'][0]) => void) =>
-      ipcRenderer.on('game:launch_launch', (_event, value) => callback(value)),
-    launched: (callback: () => void) => ipcRenderer.on('game:launched', (_event) => callback()),
+    launchClean: (callback: () => void) => {
+      const listener = (_event: unknown) => callback()
+      ipcRenderer.on('game:launch_clean', listener)
+      return () => ipcRenderer.removeListener('game:launch_clean', listener)
+    },
+    cleanProgress: (callback: (value: CleanerEvents['clean_progress'][0]) => void) => {
+      const listener = (_event: unknown, value: CleanerEvents['clean_progress'][0]) => callback(value)
+      ipcRenderer.on('game:clean_progress', listener)
+      return () => ipcRenderer.removeListener('game:clean_progress', listener)
+    },
+    cleanEnd: (callback: (value: CleanerEvents['clean_end'][0]) => void) => {
+      const listener = (_event: unknown, value: CleanerEvents['clean_end'][0]) => callback(value)
+      ipcRenderer.on('game:clean_end', listener)
+      return () => ipcRenderer.removeListener('game:clean_end', listener)
+    },
+    launchLaunch: (callback: (value: LauncherEvents['launch_launch'][0]) => void) => {
+      const listener = (_event: unknown, value: LauncherEvents['launch_launch'][0]) => callback(value)
+      ipcRenderer.on('game:launch_launch', listener)
+      return () => ipcRenderer.removeListener('game:launch_launch', listener)
+    },
+    launched: (callback: () => void) => {
+      const listener = (_event: unknown) => callback()
+      ipcRenderer.on('game:launched', listener)
+      return () => ipcRenderer.removeListener('game:launched', listener)
+    },
 
-    launchData: (callback: (value: LauncherEvents['launch_data'][0]) => void) =>
-      ipcRenderer.on('game:launch_data', (_event, value) => callback(value)),
-    launchClose: (callback: (value: any) => void) => ipcRenderer.on('game:launch_close', (_event, value) => callback(value)),
-    launchDebug: (callback: (value: LauncherEvents['launch_debug'][0]) => void) =>
-      ipcRenderer.on('game:launch_debug', (_event, value) => callback(value)),
-    patchDebug: (callback: (value: PatcherEvents['patch_debug'][0]) => void) => ipcRenderer.on('game:patch_debug', (_event, value) => callback(value))
+    launchData: (callback: (value: LauncherEvents['launch_data'][0]) => void) => {
+      const listener = (_event: unknown, value: LauncherEvents['launch_data'][0]) => callback(value)
+      ipcRenderer.on('game:launch_data', listener)
+      return () => ipcRenderer.removeListener('game:launch_data', listener)
+    },
+    launchClose: (callback: (value: any) => void) => {
+      const listener = (_event: unknown, value: any) => callback(value)
+      ipcRenderer.on('game:launch_close', listener)
+      return () => ipcRenderer.removeListener('game:launch_close', listener)
+    },
+    launchDebug: (callback: (value: LauncherEvents['launch_debug'][0]) => void) => {
+      const listener = (_event: unknown, value: LauncherEvents['launch_debug'][0]) => callback(value)
+      ipcRenderer.on('game:launch_debug', listener)
+      return () => ipcRenderer.removeListener('game:launch_debug', listener)
+    },
+    patchDebug: (callback: (value: PatcherEvents['patch_debug'][0]) => void) => {
+      const listener = (_event: unknown, value: PatcherEvents['patch_debug'][0]) => callback(value)
+      ipcRenderer.on('game:patch_debug', listener)
+      return () => ipcRenderer.removeListener('game:patch_debug', listener)
+    }
   },
   skin: {
     reload: (account: Account): Promise<void | null> => ipcRenderer.invoke('skin:reload', account),
@@ -115,12 +209,21 @@ contextBridge.exposeInMainWorld('api', {
     check: (): Promise<IBootstraps> => ipcRenderer.invoke('bootstraps:check'),
     download: (): Promise<string> => ipcRenderer.invoke('bootstraps:download'),
     install: (): Promise<void> => ipcRenderer.invoke('bootstraps:install'),
-    downloadProgress: (callback: (value: DownloaderEvents['download_progress'][0]) => void) =>
-      ipcRenderer.on('bootstraps:download_progress', (_event, value) => callback(value)),
-    downloadEnd: (callback: (value: DownloaderEvents['download_end'][0]) => void) =>
-      ipcRenderer.on('bootstraps:download_end', (_event, value) => callback(value)),
-    error: (callback: (value: BootstrapsEvents['bootstraps_error'][0]) => void) =>
-      ipcRenderer.on('bootstraps:error', (_event, value) => callback(value))
+    downloadProgress: (callback: (value: DownloaderEvents['download_progress'][0]) => void) => {
+      const listener = (_event: unknown, value: DownloaderEvents['download_progress'][0]) => callback(value)
+      ipcRenderer.on('bootstraps:download_progress', listener)
+      return () => ipcRenderer.removeListener('bootstraps:download_progress', listener)
+    },
+    downloadEnd: (callback: (value: DownloaderEvents['download_end'][0]) => void) => {
+      const listener = (_event: unknown, value: DownloaderEvents['download_end'][0]) => callback(value)
+      ipcRenderer.on('bootstraps:download_end', listener)
+      return () => ipcRenderer.removeListener('bootstraps:download_end', listener)
+    },
+    error: (callback: (value: BootstrapsEvents['bootstraps_error'][0]) => void) => {
+      const listener = (_event: unknown, value: BootstrapsEvents['bootstraps_error'][0]) => callback(value)
+      ipcRenderer.on('bootstraps:error', listener)
+      return () => ipcRenderer.removeListener('bootstraps:error', listener)
+    }
   },
   settings: {
     get: (): Promise<IGameSettings> => ipcRenderer.invoke('settings:get'),

@@ -1,4 +1,5 @@
 _mock-msa.ts
+repro-tmp.mjs
 logs
 *.log
 npm-debug.log*

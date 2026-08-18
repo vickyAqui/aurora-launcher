@@ -60,10 +60,14 @@
       "shortcutName": "Aurora Studios",
       "deleteAppDataOnUninstall": true,
       "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
       "installerHeader": "build/installerHeader.bmp",
       "installerSidebar": "build/installerSidebar.bmp",
+      "uninstallerSidebar": "build/installerSidebar.bmp",
       "artifactName": "${productName}-Setup-${version}.${ext}",
-      "uninstallDisplayName": "Aurora Studios"
+      "uninstallDisplayName": "Aurora Studios",
+      "include": "build/installer.nsh",
+      "warningsAsErrors": false
     },
     "mac": {
       "target": [

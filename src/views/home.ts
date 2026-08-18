@@ -4,6 +4,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import logger from 'electron-log/renderer'
 import { openScreenshots } from './screenshots'
+import { setIndeterminate } from '../progress'
 
 marked.use({
   renderer: {
@@ -217,19 +218,13 @@ export function initHome() {
   updateStats()
 
   statusIndicator?.addEventListener('click', () => updateServerStatus())
-  setInterval(updateServerStatus, 60000)
+  const serverStatusInterval = setInterval(updateServerStatus, 60000)
 
-  const setIndeterminate = (active: boolean) => {
-    if (!progressBar || !progressPercent) return
-
-    if (active) {
-      progressBar.classList.add('indeterminate')
-      progressPercent.style.display = 'none'
-    } else {
-      progressBar.classList.remove('indeterminate')
-      progressPercent.style.display = 'block'
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      clearInterval(serverStatusInterval)
     }
-  }
+  })
 
   settingsBtn?.addEventListener('click', () => {
     setView('settings')
@@ -241,7 +236,7 @@ export function initHome() {
   })
 
   playBtn?.addEventListener('click', async () => {
-    setIndeterminate(true)
+    setIndeterminate(progressBar, progressPercent, true)
     if (playBtn) playBtn.style.display = 'none'
     if (progressContainer) progressContainer.classList.remove('hidden')
     if (progressBar) progressBar.style.width = '0%'
@@ -277,12 +272,12 @@ Ready to launch the game with the following settings:
   })
 
   game.launchComputeDownload(() => {
-    setIndeterminate(true)
+    setIndeterminate(progressBar, progressPercent, true)
     if (progressLabel) progressLabel.innerText = 'Preparando download...'
     if (progressPercent) progressPercent.innerText = ''
   })
   game.launchDownload((download) => {
-    setIndeterminate(false)
+    setIndeterminate(progressBar, progressPercent, false)
     totalToDownload = download.total.size
     if (progressLabel) progressLabel.innerText = `Baixando arquivos...`
   })
@@ -300,24 +295,24 @@ Ready to launch the game with the following settings:
     }
   })
   game.launchInstallLoader(() => {
-    setIndeterminate(true)
+    setIndeterminate(progressBar, progressPercent, true)
     if (progressLabel) progressLabel.innerText = 'Extraindo arquivos...'
     if (progressPercent) progressPercent.innerText = ''
   })
   game.launchExtractNatives(() => {
-    setIndeterminate(true)
+    setIndeterminate(progressBar, progressPercent, true)
     if (progressLabel) progressLabel.innerText = 'Extraindo arquivos...'
   })
   game.launchCopyAssets(() => {
-    setIndeterminate(true)
+    setIndeterminate(progressBar, progressPercent, true)
     if (progressLabel) progressLabel.innerText = 'Extraindo arquivos...'
   })
   game.launchPatchLoader(() => {
-    setIndeterminate(true)
+    setIndeterminate(progressBar, progressPercent, true)
     if (progressLabel) progressLabel.innerText = 'Finalizando...'
   })
   game.launchLaunch(() => {
-    setIndeterminate(true)
+    setIndeterminate(progressBar, progressPercent, true)
     if (progressLabel) progressLabel.innerText = 'Abrindo o Minecraft...'
   })
   game.launched(() => {
