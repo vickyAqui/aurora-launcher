@@ -1,35 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
   <defs>
     <radialGradient id="bg" cx="68%" cy="34%" r="80%">
-      <stop offset="0%" stop-color="#1a0f3d"/>
-      <stop offset="34%" stop-color="#0c0624"/>
-      <stop offset="70%" stop-color="#050014"/>
-      <stop offset="100%" stop-color="#03010e"/>
+      <stop offset="0%" stop-color="#150c48"/>
+      <stop offset="34%" stop-color="#0a0630"/>
+      <stop offset="70%" stop-color="#070420"/>
+      <stop offset="100%" stop-color="#04031a"/>
     </radialGradient>
 
     <radialGradient id="core" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#f6f3ff" stop-opacity="0.85"/>
-      <stop offset="22%" stop-color="#aeb6ff" stop-opacity="0.45"/>
-      <stop offset="50%" stop-color="#8a7cff" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#8a7cff" stop-opacity="0"/>
+      <stop offset="22%" stop-color="#c4b2f2" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#ac63e9" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#ac63e9" stop-opacity="0"/>
     </radialGradient>
 
     <linearGradient id="arm" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#57e6ff" stop-opacity="0"/>
-      <stop offset="45%" stop-color="#8a7cff" stop-opacity="0.30"/>
-      <stop offset="100%" stop-color="#57e6ff" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#66d2ea" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#8449d8" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#66d2ea" stop-opacity="0"/>
     </linearGradient>
 
     <radialGradient id="nebulaCyan" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#57e6ff" stop-opacity="0.14"/>
-      <stop offset="60%" stop-color="#3a6bd6" stop-opacity="0.05"/>
-      <stop offset="100%" stop-color="#3a6bd6" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#66d2ea" stop-opacity="0.14"/>
+      <stop offset="60%" stop-color="#4646c2" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#4646c2" stop-opacity="0"/>
     </radialGradient>
 
     <radialGradient id="nebulaViolet" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#8a7cff" stop-opacity="0.12"/>
-      <stop offset="55%" stop-color="#6b5bff" stop-opacity="0.05"/>
-      <stop offset="100%" stop-color="#6b5bff" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#ac63e9" stop-opacity="0.12"/>
+      <stop offset="55%" stop-color="#8449d8" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#8449d8" stop-opacity="0"/>
     </radialGradient>
 
     <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">

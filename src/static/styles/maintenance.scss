@@ -16,7 +16,7 @@ div.maintenance-card {
   .gears {
     font-size: 2.5rem;
     color: var(--accent-cyan);
-    filter: drop-shadow(0 0 12px rgba(87, 230, 255, 0.3));
+    filter: drop-shadow(0 0 12px rgba(102, 210, 234, 0.3));
     margin-bottom: 1rem;
     animation: maintenanceFloat 3s ease-in-out infinite;
   }
@@ -51,10 +51,10 @@ div.maintenance-card {
 @keyframes maintenanceFloat {
   0%, 100% {
     transform: translateY(0);
-    filter: drop-shadow(0 0 12px rgba(87, 230, 255, 0.3));
+    filter: drop-shadow(0 0 12px rgba(102, 210, 234, 0.3));
   }
   50% {
     transform: translateY(-8px);
-    filter: drop-shadow(0 0 20px rgba(87, 230, 255, 0.5));
+    filter: drop-shadow(0 0 20px rgba(102, 210, 234, 0.5));
   }
 }

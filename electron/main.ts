@@ -18,7 +18,7 @@ import { registerPacksHandlers } from './handlers/packs'
 import { registerUpdateHandlers } from './handlers/update'
 
 const APP_TITLE = 'Aurora Studios'
-const BG_COLOR = '#14121c'
+const BG_COLOR = '#06041c'
 
 let mainWindow: BrowserWindow | null = null
 

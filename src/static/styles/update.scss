@@ -16,7 +16,7 @@ div.maintenance-card {
   .up {
     font-size: 2.5rem;
     color: var(--accent-cyan);
-    filter: drop-shadow(0 0 12px rgba(87, 230, 255, 0.3));
+    filter: drop-shadow(0 0 12px rgba(102, 210, 234, 0.3));
     margin-bottom: 1rem;
     animation: updateSparkle 2s ease-in-out infinite;
   }
@@ -44,14 +44,14 @@ div.maintenance-card {
 @keyframes updateSparkle {
   0%, 100% {
     transform: scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 12px rgba(87, 230, 255, 0.3));
+    filter: drop-shadow(0 0 12px rgba(102, 210, 234, 0.3));
   }
   25% {
     transform: scale(1.1) rotate(5deg);
   }
   50% {
     transform: scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 20px rgba(87, 230, 255, 0.6));
+    filter: drop-shadow(0 0 20px rgba(102, 210, 234, 0.6));
   }
   75% {
     transform: scale(1.1) rotate(-5deg);

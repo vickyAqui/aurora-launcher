@@ -2,27 +2,27 @@
   color-scheme: dark;
 
   /* Fundos — noite profunda (Aurora Celestial) */
-  --bg-dark: #050014;
-  --bg-deep: #03010e;
-  --bg-elevated: #140b33;
+  --bg-dark: #070420;
+  --bg-deep: #04031a;
+  --bg-elevated: #1a1252;
 
   /* Superfícies — painéis quase opacos */
-  --surface: #150c38;
-  --surface-hover: #1e1247;
-  --surface-soft: rgba(21, 12, 56, 0.72);
+  --surface: #171046;
+  --surface-hover: #211759;
+  --surface-soft: rgba(23, 16, 70, 0.72);
 
-  /* Accent — dupla celestial (violeta + ciano) */
-  --accent-violet: #8a7cff;
-  --accent-violet-strong: #6b5bff;
-  --accent-cyan: #57e6ff;
-  --accent-cyan-soft: rgba(87, 230, 255, 0.12);
+  /* Accent — paleta da logo (violeta + ciano aurora sobre índigo) */
+  --accent-violet: #ac63e9;
+  --accent-violet-strong: #8449d8;
+  --accent-cyan: #66d2ea;
+  --accent-cyan-soft: rgba(102, 210, 234, 0.12);
 
   /* Primário */
-  --primary: #7c6cff;
-  --primary-hover: #9689ff;
-  --primary-soft: rgba(124, 108, 255, 0.16);
-  --accent: #7c6cff;
-  --accent-soft: rgba(124, 108, 255, 0.16);
+  --primary: #9856e0;
+  --primary-hover: #ab74ec;
+  --primary-soft: rgba(152, 86, 224, 0.16);
+  --accent: #9856e0;
+  --accent-soft: rgba(152, 86, 224, 0.16);
 
   /* Semântico (status) */
   --accent-green: #2BE080;
@@ -31,15 +31,15 @@
 
   /* Texto */
   --text-main: #f2efff;
-  --text-muted: #a89fd1;
+  --text-muted: #9f96d6;
 
   /* Fontes */
   --font-display: 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
 
   /* Painéis (Aurora Celestial) */
-  --panel-bg: rgba(19, 11, 48, 0.9);
-  --panel-bg-soft: rgba(19, 11, 48, 0.72);
+  --panel-bg: rgba(20, 14, 58, 0.9);
+  --panel-bg-soft: rgba(20, 14, 58, 0.72);
   --panel-border: rgba(255, 255, 255, 0.09);
   --panel-border-strong: rgba(255, 255, 255, 0.16);
   --panel-edge: rgba(255, 255, 255, 0.12);
@@ -59,7 +59,7 @@
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
-  --shadow-primary: 0 8px 28px rgba(124, 108, 255, 0.4);
+  --shadow-primary: 0 8px 28px rgba(132, 73, 216, 0.42);
   --shadow-panel: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 var(--panel-edge);
 
   /* Raio — contido e consistente */

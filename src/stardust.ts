@@ -50,7 +50,7 @@ export function initStardustCanvas(canvasId: string = 'stardust-canvas') {
   let grad2: CanvasGradient | null = null
 
   // Celestial palette: white, lavender, violet and ice-blue (aurora)
-  const STAR_COLORS = ['#ffffff', '#f6f3ff', '#e6e0ff', '#c3c0ff', '#9adcf5', '#aeb6ff']
+  const STAR_COLORS = ['#ffffff', '#f5f2ff', '#e4dcfb', '#c9bcf4', '#90d8f0', '#b49cf0']
 
   function createStarSprite(star: Star): HTMLCanvasElement {
     const radius = star.size
@@ -105,11 +105,11 @@ export function initStardustCanvas(canvasId: string = 'stardust-canvas') {
     createStars()
 
     grad1 = ctx!.createRadialGradient(width * 0.2, height * 0.2, 50, width * 0.2, height * 0.2, width * 0.5)
-    grad1.addColorStop(0, 'rgba(124, 108, 255, 0.07)')
+    grad1.addColorStop(0, 'rgba(172, 99, 233, 0.07)')
     grad1.addColorStop(1, 'rgba(0, 0, 0, 0)')
 
     grad2 = ctx!.createRadialGradient(width * 0.8, height * 0.7, 50, width * 0.8, height * 0.7, width * 0.6)
-    grad2.addColorStop(0, 'rgba(87, 230, 255, 0.05)')
+    grad2.addColorStop(0, 'rgba(102, 210, 234, 0.05)')
     grad2.addColorStop(1, 'rgba(0, 0, 0, 0)')
   }
 
@@ -223,8 +223,8 @@ export function initStardustCanvas(canvasId: string = 'stardust-canvas') {
       const tailY = s.y - Math.sin(s.angle) * s.length
 
       const grad = ctx!.createLinearGradient(tailX, tailY, headX, headY)
-      grad.addColorStop(0, 'rgba(160, 200, 255, 0)')
-      grad.addColorStop(0.7, 'rgba(150, 150, 255, 0.45)')
+      grad.addColorStop(0, 'rgba(144, 216, 240, 0)')
+      grad.addColorStop(0.7, 'rgba(172, 120, 235, 0.45)')
       grad.addColorStop(1, 'rgba(255, 255, 255, 0.8)')
 
       ctx!.save()
@@ -232,7 +232,7 @@ export function initStardustCanvas(canvasId: string = 'stardust-canvas') {
       ctx!.strokeStyle = grad
       ctx!.lineWidth = 1.5
       ctx!.lineCap = 'round'
-      ctx!.shadowColor = '#8a7cff'
+      ctx!.shadowColor = '#66d2ea'
       ctx!.shadowBlur = 6
       ctx!.beginPath()
       ctx!.moveTo(tailX, tailY)

@@ -184,7 +184,7 @@
   height: 34px;
   border-radius: var(--radius-sm);
   background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
-  color: #0a0520;
+  color: #0d0730;
   font-weight: 800;
   font-size: 15px;
   display: flex;
@@ -300,12 +300,13 @@
 }
 
 .stage-title {
-  font-family: var(--font-display);
-  font-size: 56px;
-  font-weight: 700;
-  line-height: 1.05;
-  color: var(--text-main);
-  text-shadow: 0 4px 34px rgba(0, 0, 0, 0.5);
+  width: 420px;
+  max-width: none;
+  height: auto;
+  margin: -8px 0 -14px;
+  filter: drop-shadow(0 6px 30px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 46px rgba(132, 73, 216, 0.28))
+    drop-shadow(0 0 70px rgba(102, 210, 234, 0.18));
 }
 
 .stage-subtitle {
@@ -537,7 +538,7 @@
     border-radius: 3px;
     position: relative;
     transition: width 0.3s ease;
-    box-shadow: 0 0 10px rgba(124, 108, 255, 0.35);
+    box-shadow: 0 0 10px rgba(152, 86, 224, 0.35);
 
     &::after {
       content: '';
