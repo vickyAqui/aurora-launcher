@@ -59,7 +59,37 @@ O **Aurora Studios Launcher** é um launcher moderno e rápido para o servidor M
 
 ### Modpack
 
-O manifest do modpack e os arquivos são distribuídos via GitHub Releases. Veja `scripts/publish-modpack.mjs` para republicar.
+O manifest do modpack e os arquivos são distribuídos via GitHub Releases.
+
+#### Como Atualizar o Modpack
+
+O modpack é sincronizado entre o repositório e os clientes via um arquivo `modpack.json` (manifest). Cada mod tem hash SHA1 e tamanho registrados, garantindo integridade. Para atualizar:
+
+1.  **Prepare os mods**: coloque os `.jar` (e quaisquer configs) na pasta `./modpack`. Subpastas são permitidas.
+
+2.  **Gere um GitHub Token**: acesse [github.com/settings/tokens](https://github.com/settings/tokens), crie um Personal Access Token (classic) com escopo **`repo`**.
+
+3.  **Configure o token** (só na primeira vez):
+
+    ```bash
+    export GH_TOKEN="seu_token_aqui"
+    ```
+
+4.  **Publique o modpack**:
+
+    ```bash
+    npm run modpack:publish
+    ```
+
+    O script vai:
+    - Varrer a pasta `./modpack`, calcular SHA1 e tamanho de cada arquivo
+    - Criar (ou atualizar) a Release com tag `modpack` no GitHub
+    - Deletar assets antigos e subir os novos
+    - Gerar o `modpack.json` atualizado
+
+5.  **Confirme**: abra o launcher — ele baixa o `modpack.json` do `main` e sincroniza os mods automaticamente.
+
+> **Dica**: se você só alterou o `modpack.json` (ex: atualizou hashes de mods já hospedados), rode `npm run modpack:update` para recalcular sem reenviar arquivos.
 
 ### Customização de ícones
 
