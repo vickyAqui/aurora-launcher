@@ -783,14 +783,6 @@
       "type": "MOD"
     },
     {
-      "name": "auroramortis_ex-1.20.1-1.0.0.jar",
-      "path": "mods/",
-      "size": 3059281,
-      "sha1": "cb3d6948e6cb5f7b7efed6103899570b133b836c",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/auroramortis_ex-1.20.1-1.0.0.jar",
-      "type": "MOD"
-    },
-    {
       "name": "baguettelib-1.20.1-Forge-1.1.6.jar",
       "path": "mods/",
       "size": 31898,
