@@ -775,11 +775,19 @@
       "type": "MOD"
     },
     {
-      "name": "aurora_mortis_lib-0.0.3-forge-1.20.1.jar",
+      "name": "aurora_mortis_lib-0.0.4-forge-1.20.1.jar",
       "path": "mods/",
-      "size": 13895449,
-      "sha1": "a304c0ad960ef1a5a95bb928de9bec346bb5f5c5",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_mortis_lib-0.0.3-forge-1.20.1.jar",
+      "size": 4419617,
+      "sha1": "a12d5ce2b36f57d58584c130e74da3ff6e905a47",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_mortis_lib-0.0.4-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "auroramortis_ex-1.20.1-1.0.0.jar",
+      "path": "mods/",
+      "size": 3059281,
+      "sha1": "cb3d6948e6cb5f7b7efed6103899570b133b836c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/auroramortis_ex-1.20.1-1.0.0.jar",
       "type": "MOD"
     },
     {
@@ -2260,6 +2268,14 @@
       "size": 283977,
       "sha1": "9fe819dc110461f55909dabbed73e4fe3bdde158",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/weaponmaster_ydm-forge-1.20.1-4.2.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "wind_spellbooks-1.20.1-1.0.3.jar",
+      "path": "mods/",
+      "size": 491179,
+      "sha1": "03514598805ea8e550110d240837c0c007885a6a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/wind_spellbooks-1.20.1-1.0.3.jar",
       "type": "MOD"
     },
     {
