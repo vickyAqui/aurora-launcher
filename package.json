@@ -13,6 +13,7 @@
     "release:win": "npm run build && electron-builder --win",
     "release:mac": "npm run build && electron-builder --mac",
     "release:lin": "npm run build && electron-builder --linux",
+    "modpack:build": "node scripts/build-modpack.mjs",
     "modpack:publish": "node scripts/publish-modpack.mjs",
     "modpack:update": "node scripts/update-modpack.mjs"
   },
