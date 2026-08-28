@@ -1,4 +1,4 @@
-export const MODPACK_URL = 'https://raw.githubusercontent.com/vickyAqui/aurora-launcher/main/modpack.json'
+export const MODPACK_URL = 'https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json'
 
 export const ROOT_DIR = 'aurora-studios'
 

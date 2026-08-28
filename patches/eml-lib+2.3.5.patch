@@ -1,0 +1,256 @@
+diff --git a/lib/launcher/filesmanager.js b/lib/launcher/filesmanager.js
+index 2929e2b..4d38c36 100644
+--- a/lib/launcher/filesmanager.js
++++ b/lib/launcher/filesmanager.js
+@@ -178,12 +178,17 @@ export default class FilesManager extends EventEmitter {
+             return { injector: [], files: [] };
+         const url = 'https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.7/authlib-injector-1.2.7.jar';
+         const size = await utils.getRemoteFileSize(url, 'Failed to get authlib-injector file size');
++        let sha1 = '';
++        try {
++            sha1 = await utils.getRemoteFileSha1(url + '.sha1', 'Failed to get authlib-injector SHA1');
++        }
++        catch { }
+         const injector = [
+             {
+                 name: 'authlib-injector.jar',
+                 path: 'libraries/',
+                 url: url,
+-                sha1: '',
++                sha1: sha1,
+                 size: size,
+                 type: 'LIBRARY'
+             }
+diff --git a/lib/utils/cleaner.js b/lib/utils/cleaner.js
+index aae2cfa..457cd39 100644
+--- a/lib/utils/cleaner.js
++++ b/lib/utils/cleaner.js
+@@ -25,19 +25,20 @@ export default class Cleaner extends EventEmitter {
+     async clean(files, ignore = [], skipClean = false) {
+         if (skipClean)
+             return;
+-        const validFilesSet = new Set(files.map((f) => path_.resolve('/', this.dest, f.path, f.name).replace(/\\/g, '/')));
+-        const ignoredPaths = ignore.map((ig) => path_.resolve(this.dest, ig));
++        const normalize = (p) => path_.resolve(p).replace(/\\/g, '/').toLowerCase();
++        const validFilesSet = new Set(files.map((f) => normalize(path_.join(this.dest, f.path, f.name))));
++        const ignoredPaths = ignore.map((ig) => normalize(path_.join(this.dest, ig)));
+         const deletePromises = [];
+         let i = 0;
+         const browsed = [];
+         await this.browse(this.dest, browsed);
+         for (const file of browsed) {
+-            const fullPath = path_.resolve('/', file.path, file.name).replace(/\\/g, '/');
++            const fullPath = normalize(path_.join(file.rawDir, file.name));
+             const isFileValid = validFilesSet.has(fullPath);
+-            const isIgnored = ignoredPaths.some((ig) => fullPath.startsWith(ig.replace(/\\/g, '/')) || fullPath.startsWith(ig));
++            const isIgnored = ignoredPaths.some((ig) => fullPath.startsWith(ig));
+             if (!isFileValid && !isIgnored) {
+                 deletePromises.push(fs
+-                    .unlink(fullPath)
++                    .unlink(path_.join(file.rawDir, file.name))
+                     .then(() => {
+                     i++;
+                     this.emit('clean_progress', { filename: file.name });
+@@ -46,7 +47,6 @@ export default class Cleaner extends EventEmitter {
+                     this.emit('clean_error', { filename: file.name, message: err });
+                 }));
+             }
+-            // can't check hash for performance reasons
+         }
+         await Promise.all(deletePromises);
+         this.emit('clean_end', { amount: i });
+@@ -64,7 +64,7 @@ export default class Cleaner extends EventEmitter {
+             else {
+                 browsed.push({
+                     name: file,
+-                    path: `${dir}/`.split('\\').join('/').replace(/^\/+/, '')
++                    rawDir: dir
+                 });
+             }
+         });
+diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
+index e830a72..06b4b58 100644
+--- a/lib/utils/downloader.js
++++ b/lib/utils/downloader.js
+@@ -32,17 +32,24 @@ export default class Downloader extends EventEmitter {
+      */
+     async download(files, skipCheck = false) {
+         const filesToDownload = !skipCheck ? await this.getFilesToDownload(files) : files;
+-        this.size = filesToDownload.reduce((acc, curr) => acc + (curr.size ?? 0), 0);
+-        this.amount = filesToDownload.length;
++        const seen = new Set();
++        const deduped = filesToDownload.filter((f) => {
++            const key = path_.join(f.path, f.name);
++            if (seen.has(key)) return false;
++            seen.add(key);
++            return true;
++        });
++        this.size = deduped.reduce((acc, curr) => acc + (curr.size ?? 0), 0);
++        this.amount = deduped.length;
+         this.downloaded = { amount: 0, size: 0 };
+         this.speed = 0;
+         this.lastTime = Date.now();
+         this.lastSize = 0;
+-        if (this.size === 0 || filesToDownload.length === 0) {
++        if (this.size === 0 || deduped.length === 0) {
+             this.emit('download_end', { downloaded: this.downloaded });
+             return;
+         }
+-        const queue = [...filesToDownload];
++        const queue = [...deduped];
+         const workers = Array(this.CONCURRENCY_LIMIT)
+             .fill(null)
+             .map(async () => {
+@@ -77,13 +84,23 @@ export default class Downloader extends EventEmitter {
+                 catch {
+                     await fs.mkdir(filePath, { recursive: true });
+                 }
++                return;
+             }
+             let needsDownload = false;
+             try {
+-                await fs.access(filePath);
+-                if (file.sha1 && file.sha1 !== (await utils.getFileHash(filePath))) {
++                const stats = await fs.stat(filePath);
++                if (stats.size === 0 && file.size && file.size > 0) {
++                    needsDownload = true;
++                }
++                else if (file.size && stats.size !== file.size) {
+                     needsDownload = true;
+                 }
++                else if (file.sha1) {
++                    const hash = await utils.getFileHash(filePath);
++                    if (hash !== file.sha1) {
++                        needsDownload = true;
++                    }
++                }
+             }
+             catch {
+                 needsDownload = true;
+@@ -98,11 +115,13 @@ export default class Downloader extends EventEmitter {
+     async downloadFileWithRetry(file, attempt = 0) {
+         try {
+             await this.downloadFile(file);
++            await this.verifyDownloadedFile(file);
+             this.downloaded.amount++;
+         }
+         catch (err) {
+             if (attempt < 5) {
+-                await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
++                const delay = Math.min(1000 * Math.pow(2, attempt), 15000);
++                await new Promise((r) => setTimeout(r, delay));
+                 return this.downloadFileWithRetry(file, attempt + 1);
+             }
+             else {
+@@ -115,11 +134,43 @@ export default class Downloader extends EventEmitter {
+             }
+         }
+     }
++    async verifyDownloadedFile(file) {
++        const filePath = path_.join(this.dest, file.path, file.name);
++        if (file.size) {
++            try {
++                const stats = await fs.stat(filePath);
++                if (stats.size !== file.size) {
++                    throw new EMLLibError(ErrorType.DOWNLOAD_ERROR, `Size mismatch for ${file.name}: expected ${file.size}, got ${stats.size}`);
++                }
++            }
++            catch (err) {
++                if (err instanceof EMLLibError) throw err;
++                throw new EMLLibError(ErrorType.DOWNLOAD_ERROR, `Failed to verify size of ${file.name}: ${err.message}`);
++            }
++        }
++        if (file.sha1) {
++            try {
++                const hash = await utils.getFileHash(filePath);
++                if (hash !== file.sha1) {
++                    throw new EMLLibError(ErrorType.DOWNLOAD_ERROR, `SHA1 mismatch for ${file.name}: expected ${file.sha1}, got ${hash}`);
++                }
++            }
++            catch (err) {
++                if (err instanceof EMLLibError) throw err;
++                throw new EMLLibError(ErrorType.DOWNLOAD_ERROR, `Failed to verify hash of ${file.name}: ${err.message}`);
++            }
++        }
++    }
+     async downloadFile(file) {
+         const dirPath = path_.join(this.dest, file.path);
+         const filePath = path_.join(dirPath, file.name);
++        const tmpPath = filePath + '.tmp';
+         let bytesDownloadedThisAttempt = 0;
+         await fs.mkdir(dirPath, { recursive: true });
++        try {
++            await fs.unlink(tmpPath);
++        }
++        catch { }
+         const req = await fetch(file.url, {
+             headers: { Accept: 'application/octet-stream' }
+         });
+@@ -127,7 +178,7 @@ export default class Downloader extends EventEmitter {
+             const errorText = await req.text();
+             throw new EMLLibError(ErrorType.FETCH_ERROR, `Error while fetching ${file.name}: HTTP ${req.status} ${errorText}`);
+         }
+-        const fileStream = fsSync.createWriteStream(filePath);
++        const fileStream = fsSync.createWriteStream(tmpPath);
+         const nodeStream = Readable.fromWeb(req.body);
+         return new Promise((resolve, reject) => {
+             const cleanup = () => {
+@@ -153,34 +204,53 @@ export default class Downloader extends EventEmitter {
+                     type: file.type
+                 });
+             });
+-            nodeStream.on('error', (err) => {
++            nodeStream.on('error', async (err) => {
+                 this.downloaded.size -= bytesDownloadedThisAttempt;
+                 this.lastSize = Math.min(this.lastSize, this.downloaded.size);
+                 cleanup();
++                try {
++                    await fs.unlink(tmpPath);
++                }
++                catch { }
+                 reject(err);
+             });
+             fileStream.on('finish', async () => {
+                 cleanup();
+                 try {
++                    await fs.rename(tmpPath, filePath);
+                     await this.chmodJavaFiles(filePath, file);
+                     resolve();
+                 }
+                 catch (err) {
++                    try {
++                        await fs.unlink(tmpPath);
++                    }
++                    catch { }
+                     reject(err);
+                 }
+             });
+-            fileStream.on('error', (err) => {
++            fileStream.on('error', async (err) => {
+                 this.downloaded.size -= bytesDownloadedThisAttempt;
+                 cleanup();
++                try {
++                    await fs.unlink(tmpPath);
++                }
++                catch { }
+                 reject(err);
+             });
+             nodeStream.pipe(fileStream);
+         });
+     }
+     async chmodJavaFiles(filePath, file) {
+-        if (process.platform !== 'win32' && file.executable) {
+-            await fs.chmod(filePath, 0o755);
++        try {
++            if (process.platform !== 'win32' && file.executable) {
++                await fs.chmod(filePath, 0o755);
++            }
++            else if (process.platform === 'win32') {
++                await fs.chmod(filePath, 0o644);
++            }
+         }
++        catch { }
+     }
+ }
+ //# sourceMappingURL=downloader.js.map
+\ No newline at end of file

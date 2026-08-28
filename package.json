@@ -4,10 +4,11 @@
   "author": "Aurora Studios <contato@aurorastudios.com.br>",
   "description": "Launcher oficial da Aurora Studios",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "dist-electron/main.js",
   "scripts": {
+    "postinstall": "node scripts/apply-patches.mjs",
     "dev": "vite",
     "build": "tsc && vite build",
     "release:win": "npm run build && electron-builder --win",
@@ -52,24 +53,26 @@
       "icon": "build/icon.ico",
       "legalTrademarks": "Aurora Studios"
     },
-  "nsis": {
-    "oneClick": false,
-    "perMachine": false,
-    "allowToChangeInstallationDirectory": true,
-    "createDesktopShortcut": true,
-    "createStartMenuShortcut": true,
-    "shortcutName": "Aurora Studios",
-    "deleteAppDataOnUninstall": true,
-    "installerIcon": "build/icon.ico",
-    "uninstallerIcon": "build/icon.ico",
-    "installerHeader": "build/installerHeader.bmp",
-    "installerSidebar": "build/installerSidebar.bmp",
-    "uninstallerSidebar": "build/installerSidebar.bmp",
-    "artifactName": "${productName}-Setup-${version}.${ext}",
-    "uninstallDisplayName": "Aurora Studios",
-    "installerLanguages": ["pt_BR"],
-    "warningsAsErrors": false
-  },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Aurora Studios",
+      "deleteAppDataOnUninstall": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeader": "build/installerHeader.bmp",
+      "installerSidebar": "build/installerSidebar.bmp",
+      "uninstallerSidebar": "build/installerSidebar.bmp",
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "uninstallDisplayName": "Aurora Studios",
+      "installerLanguages": [
+        "pt_BR"
+      ],
+      "warningsAsErrors": false
+    },
     "mac": {
       "target": [
         "dmg",
