@@ -129,11 +129,16 @@
     "skinview3d": "^3.4.1"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/dompurify": "^3.0.5",
+    "autoprefixer": "^10.5.4",
+    "daisyui": "^5.7.25",
     "electron": "^41.5.0",
     "electron-builder": "^26.8.1",
+    "postcss": "^8.5.26",
     "prettier": "^3.8.3",
     "sass-embedded": "^1.99.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vite": "^8.0.10",
     "vite-plugin-electron": "^0.29.1"

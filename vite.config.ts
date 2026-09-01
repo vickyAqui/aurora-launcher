@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
 import electron from 'vite-plugin-electron'
 
 export default defineConfig({
@@ -7,6 +8,7 @@ export default defineConfig({
     port: 5174
   },
   plugins: [
+    tailwindcss(),
     electron([
       {
         entry: 'electron/main.ts'

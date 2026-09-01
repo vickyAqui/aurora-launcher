@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+/* daisyUI – apenas o tema custom "aurora" (sem temas embutidos) */
+@plugin "daisyui" {
+  themes: false;
+}
+
+@plugin "daisyui/theme" {
+  name: 'aurora';
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+
+  /* Superfícies – noite índigo translúcida */
+  --color-base-100: #06041c;
+  --color-base-200: #0d0a2e;
+  --color-base-300: #151141;
+  --color-base-content: #f3f0ff;
+
+  /* Paleta da logo: violeta + ciano aurora */
+  --color-primary: #7f77dd;
+  --color-primary-content: #0b0824;
+  --color-secondary: #66d2ea;
+  --color-secondary-content: #06202c;
+  --color-accent: #5dcaa5;
+  --color-accent-content: #06201a;
+  --color-neutral: #171245;
+  --color-neutral-content: #f3f0ff;
+
+  --color-info: #66d2ea;
+  --color-info-content: #06202c;
+  --color-success: #5dcaa5;
+  --color-success-content: #06201a;
+  --color-warning: #f4c430;
+  --color-warning-content: #221a00;
+  --color-error: #ff7a9e;
+  --color-error-content: #2a0610;
+
+  /* Raio: 10px em campos/botões, pill em badges/selectores */
+  --radius-selector: 999px;
+  --radius-field: 0.625rem;
+  --radius-box: 1.125rem;
+
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}

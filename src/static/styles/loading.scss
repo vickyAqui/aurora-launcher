@@ -9,7 +9,7 @@ div.loading-card {
   .spinner {
     font-size: 2.5rem;
     color: var(--accent-cyan);
-    filter: drop-shadow(0 0 12px rgba(102, 210, 234, 0.4));
+    filter: drop-shadow(0 0 12px rgba(102, 210, 234, 0.25));
     margin-bottom: 1.2rem;
     animation: loadingSpinPulse 2s ease-in-out infinite;
   }
@@ -17,7 +17,7 @@ div.loading-card {
   .text {
     font-family: var(--font-display);
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--text-main);
     animation: loadingTextPulse 2s ease-in-out infinite;
     background: linear-gradient(135deg, var(--text-main), var(--accent-cyan));

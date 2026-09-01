@@ -49,12 +49,12 @@ export function initStardustCanvas(canvasId: string = 'stardust-canvas') {
   let grad1: CanvasGradient | null = null
   let grad2: CanvasGradient | null = null
 
-  // Celestial palette: white, lavender, violet and ice-blue (aurora)
-  const STAR_COLORS = ['#ffffff', '#f5f2ff', '#e4dcfb', '#c9bcf4', '#90d8f0', '#b49cf0']
+  // Palette celestial vibrante: branco, lavanda, violeta e azul-gelo (aurora)
+  const STAR_COLORS = ['#ffffff', '#f5f2ff', '#d9ccff', '#b49cf0', '#7fd0f5', '#66d2ea', '#c3b4ff', '#a9e6f7']
 
   function createStarSprite(star: Star): HTMLCanvasElement {
     const radius = star.size
-    const glow = radius * 2
+    const glow = radius * 2.2
     const size = Math.max(6, Math.ceil(radius * 2 + glow * 2))
     const sprite = document.createElement('canvas')
     sprite.width = size
@@ -104,46 +104,45 @@ export function initStardustCanvas(canvasId: string = 'stardust-canvas') {
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
     createStars()
 
-    grad1 = ctx!.createRadialGradient(width * 0.2, height * 0.2, 50, width * 0.2, height * 0.2, width * 0.5)
-    grad1.addColorStop(0, 'rgba(172, 99, 233, 0.07)')
+    grad1 = ctx!.createRadialGradient(width * 0.2, height * 0.18, 50, width * 0.2, height * 0.18, width * 0.5)
+    grad1.addColorStop(0, 'rgba(127, 119, 221, 0.12)')
     grad1.addColorStop(1, 'rgba(0, 0, 0, 0)')
 
-    grad2 = ctx!.createRadialGradient(width * 0.8, height * 0.7, 50, width * 0.8, height * 0.7, width * 0.6)
-    grad2.addColorStop(0, 'rgba(102, 210, 234, 0.05)')
+    grad2 = ctx!.createRadialGradient(width * 0.8, height * 0.8, 50, width * 0.8, height * 0.8, width * 0.6)
+    grad2.addColorStop(0, 'rgba(102, 210, 234, 0.09)')
     grad2.addColorStop(1, 'rgba(0, 0, 0, 0)')
   }
 
   function createStars() {
     stars = []
-    // Low density for a clean, calm look (sparser than before)
-    const count = Math.max(20, Math.floor((width * height) / 16000))
+    // Densidade média: estrelado presente, sem poluir
+    const count = Math.max(34, Math.floor((width * height) / 18000))
 
     for (let i = 0; i < count; i++) {
       const typeRand = Math.random()
       let type: Star['type'] = 'dot'
-      if (typeRand > 0.9) type = 'sparkle8'
-      else if (typeRand > 0.7) type = 'sparkle4'
+      if (typeRand > 0.88) type = 'sparkle8'
+      else if (typeRand > 0.68) type = 'sparkle4'
 
-      // Small, subtle stars
       const size =
         type === 'dot'
-          ? Math.random() * 0.9 + 0.4
+          ? Math.random() * 1 + 0.5
           : type === 'sparkle4'
-            ? Math.random() * 0.9 + 1.2
-            : Math.random() * 1 + 1.4
+            ? Math.random() * 0.8 + 1.1
+            : Math.random() * 0.8 + 1.3
 
       const star: Star = {
         x: Math.random() * width,
         y: Math.random() * height,
         size,
-        baseAlpha: Math.random() * 0.2 + 0.08,
+        baseAlpha: Math.random() * 0.18 + 0.1,
         alpha: Math.random(),
-        twinkleSpeed: Math.random() * 0.025 + 0.008,
+        twinkleSpeed: Math.random() * 0.02 + 0.008,
         twinklePhase: Math.random() * Math.PI * 2,
         color: STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)],
         type,
-        floatSpeedY: -(Math.random() * 0.08 + 0.03),
-        floatSpeedX: (Math.random() - 0.5) * 0.06,
+        floatSpeedY: -(Math.random() * 0.06 + 0.02),
+        floatSpeedX: (Math.random() - 0.5) * 0.05,
         sprite: undefined as unknown as HTMLCanvasElement
       }
       star.sprite = createStarSprite(star)
@@ -152,7 +151,7 @@ export function initStardustCanvas(canvasId: string = 'stardust-canvas') {
   }
 
   function spawnShootingStar() {
-    if (shootingStars.length < 2 && Math.random() < 0.004) {
+    if (shootingStars.length < 2 && Math.random() < 0.006) {
       shootingStars.push({
         x: Math.random() * (width * 0.8),
         y: Math.random() * (height * 0.4),
@@ -181,8 +180,8 @@ export function initStardustCanvas(canvasId: string = 'stardust-canvas') {
     // Update & draw stars (sprites = no per-frame shadowBlur)
     for (const star of stars) {
       star.twinklePhase += star.twinkleSpeed
-      star.alpha = star.baseAlpha + Math.sin(star.twinklePhase) * 0.25
-      star.alpha = Math.max(0.04, Math.min(0.9, star.alpha))
+      star.alpha = star.baseAlpha + Math.sin(star.twinklePhase) * 0.2
+      star.alpha = Math.max(0.05, Math.min(0.95, star.alpha))
 
       // Float upward gently
       star.y += star.floatSpeedY

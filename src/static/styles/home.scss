@@ -89,7 +89,7 @@
   }
 
   #user-name {
-    font-weight: 700;
+    font-weight: 500;
     font-size: 13px;
     color: var(--text-main);
     white-space: nowrap;
@@ -292,7 +292,7 @@
 
 .stage-tag {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.22em;
   color: var(--accent-cyan);
@@ -304,9 +304,8 @@
   max-width: none;
   height: auto;
   margin: -8px 0 -14px;
-  filter: drop-shadow(0 6px 30px rgba(0, 0, 0, 0.55))
-    drop-shadow(0 0 46px rgba(132, 73, 216, 0.28))
-    drop-shadow(0 0 70px rgba(102, 210, 234, 0.18));
+  filter: drop-shadow(0 6px 30px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 0 30px rgba(127, 119, 221, 0.16));
 }
 
 .stage-subtitle {
@@ -326,11 +325,11 @@
     display: flex;
     align-items: center;
     gap: 9px;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 13px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--panel-border);
-    border-radius: var(--btn-radius);
+    border-radius: var(--radius-pill);
     color: inherit;
     padding: 8px 16px;
     cursor: pointer;
@@ -356,12 +355,12 @@
 
     &.online {
       background-color: var(--accent-green);
-      box-shadow: 0 0 8px rgba(43, 224, 128, 0.45);
+      box-shadow: 0 0 8px rgba(93, 202, 165, 0.4);
     }
 
     &.offline {
       background-color: var(--accent-pink);
-      box-shadow: 0 0 8px rgba(224, 138, 192, 0.35);
+      box-shadow: 0 0 8px rgba(255, 122, 158, 0.3);
     }
   }
 
@@ -380,110 +379,6 @@
   50% {
     opacity: 1;
     box-shadow: 0 0 12px rgba(244, 196, 48, 0.5);
-  }
-}
-
-/* --- PROFILE SELECTOR --- */
-.profile-selector-container {
-  position: relative;
-  user-select: none;
-  width: 100%;
-  margin-top: 20px;
-
-  .selected-profile {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--panel-border);
-    padding: 11px 14px;
-    border-radius: var(--btn-radius);
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-main);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-
-    > i:first-child {
-      font-size: 12px;
-      color: var(--accent-violet);
-    }
-
-    span {
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    > i:last-child {
-      font-size: 11px;
-      color: var(--text-muted);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--panel-border-strong);
-    }
-  }
-
-  &.open .selected-profile {
-    > i:last-child {
-      transform: rotate(180deg);
-    }
-  }
-
-  .profile-dropdown {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    right: 0;
-    background: var(--panel-bg);
-    backdrop-filter: blur(var(--panel-blur)) saturate(150%);
-    border: 1px solid var(--panel-border-strong);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    display: none;
-    z-index: 100;
-    max-height: 180px;
-    overflow-y: auto;
-    animation: dropdownSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-
-    .profile-option {
-      padding: 10px 14px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.2s ease;
-      color: var(--text-muted);
-
-      &:hover {
-        background: var(--primary-soft);
-        color: var(--text-main);
-        padding-left: 18px;
-      }
-
-      &.active {
-        color: var(--accent-cyan);
-        font-weight: 700;
-      }
-    }
-  }
-
-  &.open .profile-dropdown {
-    display: block;
-  }
-}
-
-@keyframes dropdownSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -538,7 +433,7 @@
     border-radius: 3px;
     position: relative;
     transition: width 0.3s ease;
-    box-shadow: 0 0 10px rgba(152, 86, 224, 0.35);
+    box-shadow: 0 0 10px rgba(127, 119, 221, 0.35);
 
     &::after {
       content: '';

@@ -24,7 +24,8 @@ const shared = {
    * `skins` should be updated before calling this function.
    */
   resetMainView: async () => {
-    const skinCanvasSettingsEl = document.getElementById('skin-container') as HTMLCanvasElement
+    const skinCanvasSettingsEl = document.getElementById('skin-container') as HTMLCanvasElement | null
+    if (!skinCanvasSettingsEl) return
 
     const activeSkin = shared.skins?.find((s) => s.state === 'active') ?? DEFAULT_SKIN
     const activeCape = shared.capes?.find((c) => c.state === 'active')
@@ -53,7 +54,8 @@ const shared = {
    * `skins` should be updated before calling this function.
    */
   resetSkinViews: async () => {
-    const skinGallerySettingsEl = document.getElementById('skin-gallery')!
+    const skinGallerySettingsEl = document.getElementById('skin-gallery') as HTMLElement | null
+    if (!skinGallerySettingsEl) return
 
     skinGallerySettingsEl.innerHTML = ''
 
@@ -91,7 +93,7 @@ const shared = {
 
       if (s.state === 'inactive' && s.id !== 'steve' && s.id !== 'alex') {
         const deleteBtn = document.createElement('button')
-        deleteBtn.classList.add('btn-delete-skin', 'btn', 'btn-secondary')
+        deleteBtn.classList.add('btn-delete-skin', 'btn', 'btn-ghost')
         deleteBtn.innerHTML = '<i class="fa-solid fa-times"></i>'
         deleteBtn.addEventListener('click', async (e) => {
           e.stopPropagation()
@@ -130,9 +132,10 @@ const shared = {
    * `capes` should be updated before calling this function.
    */
   resetCapesViews: async () => {
-    const capeGallerySettingsEl = document.getElementById('cape-gallery')!
-    const inactive = !shared.capes?.some((c) => c.state === 'active')
+    const capeGallerySettingsEl = document.getElementById('cape-gallery') as HTMLElement | null
+    if (!capeGallerySettingsEl) return
 
+    const inactive = !shared.capes?.some((c) => c.state === 'active')
     capeGallerySettingsEl.innerHTML = ''
 
     const capeDiv = document.createElement('div')

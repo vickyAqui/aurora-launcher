@@ -47,7 +47,7 @@
   h2 {
     font-family: var(--font-display);
     font-size: 20px;
-    font-weight: 800;
+    font-weight: 600;
     letter-spacing: 0.03em;
     color: var(--text-main);
   }
@@ -119,7 +119,7 @@
   justify-content: flex-end;
   gap: 2px;
   padding: 10px 12px;
-  background: linear-gradient(180deg, transparent 40%, rgba(10, 7, 19, 0.9));
+  background: linear-gradient(180deg, transparent 40%, rgba(8, 6, 24, 0.88));
   opacity: 0;
   transition: opacity 0.25s ease;
 
@@ -175,7 +175,7 @@
   position: fixed;
   inset: 0;
   z-index: 130;
-  background: rgba(6, 3, 14, 0.94);
+  background: rgba(6, 4, 28, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,8 +215,9 @@
   transform: translateX(-50%);
   display: flex;
   gap: 10px;
-  background: rgba(10, 7, 19, 0.9);
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur)) saturate(150%);
   border: 1px solid var(--panel-border);
-  border-radius: var(--btn-radius);
+  border-radius: var(--radius-pill);
   padding: 8px 10px;
 }

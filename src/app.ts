@@ -1,3 +1,4 @@
+import './tailwind.css'
 import './static/styles/_variables.scss'
 import './static/styles/main.scss'
 import './static/styles/loading.scss'
@@ -27,5 +28,3 @@ initScreenshots()
 initAccountSwitcher()
 
 void bootstrap().then(() => autoCheckForUpdate())
-
-

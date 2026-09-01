@@ -34,7 +34,6 @@ const backgroundColor = (color: string) => {
 }
 
 export function initHome() {
-  const body = document.body
   const playBtn = document.getElementById('btn-play')
   const settingsBtn = document.getElementById('btn-settings')
   const progressContainer = document.getElementById('launch-progress-container')
@@ -46,9 +45,6 @@ export function initHome() {
   const statusIndicator = document.getElementById('server-status-indicator')
   const playerCount = document.getElementById('player-count')
   const newsList = document.getElementById('news-list')
-  const profileSelector = document.getElementById('profile-selector')
-  const profileDropdown = document.getElementById('profile-dropdown')
-  const currentProfileName = document.getElementById('current-profile-name')
 
   let selectedProfile: any = null
   let allProfiles: any[] = []
@@ -76,38 +72,9 @@ export function initHome() {
   const loadProfiles = async () => {
     allProfiles = await profiles.get()
     if (allProfiles.length > 0) {
-      selectProfile(allProfiles[0])
-      renderDropdown()
+      selectedProfile = allProfiles[0]
+      updateServerStatus()
     }
-  }
-
-  const renderDropdown = () => {
-    if (!profileDropdown) return
-    profileDropdown.innerHTML = allProfiles
-      .map(
-        (p) => `
-      <div class="profile-option ${selectedProfile?.id === p.id ? 'active' : ''}" data-id="${p.id}">
-        ${p.name}
-      </div>
-    `
-      )
-      .join('')
-
-    profileDropdown.querySelectorAll('.profile-option').forEach((opt) => {
-      opt.addEventListener('click', (e) => {
-        const id = (e.target as HTMLElement).dataset.id
-        const profile = allProfiles.find((p) => p.id === id)
-        if (profile) selectProfile(profile)
-        profileSelector?.classList.remove('open')
-      })
-    })
-  }
-
-  const selectProfile = (profile: any) => {
-    selectedProfile = profile
-    if (currentProfileName) currentProfileName.innerText = profile.name
-    renderDropdown()
-    updateServerStatus()
   }
 
   const updateServerStatus = async () => {
@@ -156,7 +123,7 @@ export function initHome() {
         <article class="news-article">
           <div class="article-meta">
             <div class="author">
-              <i class="fa-solid fa-star" style="color: var(--stardust-yellow)"></i>
+              <i class="fa-solid fa-star" style="color: var(--accent-yellow)"></i>
               <span>Aurora Studios Team</span>
             </div>
             <span class="separator">•</span>
@@ -259,16 +226,6 @@ Ready to launch the game with the following settings:
 
     logger.log(message)
     game.launch({ account: user, settings: config, profileSlug: selectedProfile?.slug })
-  })
-
-  profileSelector?.querySelector('.selected-profile')?.addEventListener('click', () => {
-    profileSelector.classList.toggle('open')
-  })
-
-  body.addEventListener('click', (e) => {
-    if (!profileSelector?.contains(e.target as Node)) {
-      profileSelector?.classList.remove('open')
-    }
   })
 
   game.launchComputeDownload(() => {

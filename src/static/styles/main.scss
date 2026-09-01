@@ -8,19 +8,23 @@
 
 body {
   font-family: var(--font-body);
-  background: var(--bg-dark);
+  font-weight: 400;
+  background:
+    radial-gradient(ellipse at 25% 18%, rgba(127, 119, 221, 0.24), transparent 52%),
+    radial-gradient(ellipse at 80% 82%, rgba(102, 210, 234, 0.16), transparent 58%),
+    var(--bg-dark);
   color: var(--text-main);
   height: 100vh;
   overflow: hidden;
 }
 
 ::selection {
-  background: rgba(152, 86, 224, 0.3);
+  background: rgba(127, 119, 221, 0.3);
   color: var(--text-main);
 }
 
 a {
-  color: var(--accent-cyan);
+  color: var(--primary);
   text-decoration: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -36,31 +40,21 @@ a {
   height: 100%;
 }
 
-/* --- FUNDO: GALAXY SVG --- */
+/* --- FUNDO: GALÁXIA LIMPA (2 radiais sobre índigo) --- */
+/* Camada fixa, fora do #app, para não sofrer fade/opacity do processo de boot */
 .app-background {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background-color: var(--bg-deep);
-  background-image: url('../images/galaxy.svg');
-  background-size: cover;
-  background-position: center;
-  z-index: -1;
+  background: transparent;
+  z-index: 0;
   overflow: hidden;
+  pointer-events: none;
 
   #stardust-canvas {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 44%, transparent 52%, rgba(2, 0, 12, 0.34) 100%);
     pointer-events: none;
     z-index: 1;
   }
@@ -83,7 +77,7 @@ a {
   }
 
   &.overlay {
-    background: rgba(4, 2, 14, 0.82);
+    background: rgba(6, 4, 28, 0.72);
     backdrop-filter: blur(8px);
     justify-content: center;
     align-items: center;
@@ -128,147 +122,35 @@ a {
   }
 }
 
-/* --- GLOBAL BUTTON SYSTEM --- */
+/* --- BOTÕES (base e variantes do daisyUI) --- */
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 18px;
-
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-
-  border-radius: var(--btn-radius);
-  border: 1px solid var(--panel-border);
-  cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-
-  user-select: none;
-  position: relative;
-  overflow: hidden;
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent-violet-strong) 0%, var(--accent-violet) 45%, var(--accent-cyan) 130%);
-  color: #ffffff;
-  font-weight: 800;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: var(--shadow-primary);
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--panel-shine);
-    pointer-events: none;
-  }
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 34px rgba(152, 86, 224, 0.5);
-    filter: brightness(1.08);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--panel-border);
-  color: var(--text-main);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-  &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.09);
-    border-color: var(--panel-border-strong);
-    text-decoration: none;
-    transform: translateY(-1px);
-  }
-}
-
-/* Danger Button */
-.btn-danger {
-  background: rgba(224, 138, 192, 0.12);
-  border: 1px solid rgba(224, 138, 192, 0.3);
-  color: #f0b0d8;
-
-  &:hover:not(:disabled) {
-    background: rgba(224, 138, 192, 0.22);
-    border-color: var(--accent-pink);
-    color: #ffffff;
-    transform: translateY(-1px);
-  }
-}
-
-/* Icon Button */
+/* Geometria para botões de ícone puro (não existe nativo no daisyUI) */
 .btn-icon-only {
   width: 40px;
   height: 40px;
   padding: 0;
-  border-radius: var(--btn-radius);
+  font-size: 14px;
   background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
   color: var(--text-muted);
-  border: 1px solid var(--panel-border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: var(--panel-border-strong);
     color: var(--text-main);
     transform: scale(1.05);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 }
 
-/* Link Button */
-.btn-text {
-  background: transparent;
-  padding: 6px 12px;
-  color: var(--text-muted);
-
-  &:hover {
-    color: var(--text-main);
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--btn-radius);
-  }
-}
-
-/* Brand Button: Microsoft */
-.btn-microsoft {
-  background: rgba(8, 5, 20, 0.85);
-  color: #ffffff;
-  border: 1px solid var(--panel-border);
-  box-shadow: var(--shadow-sm);
-  width: 100%;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
-  &:hover {
-    background: rgba(16, 10, 34, 0.95);
-    border-color: var(--panel-border-strong);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
+/* Peso consistente (500 em rótulos/botões) */
+.btn {
+  font-weight: 500;
+  border-radius: var(--radius-field);
 }
 
 /* --- FOCUS STATES --- */
 :focus-visible {
-  outline: 2px solid rgba(152, 86, 224, 0.5);
+  outline: 2px solid rgba(127, 119, 221, 0.5);
   outline-offset: 2px;
 }
 

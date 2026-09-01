@@ -63,7 +63,7 @@ function renderButtons(e: PopupElements, configs: { text: string; type: 'ok' | '
   for (const cfg of configs) {
     const btn = document.createElement('button')
     btn.innerText = cfg.text
-    btn.className = `btn btn-${cfg.type === 'danger' ? 'danger' : 'secondary'}`
+    btn.className = `btn btn-${cfg.type === 'danger' ? 'error' : 'ghost'}`
     btn.onclick = () => {
       hide()
       cfg.action?.()
