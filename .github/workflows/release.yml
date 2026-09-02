@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  build-windows:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -18,13 +18,13 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
+      - name: Verify dependencies integrity
         run: npm ci
 
       - name: Build
         run: npm run build
 
-      - name: Publish to GitHub Releases
+      - name: Publish Windows to GitHub Releases
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx electron-builder --win -p always
@@ -33,7 +33,41 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: release-logs
+          name: windows-release-logs
+          path: |
+            *.log
+            release/*.yml
+          if-no-files-found: ignore
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Verify dependencies integrity
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish macOS to GitHub Releases
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --mac -p always
+
+      - name: Upload release logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-release-logs
           path: |
             *.log
             release/*.yml
