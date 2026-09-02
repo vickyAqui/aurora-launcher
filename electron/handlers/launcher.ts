@@ -4,7 +4,6 @@ import type { Account } from 'eml-lib'
 import type { IGameSettings } from './settings'
 import logger from 'electron-log/main'
 import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
-import { syncModsWithManifest } from './mods'
 import { endSession, startSession } from './stats'
 
 export function registerLauncherHandlers(mainWindow: BrowserWindow) {
@@ -20,12 +19,7 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
       java = { install: 'auto' as const }
     }
 
-    const slug = profileSlug || DEFAULT_PROFILE.slug
-
     logger.log('Launching')
-
-    const removedStaleMods = await syncModsWithManifest(slug)
-    if (removedStaleMods > 0) logger.log(`Removed ${removedStaleMods} mods not in the modpack.`)
 
     const launcher = new Launcher({
       root: ROOT_DIR,
