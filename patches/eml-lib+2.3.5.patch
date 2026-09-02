@@ -1,8 +1,7 @@
 diff --git a/lib/launcher/filesmanager.js b/lib/launcher/filesmanager.js
-index 2929e2b..4d38c36 100644
 --- a/lib/launcher/filesmanager.js
 +++ b/lib/launcher/filesmanager.js
-@@ -178,12 +178,17 @@ export default class FilesManager extends EventEmitter {
+@@ -178,12 +178,17 @@
              return { injector: [], files: [] };
          const url = 'https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.7/authlib-injector-1.2.7.jar';
          const size = await utils.getRemoteFileSize(url, 'Failed to get authlib-injector file size');
@@ -22,10 +21,9 @@ index 2929e2b..4d38c36 100644
                  type: 'LIBRARY'
              }
 diff --git a/lib/utils/cleaner.js b/lib/utils/cleaner.js
-index aae2cfa..457cd39 100644
 --- a/lib/utils/cleaner.js
 +++ b/lib/utils/cleaner.js
-@@ -25,19 +25,20 @@ export default class Cleaner extends EventEmitter {
+@@ -25,19 +25,20 @@
      async clean(files, ignore = [], skipClean = false) {
          if (skipClean)
              return;
@@ -51,7 +49,7 @@ index aae2cfa..457cd39 100644
                      .then(() => {
                      i++;
                      this.emit('clean_progress', { filename: file.name });
-@@ -46,7 +47,6 @@ export default class Cleaner extends EventEmitter {
+@@ -46,7 +47,6 @@
                      this.emit('clean_error', { filename: file.name, message: err });
                  }));
              }
@@ -59,7 +57,7 @@ index aae2cfa..457cd39 100644
          }
          await Promise.all(deletePromises);
          this.emit('clean_end', { amount: i });
-@@ -64,7 +64,7 @@ export default class Cleaner extends EventEmitter {
+@@ -64,7 +64,7 @@
              else {
                  browsed.push({
                      name: file,
@@ -69,10 +67,9 @@ index aae2cfa..457cd39 100644
              }
          });
 diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
-index e830a72..06b4b58 100644
 --- a/lib/utils/downloader.js
 +++ b/lib/utils/downloader.js
-@@ -32,17 +32,24 @@ export default class Downloader extends EventEmitter {
+@@ -32,17 +32,24 @@
       */
      async download(files, skipCheck = false) {
          const filesToDownload = !skipCheck ? await this.getFilesToDownload(files) : files;
@@ -101,7 +98,7 @@ index e830a72..06b4b58 100644
          const workers = Array(this.CONCURRENCY_LIMIT)
              .fill(null)
              .map(async () => {
-@@ -77,13 +84,23 @@ export default class Downloader extends EventEmitter {
+@@ -77,13 +84,23 @@
                  catch {
                      await fs.mkdir(filePath, { recursive: true });
                  }
@@ -127,7 +124,7 @@ index e830a72..06b4b58 100644
              }
              catch {
                  needsDownload = true;
-@@ -98,11 +115,13 @@ export default class Downloader extends EventEmitter {
+@@ -98,11 +115,13 @@
      async downloadFileWithRetry(file, attempt = 0) {
          try {
              await this.downloadFile(file);
@@ -142,7 +139,7 @@ index e830a72..06b4b58 100644
                  return this.downloadFileWithRetry(file, attempt + 1);
              }
              else {
-@@ -115,11 +134,43 @@ export default class Downloader extends EventEmitter {
+@@ -115,11 +134,46 @@
              }
          }
      }
@@ -178,6 +175,9 @@ index e830a72..06b4b58 100644
          const filePath = path_.join(dirPath, file.name);
 +        const tmpPath = filePath + '.tmp';
          let bytesDownloadedThisAttempt = 0;
++        let fileLastTime = Date.now();
++        let fileLastSize = 0;
++        let fileSpeed = 0;
          await fs.mkdir(dirPath, { recursive: true });
 +        try {
 +            await fs.unlink(tmpPath);
@@ -186,7 +186,7 @@ index e830a72..06b4b58 100644
          const req = await fetch(file.url, {
              headers: { Accept: 'application/octet-stream' }
          });
-@@ -127,7 +178,7 @@ export default class Downloader extends EventEmitter {
+@@ -127,7 +181,7 @@
              const errorText = await req.text();
              throw new EMLLibError(ErrorType.FETCH_ERROR, `Error while fetching ${file.name}: HTTP ${req.status} ${errorText}`);
          }
@@ -195,9 +195,37 @@ index e830a72..06b4b58 100644
          const nodeStream = Readable.fromWeb(req.body);
          return new Promise((resolve, reject) => {
              const cleanup = () => {
-@@ -153,34 +204,53 @@ export default class Downloader extends EventEmitter {
-                     type: file.type
-                 });
+@@ -146,41 +200,75 @@
+                     this.lastTime = now;
+                     this.lastSize = this.downloaded.size;
+                 }
+-                this.emit('download_progress', {
+-                    total: { amount: this.amount, size: this.size },
+-                    downloaded: this.downloaded,
+-                    speed: Math.floor(this.speed),
+-                    type: file.type
+-                });
++                const fileDiffTime = now - fileLastTime;
++                const fileTotal = file.size ?? 0;
++                const finished = fileTotal > 0 && bytesDownloadedThisAttempt >= fileTotal;
++                if (fileDiffTime > 300 || finished) {
++                    if (fileDiffTime > 0) {
++                        const fileDiffSize = bytesDownloadedThisAttempt - fileLastSize;
++                        fileSpeed = fileTotal > 0 && finished ? 0 : fileDiffSize / (fileDiffTime / 1000);
++                    }
++                    fileLastTime = now;
++                    fileLastSize = bytesDownloadedThisAttempt;
++                    this.emit('download_progress', {
++                        total: { amount: this.amount, size: this.size },
++                        downloaded: this.downloaded,
++                        speed: Math.floor(this.speed),
++                        type: file.type,
++                        filename: file.name,
++                        fileSize: fileTotal,
++                        fileDownloaded: bytesDownloadedThisAttempt,
++                        fileSpeed: finished ? 0 : Math.floor(fileSpeed)
++                    });
++                }
              });
 -            nodeStream.on('error', (err) => {
 +            nodeStream.on('error', async (err) => {
@@ -254,3 +282,29 @@ index e830a72..06b4b58 100644
  }
  //# sourceMappingURL=downloader.js.map
 \ No newline at end of file
+diff --git a/types/events.d.ts b/types/events.d.ts
+--- a/types/events.d.ts
++++ b/types/events.d.ts
+@@ -69,6 +69,22 @@
+        * @workInProgress Currently not working well.
+        */
+       type: string
++      /**
++       * Name of the file currently being downloaded.
++       */
++      filename?: string
++      /**
++       * Total size in bytes of the current file (0 when unknown).
++       */
++      fileSize?: number
++      /**
++       * Bytes already downloaded for the current file.
++       */
++      fileDownloaded?: number
++      /**
++       * Per-file download speed in bytes/second.
++       */
++      fileSpeed?: number
+     }
+   ]
+   download_error: [{ filename: string; type: string; message: Error | string }]

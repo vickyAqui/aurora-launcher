@@ -618,3 +618,93 @@ p#version {
   line-height: 1.5;
 }
 
+/* --- LOGS TAB --- */
+.logs-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+
+  .btn {
+    white-space: nowrap;
+  }
+}
+
+.logs-files {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-right: 4px;
+}
+
+.log-file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--btn-radius);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+
+  i {
+    color: var(--accent-cyan);
+    flex-shrink: 0;
+  }
+
+  .log-file-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .log-file-size {
+    color: var(--text-muted);
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-hover);
+  }
+}
+
+.log-viewer {
+  background: rgba(6, 4, 28, 0.5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.log-viewer-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.log-viewer-content {
+  margin: 0;
+  padding: 14px;
+  min-height: 160px;
+  max-height: 220px;
+  overflow: auto;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-main);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+

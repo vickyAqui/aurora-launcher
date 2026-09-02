@@ -16,6 +16,7 @@ import { registerScreenshotsHandlers } from './handlers/screenshots'
 import { registerStatsHandlers } from './handlers/stats'
 import { registerPacksHandlers } from './handlers/packs'
 import { registerUpdateHandlers } from './handlers/update'
+import { registerLogsHandlers } from './handlers/logs'
 
 const APP_TITLE = 'Aurora Studios'
 const BG_COLOR = '#06041c'
@@ -153,6 +154,7 @@ app.whenReady().then(() => {
     registerStatsHandlers()
     registerPacksHandlers()
     registerUpdateHandlers(mainWindow)
+    registerLogsHandlers()
   }
 })
 

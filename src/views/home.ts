@@ -5,6 +5,7 @@ import DOMPurify from 'dompurify'
 import logger from 'electron-log/renderer'
 import { openScreenshots } from './screenshots'
 import { setIndeterminate } from '../progress'
+import { formatBytes, formatSpeed } from '../format'
 
 marked.use({
   renderer: {
@@ -40,6 +41,7 @@ export function initHome() {
   const progressBar = document.getElementById('launch-progress-bar')
   const progressLabel = document.getElementById('launch-progress-label')
   const progressPercent = document.getElementById('launch-progress-percent')
+  const downloadList = document.getElementById('download-list')
   const statusDot = document.getElementById('server-status-dot')
   const statusText = document.getElementById('server-status-text')
   const statusIndicator = document.getElementById('server-status-indicator')
@@ -50,6 +52,7 @@ export function initHome() {
   let allProfiles: any[] = []
   let totalToDownload = 0
   let totalDownloadedByType: { type: string; size: number }[] = []
+  const downloadItems = new Map<string, HTMLElement>()
 
   const formatPlayTime = (ms: number) => {
     const totalMinutes = Math.floor(ms / 60000)
@@ -208,6 +211,10 @@ export function initHome() {
     if (progressContainer) progressContainer.classList.remove('hidden')
     if (progressBar) progressBar.style.width = '0%'
     if (progressPercent) progressPercent.innerText = '0%'
+    if (downloadList) {
+      downloadList.innerHTML = ''
+      downloadItems.clear()
+    }
 
     const user = getUser()
     if (!user) return
@@ -250,7 +257,53 @@ Ready to launch the game with the following settings:
       progressLabel.innerText = `Baixando ${progress.type === 'JAVA' ? 'Java' : 'arquivos do jogo'}...`
       progressPercent.innerText = `${Math.round(Math.min((downloadedSum / totalToDownload) * 100, 100))}%`
     }
+    if (downloadList && progress.filename && progress.type === 'MOD') {
+      updateDownloadItem(downloadList, downloadItems, progress.filename, progress)
+    }
   })
+
+  function updateDownloadItem(
+    container: HTMLElement,
+    items: Map<string, HTMLElement>,
+    filename: string,
+    progress: { fileSize?: number; fileDownloaded?: number; fileSpeed?: number }
+  ) {
+    let item = items.get(filename)
+    if (!item) {
+      item = document.createElement('div')
+      item.className = 'download-item'
+      item.innerHTML = `
+        <div class="download-item-icon"><i class="fa-solid fa-cube"></i></div>
+        <div class="download-item-main">
+          <div class="download-item-name">${filename}</div>
+          <div class="download-item-bar-bg"><div class="download-item-bar-fill"></div></div>
+        </div>
+        <div class="download-item-meta"><span class="download-item-status">0%</span></div>
+      `
+      container.appendChild(item)
+      items.set(filename, item)
+    }
+
+    const fill = item.querySelector('.download-item-bar-fill') as HTMLElement
+    const status = item.querySelector('.download-item-status') as HTMLElement
+    const total = progress.fileSize ?? 0
+    const downloaded = progress.fileDownloaded ?? 0
+    const pct = total > 0 ? Math.min((downloaded / total) * 100, 100) : 0
+
+    if (fill) fill.style.width = `${pct}%`
+
+    if (total > 0 && downloaded >= total) {
+      item.classList.add('done')
+      status.innerText = 'Concluído'
+    } else if (progress.fileSpeed) {
+      status.innerText = `${formatSpeed(progress.fileSpeed)}`
+    } else if (total > 0) {
+      status.innerText = `${formatBytes(downloaded)} / ${formatBytes(total)}`
+    } else {
+      status.innerText = formatBytes(downloaded)
+    }
+  }
+
   game.launchInstallLoader(() => {
     setIndeterminate(progressBar, progressPercent, true)
     if (progressLabel) progressLabel.innerText = 'Extraindo arquivos...'

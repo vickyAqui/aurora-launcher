@@ -205,6 +205,7 @@
               <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="launch-progress-bar"></div>
               </div>
+              <div class="download-list" id="download-list"></div>
             </div>
           </div>
         </main>
@@ -222,6 +223,7 @@
               <button class="btn nav-btn active" data-tab="game"><i class="fa-fw fa-solid fa-cubes"></i><span>Jogo</span></button>
               <button class="btn nav-btn" data-tab="packs"><i class="fa-fw fa-solid fa-palette"></i><span>Packs</span></button>
               <button class="btn nav-btn" data-tab="account"><i class="fa-fw fa-solid fa-user"></i><span>Conta</span></button>
+              <button class="btn nav-btn" data-tab="logs"><i class="fa-fw fa-solid fa-bug"></i><span>Logs & Erros</span></button>
             </nav>
             <div class="update-check">
               <button id="btn-check-update" class="btn btn-ghost btn-sm">
@@ -343,6 +345,33 @@
                   </a>
                   <button id="btn-logout" class="btn btn-error"><i class="fa-fw fa-solid fa-right-from-bracket"></i><span>Sair</span></button>
                 </div>
+              </div>
+            </section>
+
+            <section id="tab-logs" class="tab-content">
+              <h3>Logs & Erros</h3>
+              <p class="mods-description">Leia os logs do launcher para diagnosticar erros. Você também pode abrir a pasta de logs.</p>
+
+              <div class="logs-toolbar">
+                <button id="btn-open-logs" class="btn btn-ghost">
+                  <i class="fa-fw fa-solid fa-folder-open"></i>
+                  <span>Abrir pasta de logs</span>
+                </button>
+                <button id="btn-refresh-logs" class="btn btn-ghost">
+                  <i class="fa-fw fa-solid fa-rotate"></i>
+                  <span>Atualizar</span>
+                </button>
+              </div>
+
+              <div class="logs-files" id="logs-files">
+                <div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando...</span></div>
+              </div>
+
+              <div class="log-viewer">
+                <div class="log-viewer-header">
+                  <span id="log-viewer-title">Selecione um log</span>
+                </div>
+                <pre id="log-viewer-content" class="log-viewer-content">Clique em um arquivo de log na lista acima para visualizá-lo.</pre>
               </div>
             </section>
           </main>

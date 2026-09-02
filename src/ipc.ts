@@ -5,6 +5,7 @@ import type { IScreenshot } from '../electron/handlers/screenshots'
 import type { IPlayStats } from '../electron/handlers/stats'
 import type { IPackEntry } from '../electron/handlers/packs'
 import type { UpdateStatus, UpdateProgress } from '../electron/handlers/update'
+import type { ILogFile } from '../electron/handlers/logs'
 import type {
   Account,
   BootstrapsEvents,
@@ -141,6 +142,11 @@ declare global {
         status: (callback: (value: UpdateStatus) => void) => () => void
         progress: (callback: (value: UpdateProgress) => void) => () => void
       }
+      logs: {
+        list: () => Promise<ILogFile[]>
+        read: (filePath: string) => Promise<string>
+        openFolder: () => Promise<boolean>
+      }
     }
   }
 }
@@ -263,4 +269,10 @@ export const update = {
   install: () => window.api.update.install(),
   status: (callback: (value: UpdateStatus) => void) => window.api.update.status(callback),
   progress: (callback: (value: UpdateProgress) => void) => window.api.update.progress(callback)
+}
+
+export const logs = {
+  list: () => window.api.logs.list(),
+  read: (filePath: string) => window.api.logs.read(filePath),
+  openFolder: () => window.api.logs.openFolder()
 }

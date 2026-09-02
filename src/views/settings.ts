@@ -1,5 +1,5 @@
 import { setView, closeOverlay } from '../state'
-import { settings, system, java, packs, update } from '../ipc'
+import { settings, system, java, packs, update, logs } from '../ipc'
 import { logoutCurrentAccount } from '../account'
 import { Dialog } from './dialog'
 import { enhanceSelect, type CustomSelect } from './dropdown'
@@ -37,6 +37,7 @@ export async function initSettings() {
   initJavaDetection()
   initPacksTab()
   initUpdateCheck()
+  initLogsTab()
 
   const versionElem = document.getElementById('version')
   if (versionElem) versionElem.innerText = `Aurora Studios v${sysInfo.version}`
@@ -438,5 +439,57 @@ function initUpdateCheck() {
       setStatus(res.dev ? 'Indisponível no modo de desenvolvimento.' : 'Falha ao verificar atualização.')
     }
   })
+}
+
+function initLogsTab() {
+  const openBtn = document.getElementById('btn-open-logs')
+  const refreshBtn = document.getElementById('btn-refresh-logs')
+
+  openBtn?.addEventListener('click', async () => {
+    await logs.openFolder()
+  })
+
+  refreshBtn?.addEventListener('click', () => {
+    loadLogFiles()
+  })
+
+  loadLogFiles()
+}
+
+async function loadLogFiles() {
+  const container = document.getElementById('logs-files')!
+  const viewerContent = document.getElementById('log-viewer-content')!
+  const viewerTitle = document.getElementById('log-viewer-title')!
+
+  try {
+    const files = await logs.list()
+    container.innerHTML = ''
+
+    if (files.length === 0) {
+      container.innerHTML = '<p class="mods-empty">Nenhum arquivo de log encontrado.</p>'
+      return
+    }
+
+    for (const file of files) {
+      const item = document.createElement('button')
+      item.className = 'log-file-item'
+      const sizeLabel = file.size >= 1024 * 1024 ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(file.size / 1024))} KB`
+      item.innerHTML = `
+        <i class="fa-fw fa-solid fa-file-lines"></i>
+        <span class="log-file-name">${file.name}</span>
+        <span class="log-file-size">${sizeLabel}</span>
+      `
+      item.addEventListener('click', async () => {
+        viewerTitle.innerText = file.name
+        viewerContent.innerText = 'Carregando...'
+        const content = await logs.read(file.path)
+        viewerContent.innerText = content || '(log vazio)'
+      })
+      container.appendChild(item)
+    }
+  } catch (err) {
+    logger.error('Error loading logs:', err)
+    container.innerHTML = '<p class="mods-error">Erro ao carregar logs.</p>'
+  }
 }
 

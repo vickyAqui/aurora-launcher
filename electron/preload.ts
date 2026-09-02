@@ -3,6 +3,7 @@ import type { IGameSettings, ISystemInfo } from './handlers/settings'
 import type { IAuthResponse, IAccountSummary } from './handlers/auth'
 import type { IDetectedJava } from './handlers/java'
 import type { IPackEntry } from './handlers/packs'
+import type { ILogFile } from './handlers/logs'
 import type { IPlayStats } from './handlers/stats'
 import type { IScreenshot } from './handlers/screenshots'
 import type {
@@ -267,5 +268,10 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.on('update:progress', listener)
       return () => ipcRenderer.removeListener('update:progress', listener)
     }
+  },
+  logs: {
+    list: (): Promise<ILogFile[]> => ipcRenderer.invoke('logs:list'),
+    read: (filePath: string): Promise<string> => ipcRenderer.invoke('logs:read', filePath),
+    openFolder: (): Promise<boolean> => ipcRenderer.invoke('logs:open_folder')
   }
 })
