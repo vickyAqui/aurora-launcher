@@ -13,9 +13,20 @@
  *   2. Generates modpack.json with stable download URLs (tag is fixed)
  *   3. Creates the release if needed, deletes old assets, uploads all files + JSON
  */
-import { promises as fs } from 'node:fs'
+import { promises as fs, readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { sha1, walk } from './modpack-utils.mjs'
+
+const loadEnv = (file = '.env') => {
+  const abs = path.resolve(file)
+  if (!existsSync(abs)) return
+  for (const line of readFileSync(abs, 'utf8').split('\n')) {
+    const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/)
+    if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2]
+  }
+}
+
+loadEnv()
 
 const API = 'https://api.github.com'
 const UPLOADS = 'https://uploads.github.com'
