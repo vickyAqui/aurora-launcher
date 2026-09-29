@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build-windows:
@@ -68,6 +69,45 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-release-logs
+          path: |
+            *.log
+            release/*.yml
+          if-no-files-found: ignore
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install AppImage runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libfuse2 libappindicator3-1
+
+      - name: Verify dependencies integrity
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish Linux AppImage to GitHub Releases
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --linux AppImage -p always
+
+      - name: Upload release logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-release-logs
           path: |
             *.log
             release/*.yml
