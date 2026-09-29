@@ -221,6 +221,7 @@
             <h2>Configurações</h2>
             <nav>
               <button class="btn nav-btn active" data-tab="game"><i class="fa-fw fa-solid fa-cubes"></i><span>Jogo</span></button>
+              <button class="btn nav-btn" data-tab="mods"><i class="fa-fw fa-solid fa-cube"></i><span>Mods</span></button>
               <button class="btn nav-btn" data-tab="packs"><i class="fa-fw fa-solid fa-palette"></i><span>Packs</span></button>
               <button class="btn nav-btn" data-tab="account"><i class="fa-fw fa-solid fa-user"></i><span>Conta</span></button>
               <button class="btn nav-btn" data-tab="logs"><i class="fa-fw fa-solid fa-bug"></i><span>Logs & Erros</span></button>
@@ -297,6 +298,36 @@
                   <div id="java-detected-list" class="java-detected-list"></div>
                   <p id="java-detected-status" class="java-detected-status"></p>
                 </div>
+              </div>
+            </section>
+
+            <section id="tab-mods" class="tab-content">
+              <h3>Mods</h3>
+              <p class="mods-description">
+                Desative um mod para o Forge ignorá-lo na próxima inicialização. Mods desativados ficam com o sufixo
+                <code>.jar.disabled</code> e são reativados quando você ligar o botão de novo.
+              </p>
+
+              <div class="mods-toolbar">
+                <div class="mods-search">
+                  <i class="fa-fw fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="mods-search-input" placeholder="Buscar mod..." autocomplete="off" />
+                </div>
+                <button id="btn-open-mods" class="btn btn-ghost">
+                  <i class="fa-fw fa-solid fa-folder-open"></i>
+                  <span>Pasta de mods</span>
+                </button>
+              </div>
+
+              <div class="mods-summary">
+                <span id="mods-count"></span>
+                <button id="btn-refresh-mods" class="btn btn-ghost btn-sm" title="Atualizar">
+                  <i class="fa-fw fa-solid fa-rotate"></i>
+                </button>
+              </div>
+
+              <div id="mods-list" class="mods-list">
+                <div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando...</span></div>
               </div>
             </section>
 

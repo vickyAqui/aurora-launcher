@@ -3,6 +3,7 @@ import type { IGameSettings, ISystemInfo } from './handlers/settings'
 import type { IAuthResponse, IAccountSummary } from './handlers/auth'
 import type { IDetectedJava } from './handlers/java'
 import type { IPackEntry } from './handlers/packs'
+import type { IModEntry } from './handlers/mods'
 import type { ILogFile } from './handlers/logs'
 import type { IPlayStats } from './handlers/stats'
 import type { IScreenshot } from './handlers/screenshots'
@@ -253,6 +254,11 @@ contextBridge.exposeInMainWorld('api', {
     setShaderPack: (name: string, enabled: boolean): Promise<boolean> => ipcRenderer.invoke('packs:set_shader_pack', name, enabled),
     openFolder: (dirPath: string): Promise<boolean> => ipcRenderer.invoke('packs:open_folder', dirPath),
     delete: (packPath: string): Promise<boolean> => ipcRenderer.invoke('packs:delete', packPath)
+  },
+  mods: {
+    list: (): Promise<{ mods: IModEntry[]; modsDir: string }> => ipcRenderer.invoke('mods:list'),
+    setEnabled: (name: string, enabled: boolean): Promise<boolean> => ipcRenderer.invoke('mods:set_enabled', name, enabled),
+    openFolder: (): Promise<boolean> => ipcRenderer.invoke('mods:open_folder')
   },
   update: {
     check: (): Promise<{ ok: boolean; dev?: boolean; message?: string; updateAvailable?: boolean; version?: string }> => ipcRenderer.invoke('update:check'),

@@ -4,6 +4,7 @@ import type { IDetectedJava } from '../electron/handlers/java'
 import type { IScreenshot } from '../electron/handlers/screenshots'
 import type { IPlayStats } from '../electron/handlers/stats'
 import type { IPackEntry } from '../electron/handlers/packs'
+import type { IModEntry } from '../electron/handlers/mods'
 import type { UpdateStatus, UpdateProgress } from '../electron/handlers/update'
 import type { ILogFile } from '../electron/handlers/logs'
 import type {
@@ -135,6 +136,11 @@ declare global {
         openFolder: (dirPath: string) => Promise<boolean>
         delete: (packPath: string) => Promise<boolean>
       }
+      mods: {
+        list: () => Promise<{ mods: IModEntry[]; modsDir: string }>
+        setEnabled: (name: string, enabled: boolean) => Promise<boolean>
+        openFolder: () => Promise<boolean>
+      }
       update: {
         check: () => Promise<{ ok: boolean; dev?: boolean; message?: string; updateAvailable?: boolean; version?: string }>
         download: () => Promise<{ ok: boolean; message?: string }>
@@ -261,6 +267,12 @@ export const packs = {
   setShaderPack: async (name: string, enabled: boolean) => await window.api.packs.setShaderPack(name, enabled),
   openFolder: async (dirPath: string) => await window.api.packs.openFolder(dirPath),
   delete: async (packPath: string) => await window.api.packs.delete(packPath)
+}
+
+export const mods = {
+  list: async (): Promise<{ mods: IModEntry[]; modsDir: string }> => await window.api.mods.list(),
+  setEnabled: async (name: string, enabled: boolean): Promise<boolean> => await window.api.mods.setEnabled(name, enabled),
+  openFolder: async (): Promise<boolean> => await window.api.mods.openFolder()
 }
 
 export const update = {

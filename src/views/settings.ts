@@ -1,13 +1,14 @@
 import { setView, closeOverlay } from '../state'
-import { settings, system, java, packs, update, logs } from '../ipc'
+import { settings, system, java, packs, update, logs, mods } from '../ipc'
 import { logoutCurrentAccount } from '../account'
 import { Dialog } from './dialog'
 import { enhanceSelect, type CustomSelect } from './dropdown'
 import type { IGameSettings } from '../../electron/handlers/settings'
 import type { IDetectedJava } from '../../electron/handlers/java'
 import type { IPackEntry } from '../../electron/handlers/packs'
+import type { IModEntry } from '../../electron/handlers/mods'
 import logger from 'electron-log/renderer'
-import { formatRemaining, formatSpeed } from '../format'
+import { formatRemaining, formatSpeed, formatBytes } from '../format'
 import type { UpdateProgress } from '../../electron/handlers/update'
 
 const resolutionList = [
@@ -35,6 +36,7 @@ export async function initSettings() {
   initFormValues(sysInfo.resolution)
   enhanceSettingsSelects()
   initJavaDetection()
+  initModsTab()
   initPacksTab()
   initUpdateCheck()
   initLogsTab()
@@ -271,6 +273,123 @@ function renderDetectedJava(list: IDetectedJava[]) {
     })
     container.appendChild(item)
   }
+}
+
+let allMods: IModEntry[] = []
+
+function initModsTab() {
+  const searchInput = document.getElementById('mods-search-input') as HTMLInputElement | null
+  const openBtn = document.getElementById('btn-open-mods')
+  const refreshBtn = document.getElementById('btn-refresh-mods')
+
+  searchInput?.addEventListener('input', () => renderMods())
+  openBtn?.addEventListener('click', async () => {
+    await mods.openFolder()
+  })
+  refreshBtn?.addEventListener('click', () => {
+    loadMods()
+  })
+
+  loadMods()
+}
+
+async function loadMods() {
+  const container = document.getElementById('mods-list')!
+
+  container.innerHTML = '<div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando...</span></div>'
+
+  try {
+    const data = await mods.list()
+    allMods = data.mods
+    renderMods()
+  } catch (err) {
+    logger.error('Error loading mods:', err)
+    container.innerHTML = '<p class="mods-error">Erro ao carregar mods.</p>'
+  }
+}
+
+function updateModsCount(visible: number = allMods.length) {
+  const countEl = document.getElementById('mods-count')
+  if (!countEl) return
+
+  const total = allMods.length
+  const enabledCount = allMods.filter((mod) => mod.enabled).length
+  const scope = visible === total ? `${total} mods` : `${visible} de ${total} mods`
+
+  countEl.innerText = `${scope} · ${enabledCount} ativos`
+}
+
+function renderMods() {
+  const container = document.getElementById('mods-list')
+  if (!container) return
+
+  const searchInput = document.getElementById('mods-search-input') as HTMLInputElement | null
+  const term = (searchInput?.value ?? '').trim().toLowerCase()
+  const visible = term ? allMods.filter((mod) => mod.name.toLowerCase().includes(term)) : allMods
+
+  updateModsCount(visible.length)
+
+  container.innerHTML = ''
+
+  if (visible.length === 0) {
+    container.innerHTML = `<p class="mods-empty">${term ? 'Nenhum mod encontrado.' : 'Nenhum mod no modpack.'}</p>`
+    return
+  }
+
+  for (const mod of visible) {
+    container.appendChild(buildModItem(mod))
+  }
+}
+
+function buildModItem(mod: IModEntry): HTMLElement {
+  const item = document.createElement('div')
+  item.className = `mod-item${mod.enabled ? '' : ' disabled'}`
+
+  item.innerHTML = `
+    <div class="mod-info">
+      <div class="mod-icon">
+        <i class="fa-solid fa-cube"></i>
+      </div>
+      <div class="mod-details">
+        <span class="mod-name"></span>
+        <span class="mod-filename"></span>
+      </div>
+    </div>
+    <div class="pack-item-actions">
+      <label class="mod-toggle" title="${mod.installed ? '' : 'Disponível após o primeiro download do modpack'}">
+        <input type="checkbox" ${mod.enabled ? 'checked' : ''} ${mod.installed ? '' : 'disabled'} />
+        <span class="mod-toggle-slider"></span>
+      </label>
+    </div>
+  `
+
+  const nameEl = item.querySelector('.mod-name') as HTMLElement
+  const filenameEl = item.querySelector('.mod-filename') as HTMLElement
+  nameEl.textContent = mod.name
+
+  const refreshFilename = () => {
+    const status = !mod.installed ? 'será instalado no próximo início' : mod.enabled ? 'ativo' : 'desativado'
+    filenameEl.textContent = `${mod.size ? formatBytes(mod.size) + ' · ' : ''}${status}`
+  }
+  refreshFilename()
+
+  const checkbox = item.querySelector('input[type="checkbox"]') as HTMLInputElement
+  checkbox.addEventListener('change', async () => {
+    const ok = await mods.setEnabled(mod.name, checkbox.checked)
+
+    if (!ok) {
+      checkbox.checked = !checkbox.checked
+      await Dialog.show('Não foi possível alterar este mod.', [{ text: 'OK', type: 'ok' }])
+      return
+    }
+
+    mod.enabled = checkbox.checked
+    item.classList.toggle('disabled', !mod.enabled)
+    refreshFilename()
+    updateModsCount()
+  })
+
+  return item
 }
 
 async function initPacksTab() {

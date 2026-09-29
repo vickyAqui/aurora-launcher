@@ -21,6 +21,10 @@ export function getScreenshotsDir(slug: string = DEFAULT_PROFILE.slug): string {
   return path.join(getGameDir(slug), 'screenshots')
 }
 
+export function getModsDir(slug: string = DEFAULT_PROFILE.slug): string {
+  return path.join(getGameDir(slug), 'mods')
+}
+
 export function getResourcepacksDir(slug: string = DEFAULT_PROFILE.slug): string {
   return path.join(getGameDir(slug), 'resourcepacks')
 }

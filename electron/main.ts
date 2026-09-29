@@ -15,6 +15,7 @@ import { registerJavaHandlers } from './handlers/java'
 import { registerScreenshotsHandlers } from './handlers/screenshots'
 import { registerStatsHandlers } from './handlers/stats'
 import { registerPacksHandlers } from './handlers/packs'
+import { registerModsHandlers } from './handlers/mods'
 import { registerUpdateHandlers } from './handlers/update'
 import { registerLogsHandlers } from './handlers/logs'
 
@@ -153,6 +154,7 @@ app.whenReady().then(() => {
     registerScreenshotsHandlers()
     registerStatsHandlers()
     registerPacksHandlers()
+    registerModsHandlers()
     registerUpdateHandlers(mainWindow)
     registerLogsHandlers()
   }

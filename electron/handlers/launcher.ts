@@ -5,6 +5,7 @@ import type { IGameSettings } from './settings'
 import logger from 'electron-log/main'
 import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
 import { endSession, startSession } from './stats'
+import { applyDisabledMods } from './mods'
 
 export function registerLauncherHandlers(mainWindow: BrowserWindow) {
   ipcMain.handle('game:launch', async (_event, payload: { account: Account; settings: IGameSettings; profileSlug: string }) => {
@@ -132,6 +133,10 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
 
     launcher.on('launch_launch', (info) => {
       logger.log(`Launching Minecraft ${info.version} (${info.type}${info.loaderVersion ? ` ${info.loaderVersion}` : ''})...`)
+
+      const reapplied = applyDisabledMods(profileSlug || DEFAULT_PROFILE.slug)
+      if (reapplied > 0) logger.log(`Re-applied ${reapplied} disabled mod(s) before launch.`)
+
       mainWindow.webContents.send('game:launch_launch', info)
       startSession()
       if (settings.launcherAction === 'close') {
