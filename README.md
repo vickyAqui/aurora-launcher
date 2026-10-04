@@ -67,7 +67,7 @@ O modpack é sincronizado entre o repositório e os clientes via um arquivo `mod
 
 **Fluxo rápido (dia a dia)**:
 
-1.  Adicione/remova `.jar` na pasta `./modpack`.
+1.  Adicione/remova `.jar` na pasta `./modpack/mods`.
 2.  Gere o manifest localmente:
 
     ```bash
@@ -75,6 +75,11 @@ O modpack é sincronizado entre o repositório e os clientes via um arquivo `mod
     ```
 
 3.  Faça commit e push do `modpack.json` atualizado — o launcher baixa automaticamente.
+
+> **Os mods precisam ficar em `modpack/mods/`.** O launcher baixa cada entrada do manifest em
+> `<gameDir>/<path><nome>` e o Forge só carrega o que está em `<gameDir>/mods`. Um mod na raiz do
+> `./modpack` geraria um `path` vazio e o jar seria baixado para a pasta do jogo, onde nunca é
+> carregado. `modpack:build` e `modpack:publish` recusam publicar um manifest com esse problema.
 
 **Fluxo completo (quando precisar subir novos mods)**:
 
@@ -115,6 +120,21 @@ Para alterar a identidade visual, substitua os arquivos da pasta `build/`:
 | Linux      | `npm run release:lin` | `.AppImage`                |
 
 Os arquivos compilados ficam na pasta `release/`.
+
+## Testes
+
+```bash
+npm test          # uma vez
+npm run test:watch # durante o desenvolvimento
+```
+
+Suíte com [Vitest](https://vitest.dev), cobrindo a lógica de mods, o manifesto do modpack e a pasta
+do jogo. Os testes usam a pasta de jogo real num diretório temporário (via `AURORA_APPDATA_DIR`), sem
+mock de `fs`, e `tests/download-integration.test.ts` roda contra o `Downloader` do próprio `eml-lib`
+para garantir que o manifesto entregue é interpretado como o launcher realmente lê.
+
+Entre os testes está a validação do `modpack.json` versionado: ele impede que um `path` vazio — a
+causa de mods serem baixados para o lugar errado e o jogo abrir sem eles — volte a ser publicado.
 
 ## Contribuindo
 

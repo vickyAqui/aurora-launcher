@@ -14,6 +14,7 @@
 import { createHash } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
+import { validateManifest } from './modpack-utils.mjs'
 
 const modpackFile = path.resolve(process.env.MODPACK_FILE || './modpack.json')
 const conc = Math.max(1, Number(process.env.MODPACK_CONC) || 4)
@@ -57,6 +58,17 @@ async function downloadHash(url) {
 
 async function main() {
   const manifest = await readManifest()
+
+  // This script's whole job is rewriting the manifest, so it must not be able to write one that
+  // sends the mods to the wrong place. Refreshing the hashes cannot fix a bad `path`, only carry it.
+  const problems = validateManifest(manifest)
+  if (problems.length > 0) {
+    console.error(`\nERROR: refusing to rewrite, manifest has ${problems.length} problem(s):`)
+    for (const problem of problems) console.error(`  - ${problem}`)
+    console.error('\nMods must live in "modpack/mods/": the game loads them from the mods folder.')
+    process.exit(1)
+  }
+
   const mods = manifest.files.filter((f) => f.type === 'MOD')
 
   console.log(`Refreshing ${mods.length} files from the server...`)

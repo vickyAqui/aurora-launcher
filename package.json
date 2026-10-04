@@ -11,6 +11,8 @@
     "postinstall": "node scripts/apply-patches.mjs",
     "dev": "vite",
     "build": "tsc && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "release:win": "npm run build && electron-builder --win",
     "release:mac": "npm run build && electron-builder --mac",
     "release:lin": "npm run build && electron-builder --linux",
@@ -141,6 +143,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vite": "^8.0.10",
-    "vite-plugin-electron": "^0.29.1"
+    "vite-plugin-electron": "^0.29.1",
+    "vitest": "^4.1.11"
   }
 }

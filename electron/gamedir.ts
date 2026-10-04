@@ -3,6 +3,8 @@ import path from 'node:path'
 import { DEFAULT_PROFILE, ROOT_DIR } from './const'
 
 export function getAppDataDir(): string {
+  // Escape hatch for portable installs and for tests, which need a throwaway game directory.
+  if (process.env.AURORA_APPDATA_DIR) return process.env.AURORA_APPDATA_DIR
   if (process.platform === 'win32') return process.env.APPDATA || ''
   if (process.platform === 'darwin') return path.join(os.homedir(), 'Library', 'Application Support')
   return os.homedir()

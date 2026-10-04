@@ -9,7 +9,7 @@
  */
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
-import { sha1, walk } from './modpack-utils.mjs'
+import { buildManifestEntries, validateManifest, walk } from './modpack-utils.mjs'
 
 const modpackDir = path.resolve(process.env.MODPACK_DIR || './modpack')
 const outputPath = path.resolve(process.env.MODPACK_OUT || './modpack.json')
@@ -23,35 +23,17 @@ async function main() {
 
   console.log(`Scanning ${modpackDir}...`)
   const { folders, files } = await walk(modpackDir)
+  const modpackFiles = await buildManifestEntries({ folders, files, baseUrl })
 
-  const modpackFiles = []
-  for (const folder of folders) {
-    const parent = folder.rel.includes('/') ? `${folder.rel.substring(0, folder.rel.lastIndexOf('/'))}/` : ''
-    modpackFiles.push({
-      name: folder.name,
-      path: parent,
-      url: `${baseUrl}/${folder.name}`,
-      type: 'FOLDER'
-    })
+  const problems = validateManifest({ files: modpackFiles })
+  if (problems.length > 0) {
+    console.error(`\nERROR: generated manifest has ${problems.length} problem(s):`)
+    for (const problem of problems) console.error(`  - ${problem}`)
+    console.error('\nMods must live in "modpack/mods/": the game loads them from the mods folder.')
+    process.exit(1)
   }
 
-  for (const file of files) {
-    const parent = file.rel.includes('/') ? `${file.rel.substring(0, file.rel.lastIndexOf('/'))}/` : ''
-    const size = (await fs.stat(file.full)).size
-    const hash = await sha1(file.full)
-    modpackFiles.push({
-      name: file.name,
-      path: parent,
-      size,
-      sha1: hash,
-      url: `${baseUrl}/${file.name}`,
-      type: 'MOD'
-    })
-    process.stdout.write(`\r${modpackFiles.length}/${files.length + folders.length} files...`)
-  }
-
-  const manifest = { files: modpackFiles }
-  await fs.writeFile(outputPath, JSON.stringify(manifest, null, 2) + '\n')
+  await fs.writeFile(outputPath, JSON.stringify({ files: modpackFiles }, null, 2) + '\n')
   console.log(`\nGenerated ${outputPath} (${modpackFiles.length} entries)`)
 }
 

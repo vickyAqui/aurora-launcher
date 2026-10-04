@@ -4,227 +4,260 @@ import path from 'node:path'
 import logger from 'electron-log/main'
 import { MODPACK_URL, DEFAULT_PROFILE } from '../const'
 import { getGameDir, getModsDir } from '../gamedir'
+import {
+  buildLaunchManifest,
+  buildModEntries,
+  disabledPathOf,
+  emptyChoices,
+  findForeignModFiles,
+  findStrayModFiles,
+  indexManifest,
+  isModFileName,
+  isSafeName,
+  listDiskMods,
+  parseChoices,
+  parseManifest,
+  serializeChoices,
+  toCanonicalName,
+  type IModChoices,
+  type IModEntry,
+  type IModpackManifest
+} from '../mods'
 
-export interface IModpackFile {
-  name: string
-  path: string
-  size: number
-  sha1: string
-  url: string
-  type: string
-}
-
-export interface IModpackManifest {
-  files: IModpackFile[]
-}
-
-export interface IModEntry {
-  name: string
-  enabled: boolean
-  installed: boolean
-  size: number
-  sha1: string
-  inManifest: boolean
-}
-
-/**
- * Forge only loads files ending in `.jar`, so a disabled mod is the same file
- * with this suffix appended — the convention the modpack itself already uses
- * for mods shipped turned off.
- */
-export const DISABLED_SUFFIX = '.disabled'
+export type { IModEntry }
 
 const DISABLED_STORE = 'disabled-mods.json'
 
-function toCanonicalName(name: string): string {
-  return name.endsWith(DISABLED_SUFFIX) ? name.slice(0, -DISABLED_SUFFIX.length) : name
-}
+/** The modpack manifest changes only when a new modpack is published; a short cache avoids refetching it on every tab open. */
+const MANIFEST_TTL_MS = 60_000
 
-function disabledPathOf(name: string): string {
-  return `${name}${DISABLED_SUFFIX}`
-}
-
-function isSafeName(name: string): boolean {
-  return !!name && name === path.basename(name) && !name.includes('..')
-}
+/** Cached successful fetch; `null` means nothing is cached yet. */
+let manifestCache: { at: number; manifest: IModpackManifest } | null = null
 
 function getDisabledStorePath(slug: string = DEFAULT_PROFILE.slug): string {
   return path.join(getGameDir(slug), DISABLED_STORE)
 }
 
-/**
- * The launcher re-downloads every modpack entry whose file is missing, so a mod
- * renamed to `.jar.disabled` comes back on the next launch. The player's choice
- * is kept here and re-applied right before the game boots.
- */
-function readDisabledMods(slug: string = DEFAULT_PROFILE.slug): Set<string> {
+function readChoices(slug: string = DEFAULT_PROFILE.slug): IModChoices {
   try {
-    const raw = fs.readFileSync(getDisabledStorePath(slug), 'utf8')
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return new Set()
-    return new Set(parsed.filter((name): name is string => typeof name === 'string' && isSafeName(name)))
+    return parseChoices(fs.readFileSync(getDisabledStorePath(slug), 'utf8'))
   } catch {
-    return new Set()
+    return emptyChoices()
   }
 }
 
-function writeDisabledMods(disabled: Set<string>, slug: string = DEFAULT_PROFILE.slug): boolean {
+function writeChoices(choices: IModChoices, slug: string = DEFAULT_PROFILE.slug): boolean {
   try {
     const storePath = getDisabledStorePath(slug)
     fs.mkdirSync(path.dirname(storePath), { recursive: true })
-    fs.writeFileSync(storePath, JSON.stringify([...disabled].sort(), null, 2) + '\n')
+    fs.writeFileSync(storePath, serializeChoices(choices))
     return true
   } catch (err) {
-    logger.error('Error saving disabled mods:', err)
+    logger.error('Error saving mod choices:', err)
     return false
   }
 }
 
-export async function fetchModpack(): Promise<IModpackManifest | null> {
+export async function fetchModpack(force = false): Promise<IModpackManifest | null> {
+  if (!force && manifestCache && Date.now() - manifestCache.at < MANIFEST_TTL_MS) return manifestCache.manifest
+
+  let manifest: IModpackManifest | null = null
   try {
     const res = await fetch(MODPACK_URL)
-    if (!res.ok) return null
-    return await res.json()
+    if (res.ok) {
+      const parsed = parseManifest(await res.json())
+      if (parsed) manifest = parsed
+      else logger.error('Modpack manifest is not in the expected format.')
+    }
   } catch (err) {
     logger.error('Failed to fetch modpack:', err)
-    return null
-  }
-}
-
-function listDiskMods(modsDir: string): Map<string, { enabled: boolean; size: number }> {
-  const found = new Map<string, { enabled: boolean; size: number }>()
-  if (!fs.existsSync(modsDir)) return found
-
-  for (const entry of fs.readdirSync(modsDir, { withFileTypes: true })) {
-    if (!entry.isFile()) continue
-
-    const disabled = entry.name.endsWith(DISABLED_SUFFIX)
-    const base = toCanonicalName(entry.name)
-    if (!base.toLowerCase().endsWith('.jar')) continue
-
-    const size = fs.statSync(path.join(modsDir, entry.name)).size
-    const current = found.get(base)
-
-    if (current) {
-      current.size = Math.max(current.size, size)
-      if (disabled) current.enabled = false
-      continue
-    }
-    found.set(base, { enabled: !disabled, size })
   }
 
-  return found
+  // A failed fetch keeps the previous manifest in place, so a hiccup never empties the Mods tab.
+  if (manifest) manifestCache = { at: Date.now(), manifest }
+
+  return manifest
 }
 
 async function listMods(slug: string = DEFAULT_PROFILE.slug): Promise<{ mods: IModEntry[]; modsDir: string }> {
-  const modsDir = getModsDir(slug)
   const manifest = await fetchModpack()
-  const disk = listDiskMods(modsDir)
-
-  const manifestByName = new Map<string, IModpackFile>()
-  for (const file of manifest?.files ?? []) {
-    if (file.type !== 'MOD') continue
-    manifestByName.set(toCanonicalName(file.name), file)
-  }
-
-  const names = new Set([...manifestByName.keys(), ...disk.keys()])
-  const disabledByUser = readDisabledMods(slug)
-  const mods: IModEntry[] = []
-
-  for (const name of [...names].sort((a, b) => a.localeCompare(b))) {
-    const file = manifestByName.get(name)
-    const onDisk = disk.get(name)
-
-    mods.push({
-      name,
-      enabled: !!onDisk && onDisk.enabled && !disabledByUser.has(name),
-      installed: onDisk !== undefined,
-      size: file?.size ?? onDisk?.size ?? 0,
-      sha1: file?.sha1 ?? '',
-      inManifest: file !== undefined
-    })
-  }
-
-  return { mods, modsDir }
+  return { mods: buildModEntries(manifest, listDiskMods(getModsDir(slug)), readChoices(slug)), modsDir: getModsDir(slug) }
 }
 
-function setModEnabled(name: string, enabled: boolean, slug: string = DEFAULT_PROFILE.slug): boolean {
-  if (!isSafeName(name)) return false
-
-  const modsDir = getModsDir(slug)
+/**
+ * Renames a mod between its enabled and disabled file name.
+ *
+ * Returns whether the folder ended up in the requested state; when it already was, the rename is
+ * skipped but the stored choice is still updated, which is what lets the player turn on a mod that
+ * has not been downloaded yet.
+ */
+function applyFileState(modsDir: string, name: string, enabled: boolean): boolean {
   const enabledPath = path.join(modsDir, name)
   const disabledPath = path.join(modsDir, disabledPathOf(name))
   const hasEnabled = fs.existsSync(enabledPath)
   const hasDisabled = fs.existsSync(disabledPath)
 
-  if (!hasEnabled && !hasDisabled) return false
+  if (enabled) {
+    if (hasEnabled) {
+      // The enabled copy is the one the game loads; drop any leftover disabled copy.
+      if (hasDisabled) fs.rmSync(disabledPath, { force: true })
+      return true
+    }
+    if (hasDisabled) {
+      fs.renameSync(disabledPath, enabledPath)
+      return true
+    }
+    return false
+  }
 
-  const disabledByUser = readDisabledMods(slug)
-  const next = new Set(disabledByUser)
-  enabled ? next.delete(name) : next.add(name)
+  if (hasDisabled) {
+    if (hasEnabled) fs.rmSync(enabledPath, { force: true })
+    return true
+  }
+  if (hasEnabled) {
+    fs.renameSync(enabledPath, disabledPath)
+    return true
+  }
+  return false
+}
+
+function setModEnabled(name: string, enabled: boolean, slug: string = DEFAULT_PROFILE.slug): boolean {
+  if (!isSafeName(name) || !isModFileName(name)) return false
+
+  const modsDir = getModsDir(slug)
+  const canonical = toCanonicalName(name)
+  const choices = readChoices(slug)
+
+  const next: IModChoices = {
+    disabled: new Set(choices.disabled),
+    enabledOverrides: new Set(choices.enabledOverrides)
+  }
+
+  if (enabled) {
+    next.disabled.delete(canonical)
+    next.enabledOverrides.add(canonical)
+  } else {
+    next.disabled.add(canonical)
+    next.enabledOverrides.delete(canonical)
+  }
 
   try {
-    if (enabled) {
-      // `<name>.jar` is the copy the game loads, and the downloader keeps it
-      // up to date, so it always wins over a leftover disabled copy.
-      if (hasDisabled && !hasEnabled) {
-        fs.renameSync(disabledPath, enabledPath)
-      } else {
-        fs.rmSync(disabledPath, { force: true })
-      }
-    } else if (hasEnabled) {
-      fs.rmSync(disabledPath, { force: true })
-      fs.renameSync(enabledPath, disabledPath)
-    }
-
-    if (!writeDisabledMods(next, slug)) {
-      // Undo the file move so disk and stored state stay in agreement.
-      if (enabled && hasDisabled && !hasEnabled) {
-        fs.renameSync(enabledPath, disabledPath)
-      } else if (!enabled && hasEnabled) {
-        fs.renameSync(disabledPath, enabledPath)
-      }
-      return false
-    }
-    logger.log(`${enabled ? 'Enabled' : 'Disabled'} mod: ${name}`)
-    return true
+    applyFileState(modsDir, canonical, enabled)
   } catch (err) {
     logger.error(`Error toggling mod ${name}:`, err)
     return false
   }
+
+  if (!writeChoices(next, slug)) return false
+
+  logger.log(`${enabled ? 'Enabled' : 'Disabled'} mod: ${canonical}`)
+  return true
 }
 
 /**
- * Re-applies the player's disabled mods right before the game boots, undoing the
- * re-download the launcher does for any modpack entry it cannot find on disk.
+ * Re-applies the player's choices to the folder right before the game boots.
+ *
+ * Only needed when the launch manifest could not be filtered (the modpack manifest is unreachable),
+ * because `eml-lib` downloads every entry it is given, ignoring this store.
  */
-export function applyDisabledMods(slug: string = DEFAULT_PROFILE.slug): number {
-  const disabledByUser = readDisabledMods(slug)
-  if (disabledByUser.size === 0) return 0
+export function applyModChoices(slug: string = DEFAULT_PROFILE.slug, shippedDisabled?: Set<string>): number {
+  const choices = readChoices(slug)
+  const off = new Set<string>()
+  for (const name of shippedDisabled ?? []) {
+    if (!choices.enabledOverrides.has(name)) off.add(name)
+  }
+  for (const name of choices.disabled) off.add(name)
+  if (off.size === 0) return 0
 
   const modsDir = getModsDir(slug)
   let applied = 0
 
-  for (const name of disabledByUser) {
+  for (const name of off) {
     const enabledPath = path.join(modsDir, name)
-    const disabledPath = path.join(modsDir, disabledPathOf(name))
-
     if (!fs.existsSync(enabledPath)) continue
 
     try {
-      // The downloader re-fetches a mod as soon as its `<name>.jar` is missing, so
-      // both files can exist. Keep the freshly downloaded one as the disabled copy
-      // instead of leaving a live `<name>.jar` behind.
+      // The downloader may have re-fetched a mod as soon as its `<name>.jar` was missing, so both
+      // files can exist. Keep the freshly downloaded one as the disabled copy instead of leaving a
+      // live `<name>.jar` behind.
+      const disabledPath = path.join(modsDir, disabledPathOf(name))
       if (fs.existsSync(disabledPath)) fs.rmSync(disabledPath, { force: true })
       fs.renameSync(enabledPath, disabledPath)
       applied++
-      logger.log(`Re-applied disabled mod before launch: ${name}`)
+      logger.log(`Re-applied mod choice before launch: ${name}`)
     } catch (err) {
-      logger.error(`Error re-applying disabled mod ${name}:`, err)
+      logger.error(`Error re-applying mod choice ${name}:`, err)
     }
   }
 
   return applied
+}
+
+function migrateStrayMods(manifest: IModpackManifest | null, slug: string = DEFAULT_PROFILE.slug): number {
+  const gameDir = getGameDir(slug)
+  const modsDir = getModsDir(slug)
+  const strays = findStrayModFiles(gameDir, manifest)
+  if (strays.length === 0) return 0
+
+  let moved = 0
+  for (const name of strays) {
+    try {
+      fs.mkdirSync(modsDir, { recursive: true })
+      fs.renameSync(path.join(gameDir, name), path.join(modsDir, name))
+      moved++
+    } catch (err) {
+      logger.error(`Failed to move stray mod ${name} into the mods folder:`, err)
+    }
+  }
+
+  if (moved > 0) logger.log(`Moved ${moved} mod(s) into the mods folder (they were in the game directory root).`)
+  return moved
+}
+
+function pruneForeignMods(manifest: IModpackManifest | null, slug: string = DEFAULT_PROFILE.slug): number {
+  const modsDir = getModsDir(slug)
+  const foreign = findForeignModFiles(modsDir, manifest)
+  if (foreign.length === 0) return 0
+
+  let removed = 0
+  for (const name of foreign) {
+    try {
+      fs.rmSync(path.join(modsDir, name), { force: true })
+      removed++
+      logger.log(`Removed mod not in the modpack: ${name}`)
+    } catch (err) {
+      logger.error(`Failed to remove ${name}:`, err)
+    }
+  }
+  return removed
+}
+
+export interface IPreparedMods {
+  /** Manifest to hand to `eml-lib`, or `null` when the modpack could not be fetched. */
+  manifest: IModpackManifest | null
+  shippedDisabled: Set<string>
+}
+
+/**
+ * Puts the mods folder in the expected state and builds the manifest for this launch.
+ *
+ * Runs before the downloader so a jar that the player turned off is never fetched again, a jar left
+ * in the game directory root by an older build is reused instead of re-downloaded, and a jar the
+ * modpack no longer ships is dropped.
+ */
+export async function prepareMods(slug: string = DEFAULT_PROFILE.slug): Promise<IPreparedMods> {
+  const manifest = await fetchModpack()
+  const index = indexManifest(manifest)
+
+  if (!manifest) {
+    logger.warn('Modpack manifest unavailable; falling back to the remote manifest without filtering.')
+    return { manifest: null, shippedDisabled: index.shippedDisabled }
+  }
+
+  migrateStrayMods(manifest, slug)
+  pruneForeignMods(manifest, slug)
+
+  return { manifest: buildLaunchManifest(manifest, readChoices(slug)), shippedDisabled: index.shippedDisabled }
 }
 
 export function registerModsHandlers() {
@@ -257,28 +290,4 @@ export function registerModsHandlers() {
       return false
     }
   })
-}
-
-export async function syncModsWithManifest(slug: string = DEFAULT_PROFILE.slug): Promise<number> {
-  const manifest = await fetchModpack()
-  if (!manifest) return 0
-
-  const modsDir = getModsDir(slug)
-  const validNames = new Set(manifest.files.filter((f) => f.type === 'MOD').map((f) => toCanonicalName(f.name)))
-  for (const name of [...validNames]) validNames.add(disabledPathOf(name))
-
-  if (!fs.existsSync(modsDir)) return 0
-
-  let removed = 0
-  for (const entry of fs.readdirSync(modsDir)) {
-    if (validNames.has(entry)) continue
-    try {
-      fs.rmSync(path.join(modsDir, entry), { recursive: true, force: true })
-      removed++
-      logger.log(`Removed mod not in the modpack: ${entry}`)
-    } catch (err) {
-      logger.error(`Failed to remove ${entry}:`, err)
-    }
-  }
-  return removed
 }

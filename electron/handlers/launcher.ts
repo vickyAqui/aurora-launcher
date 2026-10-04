@@ -3,9 +3,17 @@ import { Launcher } from 'eml-lib'
 import type { Account } from 'eml-lib'
 import type { IGameSettings } from './settings'
 import logger from 'electron-log/main'
-import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
+import { DEFAULT_PROFILE, MINECRAFT, MODPACK_URL, ROOT_DIR } from '../const'
 import { endSession, startSession } from './stats'
-import { applyDisabledMods } from './mods'
+import { applyModChoices, prepareMods } from './mods'
+
+/**
+ * Hands the filtered manifest to `eml-lib` through a `data:` URL, so the downloader only ever sees
+ * the mods this player should have: the right `path`, and the right file name for a mod that is off.
+ */
+function toDataUrl(manifest: unknown): string {
+  return 'data:application/json;base64,' + Buffer.from(JSON.stringify(manifest), 'utf8').toString('base64')
+}
 
 export function registerLauncherHandlers(mainWindow: BrowserWindow) {
   ipcMain.handle('game:launch', async (_event, payload: { account: Account; settings: IGameSettings; profileSlug: string }) => {
@@ -22,11 +30,17 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
 
     logger.log('Launching')
 
+    const slug = profileSlug || DEFAULT_PROFILE.slug
+    const prepared = await prepareMods(slug)
+    const minecraft = { ...MINECRAFT, modpackUrl: prepared.manifest ? toDataUrl(prepared.manifest) : MODPACK_URL }
+
+    if (!prepared.manifest) logger.warn('Using the remote modpack manifest unfiltered.')
+
     const launcher = new Launcher({
       root: ROOT_DIR,
       profile: { slug: profileSlug || DEFAULT_PROFILE.slug },
       account: account,
-      minecraft: MINECRAFT,
+      minecraft: minecraft,
       cleaning: {
         enabled: false
       },
@@ -134,8 +148,13 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     launcher.on('launch_launch', (info) => {
       logger.log(`Launching Minecraft ${info.version} (${info.type}${info.loaderVersion ? ` ${info.loaderVersion}` : ''})...`)
 
-      const reapplied = applyDisabledMods(profileSlug || DEFAULT_PROFILE.slug)
-      if (reapplied > 0) logger.log(`Re-applied ${reapplied} disabled mod(s) before launch.`)
+      // The filtered manifest normally keeps the mods folder in the player's chosen state. When it
+      // could not be fetched, the remote manifest is used as-is and the choices are re-applied here
+      // so no mod the player turned off is loaded by the game.
+      if (!prepared.manifest) {
+        const reapplied = applyModChoices(slug, prepared.shippedDisabled)
+        if (reapplied > 0) logger.log(`Re-applied ${reapplied} mod choice(s) before launch.`)
+      }
 
       mainWindow.webContents.send('game:launch_launch', info)
       startSession()
