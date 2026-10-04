@@ -2,16 +2,22 @@
 /**
  * Applies local patches to dependencies after install.
  *
- * Idempotent: a patch already in place is detected with a reverse dry-run and skipped, so
- * re-running the script never produces rejects or a non-zero exit code.
+ * Idempotent by content, not by exit code: `patch -R --dry-run` is not trustworthy across
+ * platforms. GNU patch exits non-zero when it skips a reversed hunk, so Linux re-applies
+ * correctly, but the BSD patch on macOS exits 0 there, the script decided the patch was
+ * already in place, skipped it, and the build broke on src/views/home.ts (the patched
+ * eml-lib types are where `progress.filename` comes from). So the decision is made by
+ * looking for a line that only exists once the patch is applied.
+ *
+ * A patch that cannot be confirmed fails the install by default: eml-lib unpatched means
+ * `tsc` fails, and a warning at install time just moves the failure somewhere more
+ * confusing. Set PATCH_SOFT=1 to downgrade that to a warning and keep working unpatched.
  *
  * Environment variables:
- *   PATCH_STRICT=1  fail the install when a patch cannot be applied
- *                   (default: warn and continue, since the launcher still runs unpatched)
+ *   PATCH_SOFT=1  warn instead of failing the install when a patch cannot be applied/confirmed
  */
 import { execSync } from 'node:child_process'
-import fs from 'node:fs'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -20,31 +26,29 @@ const root = join(__dirname, '..')
 const patchDir = join(root, 'patches')
 const nmDir = join(root, 'node_modules')
 
-const patches = [{ name: 'eml-lib', version: '2.3.5' }]
+const patches = [
+  {
+    name: 'eml-lib',
+    version: '2.3.5',
+    // Linha que o patch adiciona em types/events.d.ts: a progressão de download por mod.
+    verify: { file: 'types/events.d.ts', includes: 'filename?: string' },
+  },
+]
 
 const run = (command, cwd) =>
   execSync(command, { cwd, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
 
-/** Collects leftover `.rej` files, without descending into nested dependencies. */
-function findRejects(dir, depth = 0) {
-  if (depth > 6) return []
-  let entries = []
+/** O patch está aplicado? Pergunta para o arquivo, não para o exit code do patch(1). */
+function isApplied({ verify }, pkgDir) {
   try {
-    entries = fs.readdirSync(dir, { withFileTypes: true })
+    return readFileSync(join(pkgDir, verify.file), 'utf8').includes(verify.includes)
   } catch {
-    return []
+    return false
   }
-
-  const found = []
-  for (const entry of entries) {
-    const full = join(dir, entry.name)
-    if (entry.isFile() && entry.name.endsWith('.rej')) found.push(full)
-    else if (entry.isDirectory() && entry.name !== 'node_modules') found.push(...findRejects(full, depth + 1))
-  }
-  return found
 }
 
-for (const { name, version } of patches) {
+for (const patch of patches) {
+  const { name, version } = patch
   const patchFile = join(patchDir, `${name}+${version}.patch`)
   const pkgDir = join(nmDir, name)
 
@@ -56,42 +60,34 @@ for (const { name, version } of patches) {
     console.log(`[apply-patches] Package ${name} not installed, skipping.`)
     continue
   }
-  if (process.platform === 'win32') {
-    console.warn(`[apply-patches] Skipping ${name}: the "patch" command is not available on Windows.`)
-    continue
-  }
-
-  // A reverse dry-run that succeeds means the patch is already in place. Running `patch --forward`
-  // anyway would exit non-zero and litter the package with `.rej` files.
-  try {
-    run(`patch -p1 -R --dry-run --no-backup-if-mismatch < "${patchFile}"`, pkgDir)
+  if (isApplied(patch, pkgDir)) {
     console.log(`[apply-patches] ${name}@${version} is already patched, nothing to do.`)
     continue
-  } catch {
-    // Not applied yet (or drifted): fall through and apply it.
   }
 
   console.log(`[apply-patches] Applying patch for ${name}@${version}...`)
+  let output = ''
   try {
-    const output = run(`patch -p1 --no-backup-if-mismatch < "${patchFile}"`, pkgDir)
+    output = run(`patch -p1 --forward --no-backup-if-mismatch < "${patchFile}"`, pkgDir)
     console.log(`[apply-patches] ${name} patched successfully.`)
     if (output.trim()) console.log(output.trim())
   } catch (err) {
-    console.error(`[apply-patches] Failed to patch ${name}:\n${err.stdout ?? ''}${err.stderr ?? ''}`.trim())
-    if (process.env.PATCH_STRICT === '1') {
-      process.exitCode = 1
-      continue
-    }
-    console.warn(
-      `[apply-patches] Continuing without the ${name} patch. The launcher still runs, but downloads lose the extra integrity checks the patch adds. Re-run with PATCH_STRICT=1 to make this fatal.`
-    )
+    output = `${err.stdout ?? ''}${err.stderr ?? ''}`.trim()
+    console.error(`[apply-patches] patch(1) failed for ${name}:\n${output}`)
   }
 
-  // A reject means some hunks did not fit: a silently half-patched dependency is worse than a
-  // known-unpatched one, so name the files that still need attention.
-  const rejects = findRejects(pkgDir)
-  if (rejects.length > 0) {
-    console.warn(`[apply-patches] Warning: ${rejects.length} hunk(s) of ${name} could not be applied:`)
-    for (const reject of rejects) console.warn(`  - ${reject}`)
+  if (!isApplied(patch, pkgDir)) {
+    const detail = output || `${patch.verify.includes} não apareceu em ${patch.verify.file}`
+    console.error(`[apply-patches] ${name}@${version} segue sem patch: ${detail}`)
+    if (process.env.PATCH_SOFT === '1') {
+      console.warn(
+        `[apply-patches] Seguindo sem o patch do ${name} (PATCH_SOFT=1). O build vai falhar em src/views/home.ts.`
+      )
+      continue
+    }
+    console.error(
+      `[apply-patches] Falhando o install: sem o patch do ${name} o launcher não compila. Re-run com PATCH_SOFT=1 para ignorar.`
+    )
+    process.exitCode = 1
   }
 }
