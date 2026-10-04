@@ -99,8 +99,42 @@ O modpack é sincronizado entre o repositório e os clientes via um arquivo `mod
 
 > **Scripts disponíveis**:
 > - `modpack:build` — gera `modpack.json` localmente (rápido, sem upload)
-> - `modpack:publish` — sobe mods no GitHub Releases e gera o manifest (lento, para novos mods)
+> - `modpack:publish` — sobe mods no GitHub Releases, gera e **assina** o manifest (lento, para novos mods)
 > - `modpack:update` — recalcula hashes de mods já hospedados (sem reenviar arquivos)
+
+#### Assinatura do manifest
+
+O launcher só aceita um `modpack.json` **assinado**. A assinatura (Ed25519) é publicada no mesmo
+release, em `modpack.sig.json`, e o lançamento é recusado quando ela falta, foi feita por uma chave
+que o launcher não conhece ou não corresponde aos bytes recebidos. Por isso `modpack:publish` se
+recusa a publicar sem chave — trocar um manifesto assinado por um sem assinatura bloquearia o
+lançamento de todo mundo.
+
+1.  Gere o par de chaves (uma vez por máquina que publica):
+
+    ```bash
+    mkdir -p ~/.config/aurora-launcher
+    openssl genpkey -algorithm ed25519 -out ~/.config/aurora-launcher/modpack-signing-key.pem
+    chmod 600 ~/.config/aurora-launcher/modpack-signing-key.pem
+    openssl pkey -in ~/.config/aurora-launcher/modpack-signing-key.pem -pubout
+    ```
+
+2.  Guarde a chave privada em `.env` — o `modpack:publish` carrega esse arquivo sozinho, não precisa
+    exportar nada no terminal:
+
+    ```
+    MODPACK_SIGNING_KEY_B64=<base64 do arquivo PEM>
+    ```
+
+    > **Faça backup da chave privada.** Ela não está no repositório em lugar nenhum: sem ela você não
+    > consegue mais publicar modpack novo, porque o `modpack:publish` recusa assinar sem chave — e
+    > publicar sem assinatura faria os launchers novos recusarem o manifesto.
+
+3.  Registre a chave **pública** em `electron/manifest-keys.ts`, dentro de `MANIFEST_KEYS`, com o
+    `keyId` que `scripts/manifest-signature.mjs` imprime ao assinar.
+
+> **Rotação**: publique com a chave nova e só então remova a antiga de `MANIFEST_KEYS`. Ao contrário,
+> todo launcher que ainda não conhece a chave nova recusa o manifesto.
 
 ### Customização de ícones
 

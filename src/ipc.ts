@@ -74,6 +74,9 @@ declare global {
       game: {
         launch: (payload: { account: Account; settings: IGameSettings, profileSlug: string }) => Promise<void>
 
+        /** The launch was refused before the game started; carries the reason it was refused. */
+        launchError: (callback: (reason: string) => void) => () => void
+
         launchComputeDownload: (callback: () => void) => () => void
 
         launchDownload: (callback: (value: LauncherEvents['launch_download'][0]) => void) => () => void
@@ -207,6 +210,7 @@ export const bootstraps = {
 
 export const game = {
   launch: async (payload: { account: Account; settings: IGameSettings, profileSlug: string }) => await window.api.game.launch(payload),
+  launchError: (callback: (reason: string) => void) => window.api.game.launchError(callback),
   launchComputeDownload: (callback: () => void) => window.api.game.launchComputeDownload(callback),
   launchDownload: (callback: (value: LauncherEvents['launch_download'][0]) => void) => window.api.game.launchDownload(callback),
   downloadProgress: (callback: (value: DownloaderEvents['download_progress'][0]) => void) => window.api.game.downloadProgress(callback),

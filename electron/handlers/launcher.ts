@@ -3,9 +3,9 @@ import { Launcher } from 'eml-lib'
 import type { Account } from 'eml-lib'
 import type { IGameSettings } from './settings'
 import logger from 'electron-log/main'
-import { DEFAULT_PROFILE, MINECRAFT, MODPACK_URL, ROOT_DIR } from '../const'
+import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
 import { endSession, startSession } from './stats'
-import { applyModChoices, prepareMods } from './mods'
+import { ModpackUnavailableError, prepareMods, type IPreparedMods } from './mods'
 
 /**
  * Hands the filtered manifest to `eml-lib` through a `data:` URL, so the downloader only ever sees
@@ -31,10 +31,21 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     logger.log('Launching')
 
     const slug = profileSlug || DEFAULT_PROFILE.slug
-    const prepared = await prepareMods(slug)
-    const minecraft = { ...MINECRAFT, modpackUrl: prepared.manifest ? toDataUrl(prepared.manifest) : MODPACK_URL }
 
-    if (!prepared.manifest) logger.warn('Using the remote modpack manifest unfiltered.')
+    // `prepareMods` throws when the manifest cannot be verified; the launch is refused rather than
+    // continued on a manifest of unknown origin. The reason goes to the window, because
+    // `game:launch` is invoked fire-and-forget and a rejection here would leave the UI waiting.
+    let prepared: IPreparedMods
+    try {
+      prepared = await prepareMods(slug)
+    } catch (err) {
+      const reason = err instanceof ModpackUnavailableError ? err.reason : (err as Error).message
+      logger.error('Launch refused:', err)
+      mainWindow.webContents.send('game:launch_error', reason)
+      return
+    }
+
+    const minecraft = { ...MINECRAFT, modpackUrl: toDataUrl(prepared.manifest) }
 
     const launcher = new Launcher({
       root: ROOT_DIR,
@@ -147,14 +158,6 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
 
     launcher.on('launch_launch', (info) => {
       logger.log(`Launching Minecraft ${info.version} (${info.type}${info.loaderVersion ? ` ${info.loaderVersion}` : ''})...`)
-
-      // The filtered manifest normally keeps the mods folder in the player's chosen state. When it
-      // could not be fetched, the remote manifest is used as-is and the choices are re-applied here
-      // so no mod the player turned off is loaded by the game.
-      if (!prepared.manifest) {
-        const reapplied = applyModChoices(slug, prepared.shippedDisabled)
-        if (reapplied > 0) logger.log(`Re-applied ${reapplied} mod choice(s) before launch.`)
-      }
 
       mainWindow.webContents.send('game:launch_launch', info)
       startSession()

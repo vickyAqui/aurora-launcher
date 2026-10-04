@@ -68,9 +68,20 @@ export function parseManifest(data: unknown): IModpackManifest | null {
   return { files: valid }
 }
 
-export interface IModpackManifest {
-  files: IModpackFile[]
+/** How a file the modpack does not ship has to be removed. */
+export interface IForeignModFile {
+  /** Path relative to the mods folder, using `/` so a log line reads the same on every platform. */
+  rel: string
+  kind: 'file' | 'symlink' | 'dir'
 }
+
+/**
+ * How deep the mods folder is walked looking for jars the modpack does not ship.
+ *
+ * The modpack is a flat list of mods, so anything nested this deep is not part of it and is reported
+ * as a whole folder rather than descended into.
+ */
+export const MAX_MOD_SCAN_DEPTH = 8
 
 export interface IModEntry {
   name: string
@@ -308,24 +319,55 @@ export function buildLaunchManifest(
 /**
  * Names in the mods folder that the modpack does not ship, in either file form.
  *
- * Only jar files are reported: anything else in the folder belongs to the player (configs,
- * sub-folders) and is never touched.
+ * The walk is recursive because Forge walks `mods/` recursively too, so a jar tucked in a
+ * sub-folder is loaded by the game just the same. A symlink is reported as well: it is the cheap way
+ * to point the game at a jar that lives anywhere else on the disk, and it is never something the
+ * modpack ships.
+ *
+ * Only jars are reported: anything else in the folder belongs to the player (configs, resource
+ * packs, screenshots) and is never touched.
  */
-export function findForeignModFiles(modsDir: string, manifest: IModpackManifest | null | undefined): string[] {
+export function findForeignModFiles(modsDir: string, manifest: IModpackManifest | null | undefined): IForeignModFile[] {
   const index = indexManifest(manifest)
   if (index.byName.size === 0 || !fs.existsSync(modsDir)) return []
 
-  let entries: fs.Dirent[]
-  try {
-    entries = fs.readdirSync(modsDir, { withFileTypes: true })
-  } catch {
-    return []
+  const foreign: IForeignModFile[] = []
+
+  const walk = (dir: string, prefix: string, depth: number): void => {
+    let entries: fs.Dirent[]
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true })
+    } catch {
+      return
+    }
+
+    // Past this depth the whole folder is reported instead of what is inside it: an unreadable
+    // corner of the mods folder must not become a place a jar can hide from the check.
+    if (depth > MAX_MOD_SCAN_DEPTH && prefix !== '') {
+      foreign.push({ rel: prefix, kind: 'dir' })
+      return
+    }
+
+    for (const entry of entries) {
+      const rel = prefix === '' ? entry.name : `${prefix}/${entry.name}`
+
+      if (entry.isSymbolicLink()) {
+        foreign.push({ rel, kind: 'symlink' })
+        continue
+      }
+      if (entry.isDirectory()) {
+        walk(path.join(dir, entry.name), rel, depth + 1)
+        continue
+      }
+      if (!entry.isFile() || !isModFileName(entry.name)) continue
+      if (index.byName.has(toCanonicalName(entry.name))) continue
+
+      foreign.push({ rel, kind: 'file' })
+    }
   }
 
-  return entries
-    .filter((entry) => entry.isFile() && isModFileName(entry.name))
-    .map((entry) => entry.name)
-    .filter((name) => !index.byName.has(toCanonicalName(name)))
+  walk(modsDir, '', 0)
+  return foreign
 }
 
 /**

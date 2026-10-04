@@ -50,6 +50,19 @@ contextBridge.exposeInMainWorld('api', {
       return () => ipcRenderer.removeListener('game:launch_compute_download', listener)
     },
 
+    /**
+     * The launch was refused before the game started, with the reason it was refused.
+     *
+     * A separate channel rather than the rejection of `game:launch`: that call is fire-and-forget, so
+     * nothing it throws would ever reach the window and the Play button would stay stuck on
+     * "preparing" with no way back.
+     */
+    launchError: (callback: (reason: string) => void) => {
+      const listener = (_event: unknown, reason: string) => callback(reason)
+      ipcRenderer.on('game:launch_error', listener)
+      return () => ipcRenderer.removeListener('game:launch_error', listener)
+    },
+
     launchDownload: (callback: (value: LauncherEvents['launch_download'][0]) => void) => {
       const listener = (_event: unknown, value: LauncherEvents['launch_download'][0]) => callback(value)
       ipcRenderer.on('game:launch_download', listener)

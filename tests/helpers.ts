@@ -2,7 +2,15 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { getGameDir, getModsDir } from '../electron/gamedir'
+import { MODPACK_SIGNATURE_URL, MODPACK_URL } from '../electron/const'
 import type { File } from 'eml-lib'
+
+/**
+ * The two modpack URLs, read from the production constants so a test that mocks `fetch` cannot end up
+ * answering a request the launcher never makes.
+ */
+export const MANIFEST_URL = MODPACK_URL
+export const SIGNATURE_URL = MODPACK_SIGNATURE_URL
 
 export interface TempGame {
   appData: string

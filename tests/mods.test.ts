@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, symlinkSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
@@ -10,6 +10,7 @@ import {
   findStrayModFiles,
   indexManifest,
   isModFileName,
+  MAX_MOD_SCAN_DEPTH,
   isModOff,
   isSafeName,
   listDiskMods,
@@ -275,7 +276,10 @@ describe('findForeignModFiles', () => {
     writeJar(path.join(modsDir, 'stale.jar'))
     writeJar(path.join(modsDir, 'stale.jar.disabled'))
 
-    expect(findForeignModFiles(modsDir, { files: [modEntry('a.jar')] }).sort()).toEqual(['stale.jar', 'stale.jar.disabled'])
+    expect(findForeignModFiles(modsDir, { files: [modEntry('a.jar')] })).toEqual([
+      { rel: 'stale.jar', kind: 'file' },
+      { rel: 'stale.jar.disabled', kind: 'file' }
+    ])
   })
 
   it('accepts a shipped-off mod in either state', () => {
@@ -297,6 +301,56 @@ describe('findForeignModFiles', () => {
     writeJar(path.join(modsDir, 'a.jar'))
     expect(findForeignModFiles(modsDir, null)).toEqual([])
     expect(findForeignModFiles(modsDir, { files: [] })).toEqual([])
+  })
+
+  it('reports jars hidden in a sub-folder, which the game loads just the same', () => {
+    writeJar(path.join(modsDir, 'a.jar'))
+    writeJar(path.join(modsDir, 'sub', 'stale.jar'))
+    writeJar(path.join(modsDir, 'sub', 'deep', 'deeper', 'stale.jar'))
+
+    expect(findForeignModFiles(modsDir, { files: [modEntry('a.jar')] })).toEqual([
+      { rel: path.join('sub', 'deep', 'deeper', 'stale.jar'), kind: 'file' },
+      { rel: path.join('sub', 'stale.jar'), kind: 'file' }
+    ])
+  })
+
+  it('reports a shipped mod found in a sub-folder under its own name', () => {
+    writeJar(path.join(modsDir, 'sub', 'a.jar'))
+
+    expect(findForeignModFiles(modsDir, { files: [modEntry('a.jar')] })).toEqual([])
+  })
+
+  it('reports symlinks, which point the game at a jar living anywhere on disk', () => {
+    const outside = path.join(tmp.appData, 'elsewhere.jar')
+    writeJar(outside)
+    symlinkSync(outside, path.join(modsDir, 'innocent.jar'))
+
+    expect(findForeignModFiles(modsDir, { files: [modEntry('a.jar')] })).toEqual([
+      { rel: 'innocent.jar', kind: 'symlink' }
+    ])
+  })
+
+  it('reports a symlinked folder instead of following it into someone elses disk', () => {
+    const elsewhere = path.join(tmp.appData, 'payload')
+    mkdirSync(elsewhere, { recursive: true })
+    writeJar(path.join(elsewhere, 'stale.jar'))
+    symlinkSync(elsewhere, path.join(modsDir, 'addon'))
+
+    expect(findForeignModFiles(modsDir, { files: [modEntry('a.jar')] })).toEqual([
+      { rel: 'addon', kind: 'symlink' }
+    ])
+  })
+
+  it('reports the folder itself past the depth limit instead of skipping what is inside', () => {
+    let deep = modsDir
+    for (let level = 0; level <= MAX_MOD_SCAN_DEPTH; level++) deep = path.join(deep, `d${level}`)
+    writeJar(path.join(deep, 'stale.jar'))
+
+    const found = findForeignModFiles(modsDir, { files: [modEntry('a.jar')] })
+
+    expect(found).toHaveLength(1)
+    expect(found[0].kind).toBe('dir')
+    expect(found[0].rel).not.toContain('stale.jar')
   })
 })
 

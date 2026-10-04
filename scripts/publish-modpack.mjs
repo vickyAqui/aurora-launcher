@@ -22,10 +22,17 @@
  *      missing from the release
  *   4. Deletes only what the folder no longer holds, which is what keeps a mod that changed version
  *      from piling up next to the version that replaced it
+ *   5. Signs the manifest and publishes the signature next to it, which is what lets the launcher
+ *      tell a manifest from Aurora Studios apart from one someone else wrote
+ *
+ * Signing is mandatory: without `MODPACK_SIGNING_KEY_B64` the run stops before touching the release,
+ * because replacing a signed manifest with an unsigned one would lock every player out. Pass
+ * `--allow-unsigned` only when publishing for a throwaway tag with no launcher pointing at it.
  */
 import { promises as fs, readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { buildManifestEntries, sanitizeAssetName, validateManifest, walk } from './modpack-utils.mjs'
+import { buildSignatureDocument, loadSigningKey, signManifest, SIGNATURE_ASSET } from './manifest-signature.mjs'
 
 const loadEnv = (file = '.env') => {
   const abs = path.resolve(file)
@@ -39,6 +46,7 @@ const loadEnv = (file = '.env') => {
 loadEnv()
 
 const dryRun = process.argv.includes('--dry-run')
+const allowUnsigned = process.argv.includes('--allow-unsigned')
 const API = 'https://api.github.com'
 const UPLOADS = 'https://uploads.github.com'
 const token = process.env.GH_TOKEN
@@ -132,6 +140,29 @@ async function uploadAsset(releaseId, filePath, name) {
 }
 
 async function main() {
+  // Checked before anything else: a run that cannot sign must not replace a signed manifest with an
+  // unsigned one, which would leave every player unable to launch the game.
+  let signingKey = null
+  let keyProblem = null
+  try {
+    signingKey = loadSigningKey()
+  } catch (err) {
+    keyProblem = err.message
+  }
+
+  if (!signingKey) {
+    if (keyProblem) console.error(`ERROR: ${keyProblem}.`)
+    else {
+      console.error('ERROR: no modpack signing key found.')
+      console.error('Set MODPACK_SIGNING_KEY_B64 (base64 of the PEM private key) or MODPACK_SIGNING_KEY_PATH.')
+    }
+    if (!allowUnsigned) {
+      console.error('Refusing to publish unsigned. Pass --allow-unsigned only for a throwaway tag.')
+      process.exit(1)
+    }
+    console.warn('WARNING: --allow-unsigned was passed, so the manifest will be published unsigned.')
+  }
+
   if (!(await fs.stat(modpackDir).catch(() => null))) {
     console.error(`ERROR: modpack folder not found at "${modpackDir}". Set MODPACK_DIR to point at your local modpack.`)
     process.exit(1)
@@ -177,7 +208,7 @@ async function main() {
     else console.log(`  Up to date: ${name}`)
   }
 
-  const keep = new Set([...wanted.keys(), MANIFEST_ASSET])
+  const keep = new Set([...wanted.keys(), MANIFEST_ASSET, SIGNATURE_ASSET])
   const leftovers = [...remote.values()].filter((asset) => !keep.has(asset.name))
 
   console.log(
@@ -188,6 +219,12 @@ async function main() {
     for (const asset of leftovers) console.log(`  - ${asset.name}`)
   }
   if (dryRun) {
+    if (signingKey) {
+      // Signs the manifest as it stands so a broken secret shows up here, rather than after the mod
+      // assets have already been replaced.
+      const { keyId } = signManifest(JSON.stringify({ files: entries }, null, 2), signingKey)
+      console.log(`\nWould sign the manifest with key ${keyId}.`)
+    }
     console.log('\nDry run: nothing was uploaded, deleted or written.')
     return
   }
@@ -227,10 +264,24 @@ async function main() {
   await fs.writeFile(jsonPath, JSON.stringify({ files: entries }, null, 2))
   console.log(`\nGenerated ${jsonPath} (${entries.length} entries)`)
 
+  // Signed before the manifest goes up, over the bytes that are about to be uploaded: a run that
+  // cannot produce a signature must not replace a signed manifest with an unsigned one.
+  const sigPath = path.join(modpackDir, SIGNATURE_ASSET)
+  if (signingKey) {
+    await fs.writeFile(sigPath, buildSignatureDocument(await fs.readFile(jsonPath), signingKey))
+    console.log(`Signed the manifest with key ${JSON.parse(await fs.readFile(sigPath, 'utf8')).keyId}`)
+  }
+
   // Manifest first: everything below only removes assets the new manifest does not reference.
   const staleManifest = remote.get(MANIFEST_ASSET)
   if (staleManifest) await deleteAsset(staleManifest)
   await uploadAsset(release.id, jsonPath, MANIFEST_ASSET)
+
+  if (signingKey) {
+    const staleSignature = remote.get(SIGNATURE_ASSET)
+    if (staleSignature) await deleteAsset(staleSignature)
+    await uploadAsset(release.id, sigPath, SIGNATURE_ASSET)
+  }
 
   for (const asset of leftovers) await deleteAsset(asset)
 

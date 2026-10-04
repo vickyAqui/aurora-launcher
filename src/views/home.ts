@@ -232,7 +232,46 @@ Ready to launch the game with the following settings:
     `
 
     logger.log(message)
-    game.launch({ account: user, settings: config, profileSlug: selectedProfile?.slug })
+    try {
+      await game.launch({ account: user, settings: config, profileSlug: selectedProfile?.slug })
+    } catch (err) {
+      logger.error('Falha ao chamar o launch:', err)
+      showLaunchRefusal((err as Error).message)
+    }
+  })
+
+  /**
+   * Puts the Play button back and clears the progress readouts.
+   *
+   * Used both after a successful launch and after a refusal, so a player who hits a problem is left
+   * with a button they can press again instead of a panel stuck on a message that will never change.
+   */
+  function resetLaunchUi() {
+    if (playBtn) playBtn.style.display = 'block'
+    if (progressContainer) progressContainer.classList.add('hidden')
+    if (progressBar) progressBar.style.width = '0%'
+    if (progressPercent) progressPercent.innerText = ''
+  }
+
+  /**
+   * Shows why the launch was refused by the main process.
+   *
+   * The progress panel stays visible on purpose: it is the only part of the Home view with room for
+   * a sentence, and the reason is the whole point of refusing. `game:launch` is fire-and-forget, so
+   * without this channel a refused launch would just sit on "Preparando download..." forever.
+   */
+  function showLaunchRefusal(reason: string) {
+    setIndeterminate(progressBar, progressPercent, false)
+    if (playBtn) playBtn.style.display = 'block'
+    if (progressContainer) progressContainer.classList.remove('hidden')
+    if (progressBar) progressBar.style.width = '0%'
+    if (progressPercent) progressPercent.innerText = ''
+    if (progressLabel) progressLabel.innerText = `Não foi possível iniciar o jogo: ${reason}`
+  }
+
+  game.launchError((reason) => {
+    logger.error('Launch recusado pelo processo principal:', reason)
+    showLaunchRefusal(reason)
   })
 
   game.launchComputeDownload(() => {
@@ -327,10 +366,7 @@ Ready to launch the game with the following settings:
   })
   game.launched(() => {
     setTimeout(() => {
-      if (playBtn) playBtn.style.display = 'block'
-      if (progressContainer) progressContainer.classList.add('hidden')
-      if (progressBar) progressBar.style.width = '0%'
-      if (progressPercent) progressPercent.innerText = ''
+      resetLaunchUi()
     }, 10000)
   })
 

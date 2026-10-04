@@ -2,8 +2,9 @@ import { ipcMain, shell } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
 import logger from 'electron-log/main'
-import { MODPACK_URL, DEFAULT_PROFILE } from '../const'
+import { MODPACK_SIGNATURE_URL, MODPACK_URL, DEFAULT_PROFILE } from '../const'
 import { getGameDir, getModsDir } from '../gamedir'
+import { verifyManifestSignature } from '../manifest-signature'
 import {
   buildLaunchManifest,
   buildModEntries,
@@ -11,7 +12,6 @@ import {
   emptyChoices,
   findForeignModFiles,
   findStrayModFiles,
-  indexManifest,
   isModFileName,
   isSafeName,
   listDiskMods,
@@ -58,25 +58,85 @@ function writeChoices(choices: IModChoices, slug: string = DEFAULT_PROFILE.slug)
   }
 }
 
-export async function fetchModpack(force = false): Promise<IModpackManifest | null> {
+/**
+ * Why the launch cannot continue, phrased for the player.
+ *
+ * Distinct from an unexpected error on purpose: this is the launch being refused because the
+ * modpack could not be proven to come from Aurora Studios, and the message has to say so instead of
+ * reading like a crash.
+ */
+export class ModpackUnavailableError extends Error {
+  constructor(public reason: string) {
+    super(reason)
+    this.name = 'ModpackUnavailableError'
+  }
+}
+
+async function fetchVerifiedManifest(force = false): Promise<IModpackManifest> {
   if (!force && manifestCache && Date.now() - manifestCache.at < MANIFEST_TTL_MS) return manifestCache.manifest
 
   let manifest: IModpackManifest | null = null
+  let failure: string | null = null
+
   try {
-    const res = await fetch(MODPACK_URL)
-    if (res.ok) {
-      const parsed = parseManifest(await res.json())
-      if (parsed) manifest = parsed
-      else logger.error('Modpack manifest is not in the expected format.')
+    // Both responses come from the same place but travel separately, so neither one can be swapped
+    // for the other: what gets verified is the manifest body against the published digest.
+    const [manifestRes, signatureRes] = await Promise.all([
+      fetch(MODPACK_URL),
+      fetch(MODPACK_SIGNATURE_URL).catch(() => null)
+    ])
+
+    if (!manifestRes.ok) {
+      failure = `manifesto indisponível (HTTP ${manifestRes.status})`
+    } else if (!signatureRes || !signatureRes.ok) {
+      // A 404 means nobody published a signature; no response at all means the request never landed.
+      failure = signatureRes
+        ? `assinatura indisponível (HTTP ${signatureRes.status})`
+        : 'não foi possível baixar a assinatura do modpack'
+    } else {
+      const bytes = Buffer.from(await manifestRes.arrayBuffer())
+      const verified = verifyManifestSignature(bytes, await signatureRes.json())
+
+      if (!verified.ok) {
+        failure = verified.reason
+      } else {
+        const parsed = parseManifest(JSON.parse(bytes.toString('utf8')))
+        if (!parsed) failure = 'formato inesperado'
+        else manifest = parsed
+      }
     }
   } catch (err) {
     logger.error('Failed to fetch modpack:', err)
+    failure = `não foi possível baixar o modpack: ${(err as Error).message}`
   }
 
-  // A failed fetch keeps the previous manifest in place, so a hiccup never empties the Mods tab.
+  // Only a verified manifest is ever cached, which is what makes it safe to fall back to it below.
   if (manifest) manifestCache = { at: Date.now(), manifest }
+  else if (manifestCache) {
+    // Offline or a release mid-publish: the last manifest whose signature was checked still decides
+    // the files, so a hiccup costs a moment of waiting instead of blocking the launch outright.
+    logger.warn(`Using the last verified modpack manifest (${failure}).`)
+    return manifestCache.manifest
+  }
+
+  if (!manifest) throw new ModpackUnavailableError(failure ?? 'modpack indisponível')
 
   return manifest
+}
+
+/**
+ * Signed manifest for the Mods tab.
+ *
+ * Returns `null` when the modpack cannot be verified, unlike `prepareMods`: the tab only lists what
+ * the launcher would install, so with nothing verified it has nothing to show.
+ */
+export async function fetchModpack(force = false): Promise<IModpackManifest | null> {
+  try {
+    return await fetchVerifiedManifest(force)
+  } catch (err) {
+    logger.error('Modpack manifest unavailable:', err)
+    return null
+  }
 }
 
 async function listMods(slug: string = DEFAULT_PROFILE.slug): Promise<{ mods: IModEntry[]; modsDir: string }> {
@@ -154,46 +214,7 @@ function setModEnabled(name: string, enabled: boolean, slug: string = DEFAULT_PR
   return true
 }
 
-/**
- * Re-applies the player's choices to the folder right before the game boots.
- *
- * Only needed when the launch manifest could not be filtered (the modpack manifest is unreachable),
- * because `eml-lib` downloads every entry it is given, ignoring this store.
- */
-export function applyModChoices(slug: string = DEFAULT_PROFILE.slug, shippedDisabled?: Set<string>): number {
-  const choices = readChoices(slug)
-  const off = new Set<string>()
-  for (const name of shippedDisabled ?? []) {
-    if (!choices.enabledOverrides.has(name)) off.add(name)
-  }
-  for (const name of choices.disabled) off.add(name)
-  if (off.size === 0) return 0
-
-  const modsDir = getModsDir(slug)
-  let applied = 0
-
-  for (const name of off) {
-    const enabledPath = path.join(modsDir, name)
-    if (!fs.existsSync(enabledPath)) continue
-
-    try {
-      // The downloader may have re-fetched a mod as soon as its `<name>.jar` was missing, so both
-      // files can exist. Keep the freshly downloaded one as the disabled copy instead of leaving a
-      // live `<name>.jar` behind.
-      const disabledPath = path.join(modsDir, disabledPathOf(name))
-      if (fs.existsSync(disabledPath)) fs.rmSync(disabledPath, { force: true })
-      fs.renameSync(enabledPath, disabledPath)
-      applied++
-      logger.log(`Re-applied mod choice before launch: ${name}`)
-    } catch (err) {
-      logger.error(`Error re-applying mod choice ${name}:`, err)
-    }
-  }
-
-  return applied
-}
-
-function migrateStrayMods(manifest: IModpackManifest | null, slug: string = DEFAULT_PROFILE.slug): number {
+function migrateStrayMods(manifest: IModpackManifest, slug: string = DEFAULT_PROFILE.slug): number {
   const gameDir = getGameDir(slug)
   const modsDir = getModsDir(slug)
   const strays = findStrayModFiles(gameDir, manifest)
@@ -214,28 +235,37 @@ function migrateStrayMods(manifest: IModpackManifest | null, slug: string = DEFA
   return moved
 }
 
-function pruneForeignMods(manifest: IModpackManifest | null, slug: string = DEFAULT_PROFILE.slug): number {
+function pruneForeignMods(manifest: IModpackManifest, slug: string = DEFAULT_PROFILE.slug): number {
   const modsDir = getModsDir(slug)
   const foreign = findForeignModFiles(modsDir, manifest)
   if (foreign.length === 0) return 0
 
   let removed = 0
-  for (const name of foreign) {
+  for (const { rel, kind } of foreign) {
+    const full = path.join(modsDir, rel)
     try {
-      fs.rmSync(path.join(modsDir, name), { force: true })
+      // A symlink is unlinked rather than deleted through: `rmSync` on a link to a folder removes
+      // the link, but reading what it points at is never part of the decision to remove it.
+      if (kind === 'symlink') fs.unlinkSync(full)
+      else fs.rmSync(full, { recursive: kind === 'dir', force: true })
+
       removed++
-      logger.log(`Removed mod not in the modpack: ${name}`)
+      logger.log(`Removed ${kind === 'dir' ? 'folder' : 'mod'} not in the modpack: ${rel}`)
     } catch (err) {
-      logger.error(`Failed to remove ${name}:`, err)
+      logger.error(`Failed to remove ${rel}:`, err)
     }
   }
   return removed
 }
 
 export interface IPreparedMods {
-  /** Manifest to hand to `eml-lib`, or `null` when the modpack could not be fetched. */
-  manifest: IModpackManifest | null
-  shippedDisabled: Set<string>
+  /**
+   * Manifest to hand to `eml-lib`.
+   *
+   * Not optional: an unverified manifest is never returned, so a launch either gets a manifest whose
+   * signature was checked against the keys the launcher trusts, or it does not launch at all.
+   */
+  manifest: IModpackManifest
 }
 
 /**
@@ -244,20 +274,17 @@ export interface IPreparedMods {
  * Runs before the downloader so a jar that the player turned off is never fetched again, a jar left
  * in the game directory root by an older build is reused instead of re-downloaded, and a jar the
  * modpack no longer ships is dropped.
+ *
+ * Throws `ModpackUnavailableError` when the manifest cannot be fetched and verified, which is what
+ * stops the launch rather than letting the game start on a manifest of unknown origin.
  */
 export async function prepareMods(slug: string = DEFAULT_PROFILE.slug): Promise<IPreparedMods> {
-  const manifest = await fetchModpack()
-  const index = indexManifest(manifest)
-
-  if (!manifest) {
-    logger.warn('Modpack manifest unavailable; falling back to the remote manifest without filtering.')
-    return { manifest: null, shippedDisabled: index.shippedDisabled }
-  }
+  const manifest = await fetchVerifiedManifest()
 
   migrateStrayMods(manifest, slug)
   pruneForeignMods(manifest, slug)
 
-  return { manifest: buildLaunchManifest(manifest, readChoices(slug)), shippedDisabled: index.shippedDisabled }
+  return { manifest: buildLaunchManifest(manifest, readChoices(slug)) }
 }
 
 export function registerModsHandlers() {
