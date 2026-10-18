@@ -21,9 +21,18 @@ export interface IManifestKey {
 
 export const MANIFEST_KEYS: IManifestKey[] = [
   {
+    keyId: '3949c64b5af1a7d5',
+    addedAt: '2026-10-17',
+    comment: 'chave de produção do modpack; privada em MODPACK_SIGNING_KEY_B64',
+    publicKeyPem: `-----BEGIN PUBLIC KEY-----
+MCowBQYDK2VwAyEAyvw3/RnEAeArcXDJEQz574Zb1smHoUJ67VquIu6Yv78=
+-----END PUBLIC KEY-----
+`
+  },
+  {
     keyId: '243685e37e0867e6',
     addedAt: '2026-10-04',
-    comment: 'chave de produção do modpack; privada em MODPACK_SIGNING_KEY_B64 (secret do CI)',
+    comment: 'chave anterior, privada perdida; mantida para validar manifestos já publicados',
     publicKeyPem: `-----BEGIN PUBLIC KEY-----
 MCowBQYDK2VwAyEABvldyye4PbXLojhnbKvWU8/2icV2ojxRsEmPrsojHpc=
 -----END PUBLIC KEY-----
