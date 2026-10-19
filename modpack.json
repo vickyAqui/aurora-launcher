@@ -735,6 +735,14 @@
       "type": "MOD"
     },
     {
+      "name": "drippyloadingscreen_forge_3.1.2_MC_1.20.1.jar.disabled",
+      "path": "mods/",
+      "size": 287611,
+      "sha1": "0f4fe368d76572f2af563b90fafea7d75c007d22",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/drippyloadingscreen_forge_3.1.2_MC_1.20.1.jar.disabled",
+      "type": "MOD"
+    },
+    {
       "name": "duclib-1.20-1.1.4.jar",
       "path": "mods/",
       "size": 157125,
@@ -2316,6 +2324,30 @@
       "size": 5825402,
       "sha1": "9c52765ca56f917ef8cbafc20e9a4f45c346508f",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/worldedit-mod-7.2.15.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "xaerominimap-forge-1.20.1-26.6.0.jar",
+      "path": "mods/",
+      "size": 2196194,
+      "sha1": "ee73886f2f5f27bf28cffa7cc8f2b9b4540df2aa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/xaerominimap-forge-1.20.1-26.6.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "XaeroPlus-2.36.5+forge-1.20.1-WM1.47.0-MM26.6.0.jar",
+      "path": "mods/",
+      "size": 8766545,
+      "sha1": "a98e2027d86d580ee0b0021c35ebd8267b99939b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/XaeroPlus-2.36.5%2Bforge-1.20.1-WM1.47.0-MM26.6.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "xaeroworldmap-forge-1.20.1-1.47.0.jar",
+      "path": "mods/",
+      "size": 1429424,
+      "sha1": "6715c1d3758a3805589d82c41dc581537fe185cd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/xaeroworldmap-forge-1.20.1-1.47.0.jar",
       "type": "MOD"
     },
     {
