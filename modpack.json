@@ -1487,14 +1487,6 @@
       "type": "MOD"
     },
     {
-      "name": "meteor_shower-0.0.4.2.jar",
-      "path": "mods/",
-      "size": 252389,
-      "sha1": "4e542422df2b3146a2a9d130ce6535de64868e7f",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/meteor_shower-0.0.4.2.jar",
-      "type": "MOD"
-    },
-    {
       "name": "MOAdecor ART 1.20.1.jar",
       "path": "mods/",
       "size": 1067543,
@@ -2380,6 +2372,14 @@
       "size": 157602,
       "sha1": "b43a0bc054d3974076d36b5cfec6aeab968d24a6",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/YungsMenuTweaks-1.20.1-Forge-1.0.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ZcoperKarts-forge-1.20.1-1.2.jar",
+      "path": "mods/",
+      "size": 5459185,
+      "sha1": "e50f332f451a5754d5b3a1d7fba7f847190ea484",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ZcoperKarts-forge-1.20.1-1.2.jar",
       "type": "MOD"
     },
     {
