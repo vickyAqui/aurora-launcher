@@ -6,6 +6,7 @@ import logger from 'electron-log/main'
 import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
 import { endSession, startSession } from './stats'
 import { ModpackUnavailableError, prepareMods, type IPreparedMods } from './mods'
+import { ensureFreshAccount } from './auth'
 
 /**
  * Hands the filtered manifest to `eml-lib` through a `data:` URL, so the downloader only ever sees
@@ -16,8 +17,34 @@ function toDataUrl(manifest: unknown): string {
 }
 
 export function registerLauncherHandlers(mainWindow: BrowserWindow) {
+  /**
+   * O processo do Minecraft continua escrevendo no stdout depois que a janela do launcher some (o
+   * jogador fechou, ou `launcherAction: 'close'` encerrou o app). Mandar IPC para uma janela
+   * destruída estoura `Object has been destroyed` de dentro do EventEmitter do socket, e o Electron
+   * mostra isso como "A JavaScript error occurred in the main process".
+   */
+  const send = (channel: string, ...args: unknown[]) => {
+    if (mainWindow.isDestroyed() || mainWindow.webContents.isDestroyed()) return
+    mainWindow.webContents.send(channel, ...args)
+  }
+
   ipcMain.handle('game:launch', async (_event, payload: { account: Account; settings: IGameSettings; profileSlug: string }) => {
-    const { account, settings, profileSlug } = payload
+    const { settings, profileSlug } = payload
+
+    // O token da Microsoft vale ~24h, e o launcher pode ficar aberto por muito mais que isso.
+    // Renova antes de baixar/abrir qualquer coisa: com um token vencido o jogo sobe e só falha na
+    // autenticação com o servidor.
+    let account: Account
+    try {
+      account = await ensureFreshAccount(payload.account)
+    } catch (err) {
+      logger.error('Launch refused: could not refresh the Microsoft session:', err)
+      send(
+        'game:launch_error',
+        'Não foi possível renovar sua sessão da Microsoft. Entre na conta novamente.'
+      )
+      return
+    }
 
     let java: { install: 'auto' } | { install: 'manual'; absolutePath: string }
     if (settings.java === 'system') {
@@ -41,7 +68,7 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     } catch (err) {
       const reason = err instanceof ModpackUnavailableError ? err.reason : (err as Error).message
       logger.error('Launch refused:', err)
-      mainWindow.webContents.send('game:launch_error', reason)
+      send('game:launch_error', reason)
       return
     }
 
@@ -69,120 +96,122 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
 
     launcher.on('launch_compute_download', () => {
       logger.log('Computing download...')
-      mainWindow.webContents.send('game:launch_compute_download')
+      send('game:launch_compute_download')
     })
 
     launcher.on('launch_download', (download) => {
       logger.log(`Downloading ${download.total.amount} files (${download.total.size} B).`)
-      mainWindow.webContents.send('game:launch_download', download)
+      send('game:launch_download', download)
     })
     launcher.on('download_progress', (progress) => {
-      mainWindow.webContents.send('game:download_progress', progress)
+      send('game:download_progress', progress)
     })
     launcher.on('download_error', (error) => {
       logger.error(`Error downloading ${error.filename}: ${error.message}`)
-      mainWindow.webContents.send('game:download_error', error)
+      send('game:download_error', error)
     })
     launcher.on('download_end', (info) => {
       logger.log(`Downloaded ${info.downloaded.amount} files.`)
-      mainWindow.webContents.send('game:download_end', info)
+      send('game:download_end', info)
     })
 
     launcher.on('launch_install_loader', (loader) => {
       logger.log(`Installing loader ${loader.type} ${loader.loaderVersion}...`)
-      mainWindow.webContents.send('game:launch_install_loader', loader)
+      send('game:launch_install_loader', loader)
     })
 
     launcher.on('launch_extract_natives', () => {
       logger.log('Extracting natives...')
-      mainWindow.webContents.send('game:launch_extract_natives')
+      send('game:launch_extract_natives')
     })
     launcher.on('extract_progress', (progress) => {
       logger.log(`Extracted ${progress.filename}.`)
-      mainWindow.webContents.send('game:extract_progress', progress)
+      send('game:extract_progress', progress)
     })
     launcher.on('extract_end', (info) => {
       logger.log(`Extracted ${info.amount} files.`)
-      mainWindow.webContents.send('game:extract_end', info)
+      send('game:extract_end', info)
     })
 
     launcher.on('launch_copy_assets', () => {
       logger.log('Copying assets...')
-      mainWindow.webContents.send('game:launch_copy_assets')
+      send('game:launch_copy_assets')
     })
     launcher.on('copy_progress', (progress) => {
       logger.log(`Copied ${progress.filename} to ${progress.dest}.`)
-      mainWindow.webContents.send('game:copy_progress', progress)
+      send('game:copy_progress', progress)
     })
     launcher.on('copy_end', (info) => {
       logger.log(`Copied ${info.amount} files.`)
-      mainWindow.webContents.send('game:copy_end', info)
+      send('game:copy_end', info)
     })
 
     launcher.on('launch_patch_loader', () => {
       logger.log('Patching loader...')
-      mainWindow.webContents.send('game:launch_patch_loader')
+      send('game:launch_patch_loader')
     })
     launcher.on('patch_progress', (progress) => {
-      mainWindow.webContents.send('game:patch_progress', progress)
+      send('game:patch_progress', progress)
     })
     launcher.on('patch_error', (error) => {
       logger.error(`Error patching ${error.filename}: ${error.message}`)
-      mainWindow.webContents.send('game:patch_error', error)
+      send('game:patch_error', error)
     })
     launcher.on('patch_end', (info) => {
       logger.log(`Patched ${info.amount} files.`)
-      mainWindow.webContents.send('game:patch_end', info)
+      send('game:patch_end', info)
     })
 
     launcher.on('launch_check_java', () => {
       logger.log('Checking Java...')
-      mainWindow.webContents.send('game:launch_check_java')
+      send('game:launch_check_java')
     })
     launcher.on('java_info', (info) => {
       logger.log(`Using Java ${info.version} ${info.arch}`)
-      mainWindow.webContents.send('game:java_info', info)
+      send('game:java_info', info)
     })
 
     launcher.on('launch_clean', () => {
       logger.log('Cleaning game directory...')
-      mainWindow.webContents.send('game:launch_clean')
+      send('game:launch_clean')
     })
     launcher.on('clean_progress', (progress) => {
-      mainWindow.webContents.send('game:clean_progress', progress)
+      send('game:clean_progress', progress)
     })
     launcher.on('clean_end', (info) => {
       logger.log(`Cleaned ${info.amount} files.`)
-      mainWindow.webContents.send('game:clean_end', info)
+      send('game:clean_end', info)
     })
 
     launcher.on('launch_launch', (info) => {
       logger.log(`Launching Minecraft ${info.version} (${info.type}${info.loaderVersion ? ` ${info.loaderVersion}` : ''})...`)
 
-      mainWindow.webContents.send('game:launch_launch', info)
+      send('game:launch_launch', info)
       startSession()
       if (settings.launcherAction === 'close') {
         setTimeout(() => app.quit(), 5000)
       } else if (settings.launcherAction === 'hide') {
-        setTimeout(() => mainWindow.minimize(), 5000)
+        setTimeout(() => {
+          if (!mainWindow.isDestroyed()) mainWindow.minimize()
+        }, 5000)
       }
-      mainWindow.webContents.send('game:launched')
+      send('game:launched')
     })
     launcher.on('launch_data', (message) => {
       logger.log(message)
-      mainWindow.webContents.send('game:launch_data', message)
+      send('game:launch_data', message)
     })
     launcher.on('launch_close', (code) => {
       logger.log(`Closed with code ${code}.`)
       endSession()
-      mainWindow.webContents.send('game:launch_close', code)
+      send('game:launch_close', code)
     })
 
     launcher.on('launch_debug', (message) => {
-      mainWindow.webContents.send('game:launch_debug', message)
+      send('game:launch_debug', message)
     })
     launcher.on('patch_debug', (message) => {
-      mainWindow.webContents.send('game:patch_debug', message)
+      send('game:patch_debug', message)
     })
 
     try {
