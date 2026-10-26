@@ -1,4 +1,4 @@
-import { setView, getUser } from '../state'
+import { setView } from '../state'
 import { auth } from '../ipc'
 import { activateAccount, logoutCurrentAccount, onAccountsChanged } from '../account'
 import { Dialog } from './dialog'
@@ -16,7 +16,7 @@ const TYPE_LABEL: Record<string, string> = {
   crack: 'Offline'
 }
 
-function renderList(accounts: IAccountSummary[], listEl: HTMLElement, activeId: string | null) {
+function renderList(accounts: IAccountSummary[], listEl: HTMLElement) {
   listEl.innerHTML = ''
 
   if (accounts.length === 0) {
@@ -27,11 +27,11 @@ function renderList(accounts: IAccountSummary[], listEl: HTMLElement, activeId: 
   for (const account of accounts) {
     const item = document.createElement('button')
     item.type = 'button'
-    item.className = 'account-dropdown-item' + (account.id === activeId ? ' active' : '')
+    item.className = 'account-dropdown-item' + (account.active ? ' active' : '')
     item.title = account.name
 
     const badge = account.type === 'msa' ? '<i class="fa-brands fa-microsoft account-type-icon"></i>' : ''
-    const check = account.id === activeId ? '<i class="fa-solid fa-check account-check"></i>' : ''
+    const check = account.active ? '<i class="fa-solid fa-check account-check"></i>' : ''
 
     item.innerHTML = `
       <span class="account-avatar">${avatarInitial(account.name)}</span>
@@ -45,7 +45,8 @@ function renderList(accounts: IAccountSummary[], listEl: HTMLElement, activeId: 
 
     item.addEventListener('click', async () => {
       closeDropdown()
-      if (account.id === activeId) return
+      // `account.active` vem do processo principal: o id local da conta não é o uuid do Minecraft.
+      if (account.active) return
 
       const session = await auth.select(account.id)
       if (session.success) {
@@ -72,9 +73,7 @@ async function refreshDropdown() {
   try {
     const result = await auth.list()
     if (!result.success) return
-    const user = getUser()
-    const activeId = user?.uuid ?? null
-    renderList(result.accounts, listEl, activeId)
+    renderList(result.accounts, listEl)
   } catch (err) {
     logger.error('Failed to list accounts:', err)
   }
