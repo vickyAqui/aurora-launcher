@@ -16,8 +16,8 @@ export const DEFAULT_PROFILE = {
   isDefault: true,
   name: 'Aurora Studios',
   slug: 'aurora-studios',
-  ip: 'br1.xmxcloud.net',
-  port: 25496,
+  ip: '79.182.128.137',
+  port: 25565,
   createdAt: new Date(0),
   updatedAt: new Date(0)
 }
