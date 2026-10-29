@@ -2,9 +2,8 @@ import { ipcMain, shell } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
 import logger from 'electron-log/main'
-import { MODPACK_SIGNATURE_URL, MODPACK_URL, DEFAULT_PROFILE } from '../const'
+import { MODPACK_URL, DEFAULT_PROFILE } from '../const'
 import { getGameDir, getModsDir } from '../gamedir'
-import { verifyManifestSignature } from '../manifest-signature'
 import {
   buildLaunchManifest,
   buildModEntries,
@@ -62,8 +61,7 @@ function writeChoices(choices: IModChoices, slug: string = DEFAULT_PROFILE.slug)
  * Why the launch cannot continue, phrased for the player.
  *
  * Distinct from an unexpected error on purpose: this is the launch being refused because the
- * modpack could not be proven to come from Aurora Studios, and the message has to say so instead of
- * reading like a crash.
+ * modpack could not be downloaded, and the message has to say so instead of reading like a crash.
  */
 export class ModpackUnavailableError extends Error {
   constructor(public reason: string) {
@@ -72,50 +70,33 @@ export class ModpackUnavailableError extends Error {
   }
 }
 
-async function fetchVerifiedManifest(force = false): Promise<IModpackManifest> {
+async function fetchManifest(force = false): Promise<IModpackManifest> {
   if (!force && manifestCache && Date.now() - manifestCache.at < MANIFEST_TTL_MS) return manifestCache.manifest
 
   let manifest: IModpackManifest | null = null
   let failure: string | null = null
 
   try {
-    // Both responses come from the same place but travel separately, so neither one can be swapped
-    // for the other: what gets verified is the manifest body against the published digest.
-    const [manifestRes, signatureRes] = await Promise.all([
-      fetch(MODPACK_URL),
-      fetch(MODPACK_SIGNATURE_URL).catch(() => null)
-    ])
+    const manifestRes = await fetch(MODPACK_URL)
 
     if (!manifestRes.ok) {
       failure = `manifesto indisponível (HTTP ${manifestRes.status})`
-    } else if (!signatureRes || !signatureRes.ok) {
-      // A 404 means nobody published a signature; no response at all means the request never landed.
-      failure = signatureRes
-        ? `assinatura indisponível (HTTP ${signatureRes.status})`
-        : 'não foi possível baixar a assinatura do modpack'
     } else {
       const bytes = Buffer.from(await manifestRes.arrayBuffer())
-      const verified = verifyManifestSignature(bytes, await signatureRes.json())
-
-      if (!verified.ok) {
-        failure = verified.reason
-      } else {
-        const parsed = parseManifest(JSON.parse(bytes.toString('utf8')))
-        if (!parsed) failure = 'formato inesperado'
-        else manifest = parsed
-      }
+      const parsed = parseManifest(JSON.parse(bytes.toString('utf8')))
+      if (!parsed) failure = 'formato inesperado'
+      else manifest = parsed
     }
   } catch (err) {
     logger.error('Failed to fetch modpack:', err)
     failure = `não foi possível baixar o modpack: ${(err as Error).message}`
   }
 
-  // Only a verified manifest is ever cached, which is what makes it safe to fall back to it below.
   if (manifest) manifestCache = { at: Date.now(), manifest }
   else if (manifestCache) {
-    // Offline or a release mid-publish: the last manifest whose signature was checked still decides
-    // the files, so a hiccup costs a moment of waiting instead of blocking the launch outright.
-    logger.warn(`Using the last verified modpack manifest (${failure}).`)
+    // Offline or a release mid-publish: the last manifest still decides the files, so a hiccup costs
+    // a moment of waiting instead of blocking the launch outright.
+    logger.warn(`Using the last cached modpack manifest (${failure}).`)
     return manifestCache.manifest
   }
 
@@ -125,14 +106,14 @@ async function fetchVerifiedManifest(force = false): Promise<IModpackManifest> {
 }
 
 /**
- * Signed manifest for the Mods tab.
+ * Manifest for the Mods tab.
  *
- * Returns `null` when the modpack cannot be verified, unlike `prepareMods`: the tab only lists what
- * the launcher would install, so with nothing verified it has nothing to show.
+ * Returns `null` when the modpack cannot be fetched, unlike `prepareMods`: the tab only lists what
+ * the launcher would install, so with nothing to show it returns `null`.
  */
 export async function fetchModpack(force = false): Promise<IModpackManifest | null> {
   try {
-    return await fetchVerifiedManifest(force)
+    return await fetchManifest(force)
   } catch (err) {
     logger.error('Modpack manifest unavailable:', err)
     return null
@@ -259,12 +240,7 @@ function pruneForeignMods(manifest: IModpackManifest, slug: string = DEFAULT_PRO
 }
 
 export interface IPreparedMods {
-  /**
-   * Manifest to hand to `eml-lib`.
-   *
-   * Not optional: an unverified manifest is never returned, so a launch either gets a manifest whose
-   * signature was checked against the keys the launcher trusts, or it does not launch at all.
-   */
+  /** Manifest to hand to `eml-lib`. Not optional: a launch either gets one or does not launch. */
   manifest: IModpackManifest
 }
 
@@ -275,11 +251,11 @@ export interface IPreparedMods {
  * in the game directory root by an older build is reused instead of re-downloaded, and a jar the
  * modpack no longer ships is dropped.
  *
- * Throws `ModpackUnavailableError` when the manifest cannot be fetched and verified, which is what
- * stops the launch rather than letting the game start on a manifest of unknown origin.
+ * Throws `ModpackUnavailableError` when the manifest cannot be fetched, which is what stops the
+ * launch rather than letting the game start without the modpack it expects.
  */
 export async function prepareMods(slug: string = DEFAULT_PROFILE.slug): Promise<IPreparedMods> {
-  const manifest = await fetchVerifiedManifest()
+  const manifest = await fetchManifest()
 
   migrateStrayMods(manifest, slug)
   pruneForeignMods(manifest, slug)
