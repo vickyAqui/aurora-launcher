@@ -1023,6 +1023,14 @@
       "type": "MOD"
     },
     {
+      "name": "freecam-forge-1.2.1+1.20.jar",
+      "path": "mods/",
+      "size": 75389,
+      "sha1": "e4224b56750a1fe3956ae73a65f4470be3e0df3b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/freecam-forge-1.2.1%2B1.20.jar",
+      "type": "MOD"
+    },
+    {
       "name": "ftb-essentials-forge-2001.2.4.jar",
       "path": "mods/",
       "size": 157732,
