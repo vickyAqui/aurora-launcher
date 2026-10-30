@@ -60,16 +60,20 @@ Licenças:
 
 | Licença                            | Mods |
 | ---------------------------------- | ---: |
-| permissiva (MIT/Apache/BSD/CC0...) |   91 |
-| copyleft (GPL/LGPL/MPL...)         |   60 |
+| permissiva (MIT/Apache/BSD/CC0...) |  107 |
+| copyleft (GPL/LGPL/MPL...)         |   67 |
 | restritiva (NC/ND)                 |    8 |
 | All Rights Reserved                |   79 |
-| custom                             |   53 |
+| custom                             |   30 |
 | desconhecida                       |   10 |
 
-Cruzando as duas coisas: só **14 mods** de conteúdo `data`/`logic` têm licença permissiva ou copyleft
-— os candidatos baratos para uma prova de conceito. Entre eles: Macaw's Doors, Macaw's Trapdoors,
+Cruzando as duas coisas: **27 mods** de conteúdo `data`/`logic` têm licença permissiva ou copyleft —
+os candidatos baratos para uma prova de conceito. Entre eles: Macaw's Doors, Macaw's Trapdoors,
 Night Lights, Chisel, Another Furniture e Construction Wand.
+
+Mas "permissiva no `mods.toml`" não é o mesmo que "o autor liberou um port": vários projetos declaram
+MIT no metadata e mantêm todos os direitos sobre assets (texturas, modelos, sons). Isso precisa ser
+confirmado no repositório de cada um antes de publicar qualquer coisa.
 
 > Achado colateral: o pack tem **duas versões do SignPlates** (`1.0.2` e `1.1.2`) na mesma pasta
 > `mods/`. Isso é um problema do modpack atual, independente do Horizon: o Forge recusa mods
@@ -94,7 +98,7 @@ No estudo do All the Mods 10 (495 jars), o próprio Horizon classificou:
 - 55 "logic", 89 "machines", 87 "deep" — cada um exige código Rust;
 - 91 no total no tier "deep" (entidades, IA, dimensões, renderers).
 
-O nosso pack tem proporção parecida ou pior: 123 mods com blocos, 68 com entidades, 53 com worldgen,
+O nosso pack tem proporção parecida ou pior: 123 mods com blocos, 68 com entidades, 60 com worldgen,
 104 com GUI. Traduzindo: a maior parte cairia em "logic", "machines" ou "deep".
 
 ## Bloqueio jurídico
@@ -103,8 +107,22 @@ Portar um mod é **obra derivada**. O Horizon é explícito: só se publica um p
 (permissiva, ou copyleft com o port na mesma licença e código publicado) ou se o autor der permissão
 por escrito. No ATM10, **89 mods eram All Rights Reserved** e 14 não permitiam derivados.
 
-Não temos a licença de todos os 301 mods do pack. Sem permissão dos autores, não dá para distribuir
-uma versão portada — mesmo que tecnicamente funcionasse.
+Ter código no GitHub **não significa** que o mod seja open source: o repositório pode estar público só
+para leitura, e o `mods.toml` é que declara a licença. No nosso pack:
+
+- **79 mods** declaram `All Rights Reserved` — por exemplo Biomes O' Plenty, Iron's Spells 'n
+  Spellbooks, Waystones, Regions Unexplored, Supplementaries, Born in Chaos, Rechiseled e Pipez.
+- **8 mods** têm licença restritiva (NC/ND): Patchouli (CC BY-NC-SA 3.0), Jade (CC BY-NC-SA 4.0),
+  WaterMedia e WaterVision (PolyForm Strict), Kaleidoscope Cookery/Tavern (BSD + CC BY-NC-SA),
+  Genshin Instruments (CC BY-NC 4.0) e Cristel Lib (CC BY-NC-ND 4.0).
+- **30 mods** usam licença custom (Botania, Supplementaries Team License, Terrarium License,
+  Timefall Development License...) e **10** não declaram licença — os dois grupos exigem leitura
+  manual.
+
+Sem permissão dos autores, não dá para distribuir uma versão portada — mesmo que tecnicamente
+funcionasse. Uma saída legal é o port **local**: cada jogador gera o port na própria máquina, a partir
+do jar que já baixou, e nada é redistribuído. Isso resolve a distribuição, mas não o esforço de portar
+79 mods ARR.
 
 ## O que é realisticamente possível
 
@@ -116,7 +134,7 @@ Criar um pack **novo**, nativo do Horizon, com a identidade da Aurora:
 - Resource pack da Aurora (texturas, UI, fontes).
 - Data packs no formato 26.3.
 - Alguns native mods em Rust para gameplay específico (experimental).
-- Meta realista: **10–20 mods equivalentes**, não 300.
+- Meta realista: **10–20 mods equivalentes**, não 301.
 
 Isso é alcançável em semanas/meses e não depende de terceiros.
 

@@ -129,9 +129,14 @@ def license_class(license_text: str | None) -> str:
         return "restrictive"
     if "allrightsreserved" in compact or compact in {"arr", "proprietary"}:
         return "arr"
-    if re.search(r"\b(a?gpl|lgpl|mpl|epl|cddl|osl)", text):
+    # Nomes por extenso ("GNU Lesser General Public License") não batem com a sigla.
+    if (
+        re.search(r"\b(a?gpl|lgpl|mpl|epl|cddl|osl)", text)
+        or "general public license" in text
+        or "mozilla public license" in text
+    ):
         return "copyleft"
-    if re.search(r"\b(mit|apache|bsd|cc0|isc|unlicense|zlib|wtfpl|artistic|afl|academicfree)", text):
+    if re.search(r"\b(mit|apache|bsd|cc0|cc-by|isc|unlicense|zlib|wtfpl|artistic|afl)", text) or "academicfree" in compact:
         return "permissive"
     return "custom"
 

@@ -27,45 +27,58 @@ Gerado por `python scripts/horizon-inventory.py`. Não editar à mão.
 
 | licença                            | mods |
 | ---------------------------------- | ---- |
-| permissiva (MIT/Apache/BSD/CC0...) | 91   |
-| copyleft (GPL/LGPL/MPL...)         | 60   |
+| permissiva (MIT/Apache/BSD/CC0...) | 107  |
+| copyleft (GPL/LGPL/MPL...)         | 67   |
 | restritiva (NC/ND)                 | 8    |
 | All Rights Reserved                | 79   |
-| custom                             | 53   |
+| custom                             | 30   |
 | desconhecida                       | 10   |
 
 ## Tier × licença
 
 | tier     | permissiva | copyleft | restritiva | All | custom | desconhecida |
 | -------- | ---------- | -------- | ---------- | --- | ------ | ------------ |
-| deep     | 19         | 5        | 2          | 23  | 21     | 3            |
-| machines | 12         | 8        | 1          | 3   | 2      | 1            |
-| logic    | 4          | 2        | 0          | 2   | 5      | 0            |
-| data     | 4          | 4        | 0          | 13  | 13     | 3            |
-| library  | 16         | 14       | 2          | 12  | 3      | 0            |
-| client   | 3          | 6        | 0          | 6   | 4      | 0            |
-| none     | 33         | 21       | 3          | 20  | 5      | 3            |
+| deep     | 20         | 8        | 2          | 23  | 17     | 3            |
+| machines | 12         | 9        | 1          | 3   | 1      | 1            |
+| logic    | 5          | 2        | 0          | 2   | 4      | 0            |
+| data     | 16         | 4        | 0          | 13  | 1      | 3            |
+| library  | 16         | 15       | 2          | 12  | 2      | 0            |
+| client   | 4          | 7        | 0          | 6   | 2      | 0            |
+| none     | 34         | 22       | 3          | 20  | 3      | 3            |
 
 ## Candidatos para prova de conceito
 
 Mods de conteúdo `data`/`logic` com licença permissiva ou copyleft (os mais baratos de portar):
 
-| mod                      | tier  | licença    | classes | blocos | receitas | deps                                                                             |
-| ------------------------ | ----- | ---------- | ------- | ------ | -------- | -------------------------------------------------------------------------------- |
-| Heart Pouch              | logic | copyleft   | 15      | 0      | 5        | heartstone;raccooncore                                                           |
-| Doomsday Functionality   | logic | permissive | 16      | 0      | 0        | doomsday_decoration                                                              |
-| Oh The Trees You'll Grow | logic | copyleft   | 36      | 0      | 0        |                                                                                  |
-| Another Furniture        | logic | permissive | 85      | 179    | 480      | create                                                                           |
-| Bloodmoon Update         | logic | permissive | 111     | 4      | 2        |                                                                                  |
-| Dramatic Doors           | logic | permissive | 430     | 1960   | 60       | create;dawnoftimebuilder;framedblocks;mcwdoors;minestuck;morecraft;regions_unexp |
-| BotanyTrees              | data  | copyleft   | 3       | 0      | 655      | bookshelf;botanypots                                                             |
-| Night Lights             | data  | copyleft   | 6       | 83     | 133      |                                                                                  |
-| Macaw's Trapdoors        | data  | permissive | 7       | 180    | 385      |                                                                                  |
-| Macaw's Doors            | data  | permissive | 15      | 247    | 271      |                                                                                  |
-| Create: Bells & Whistles | data  | copyleft   | 19      | 39     | 59       | create                                                                           |
-| Display Delight          | data  | copyleft   | 40      | 347    | 3        | farmersdelight                                                                   |
-| Construction Wand        | data  | permissive | 72      | 0      | 18       |                                                                                  |
-| Chisel                   | data  | permissive | 362     | 328    | 376      |                                                                                  |
+| mod                       | tier  | licença    | classes | blocos | receitas | deps                                                                             |
+| ------------------------- | ----- | ---------- | ------- | ------ | -------- | -------------------------------------------------------------------------------- |
+| Heart Pouch               | logic | copyleft   | 15      | 0      | 5        | heartstone;raccooncore                                                           |
+| Doomsday Functionality    | logic | permissive | 16      | 0      | 0        | doomsday_decoration                                                              |
+| Oh The Trees You'll Grow  | logic | copyleft   | 36      | 0      | 0        |                                                                                  |
+| Another Furniture         | logic | permissive | 85      | 179    | 480      | create                                                                           |
+| Bloodmoon Update          | logic | permissive | 111     | 4      | 2        |                                                                                  |
+| Dramatic Doors            | logic | permissive | 430     | 1960   | 60       | create;dawnoftimebuilder;framedblocks;mcwdoors;minestuck;morecraft;regions_unexp |
+| Create Stuff 'N Additions | logic | permissive | 450     | 3      | 91       | create                                                                           |
+| BotanyTrees               | data  | copyleft   | 3       | 0      | 655      | bookshelf;botanypots                                                             |
+| Night Lights              | data  | copyleft   | 6       | 83     | 133      |                                                                                  |
+| Macaw's Trapdoors         | data  | permissive | 7       | 180    | 385      |                                                                                  |
+| Macaw's Doors             | data  | permissive | 15      | 247    | 271      |                                                                                  |
+| Create: Bells & Whistles  | data  | copyleft   | 19      | 39     | 59       | create                                                                           |
+| Display Delight           | data  | copyleft   | 40      | 347    | 3        | farmersdelight                                                                   |
+| Construction Wand         | data  | permissive | 72      | 0      | 18       |                                                                                  |
+| Create Confectionery      | data  | permissive | 147     | 28     | 115      |                                                                                  |
+| MOA DECOR: ART            | data  | permissive | 305     | 151    | 152      |                                                                                  |
+| MOA DECOR: SCIENCE        | data  | permissive | 305     | 151    | 162      |                                                                                  |
+| MOA: ELECTRONICS          | data  | permissive | 313     | 156    | 173      |                                                                                  |
+| MOA DECOR: LIGHTS         | data  | permissive | 315     | 156    | 157      |                                                                                  |
+| MOA DECOR: TOYS           | data  | permissive | 329     | 163    | 164      |                                                                                  |
+| MOA DECOR: HOLIDAYS       | data  | permissive | 347     | 151    | 157      |                                                                                  |
+| MOA DECOR: GARDEN         | data  | permissive | 348     | 167    | 168      |                                                                                  |
+| Chisel                    | data  | permissive | 362     | 328    | 376      |                                                                                  |
+| MOA DECOR: BATH           | data  | permissive | 375     | 159    | 169      |                                                                                  |
+| MOA DECOR: COOKERY        | data  | permissive | 554     | 162    | 166      |                                                                                  |
+| Zcoper Karts              | data  | permissive | 925     | 22     | 20       | geckolib                                                                         |
+| Abyssal Decor             | data  | permissive | 1858    | 869    | 637      |                                                                                  |
 
 ## Dependências mais comuns
 
@@ -105,14 +118,14 @@ Mods de conteúdo `data`/`logic` com licença permissiva ou copyleft (os mais ba
 | Tinkers' Construct            | 2400    | deep     | permissive |
 | Journeymap                    | 2382    | none     | arr        |
 | WorldEdit                     | 2258    | none     | copyleft   |
-| Abyssal Decor                 | 1858    | data     | custom     |
-| WaterMedia YT Plugin          | 1780    | none     | custom     |
+| Abyssal Decor                 | 1858    | data     | permissive |
+| WaterMedia YT Plugin          | 1780    | none     | copyleft   |
 | Doomsday Decoration           | 1753    | data     | unknown    |
 | Oculus                        | 1587    | client   | copyleft   |
 | Born in Chaos                 | 1552    | deep     | arr        |
-| Citadel                       | 1419    | library  | custom     |
+| Citadel                       | 1419    | library  | copyleft   |
 | Botania                       | 1369    | deep     | custom     |
-| Alex's Caves                  | 1303    | deep     | custom     |
+| Alex's Caves                  | 1303    | deep     | copyleft   |
 | XaeroPlus                     | 1300    | none     | permissive |
 | FramedBlocks                  | 1298    | machines | copyleft   |
 | cataclysm                     | 1200    | deep     | custom     |
