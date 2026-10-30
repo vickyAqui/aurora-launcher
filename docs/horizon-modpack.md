@@ -22,24 +22,58 @@ Minecraft, que o Horizon não tem. O próprio Horizon documenta isso em `docs/mo
 
 ## Evidências do nosso modpack
 
-Inventário dos 300 jars em `modpack/mods/` (30/10/2026):
+Inventário completo em [`docs/horizon-inventory.csv`](horizon-inventory.csv), gerado por
+`python scripts/horizon-inventory.py` (30/10/2026):
 
-| Métrica                                       | Valor                                 |
-| --------------------------------------------- | ------------------------------------- |
-| Jars                                          | 300                                   |
-| Tamanho total                                 | 1.408 MB                              |
-| Classes Java                                  | **109.647** (mediana de 122 por jar)  |
-| Jars com mixins/refmap                        | **205**                               |
-| Jars que adicionam blocos                     | 123                                   |
-| Jars que adicionam entidades                  | 68                                    |
-| Jars com worldgen                             | 53                                    |
-| Jars com GUI própria                          | 104                                   |
-| Jars com receitas                             | 139                                   |
-| Jars **sem nenhum** asset de conteúdo         | 136 (libs, performance, client tools) |
-| Jars **puramente** data/assets (zero classes) | **0**                                 |
+| Métrica                                       | Valor                                |
+| --------------------------------------------- | ------------------------------------ |
+| Mods                                          | 301 (300 `.jar` + 1 `.jar.disabled`) |
+| Tamanho total                                 | 1.408 MB                             |
+| Classes Java                                  | **109.689** (mediana de 122 por mod) |
+| Mods com mixins/refmap                        | **199**                              |
+| Mods que adicionam blocos                     | 123                                  |
+| Mods que adicionam entidades                  | 68                                   |
+| Mods com worldgen                             | 60                                   |
+| Mods com GUI própria                          | 104                                  |
+| Mods com receitas                             | 139                                  |
+| Mods **sem nenhum** asset de conteúdo         | 151 (libs, performance, ferramentas) |
+| Mods **puramente** data/assets (zero classes) | **0**                                |
 
-Ou seja: **nenhum mod do pack é "só dados"**. Todos os 300 têm código Java, e 205 dependem de mixins —
+Ou seja: **nenhum mod do pack é "só dados"**. Todos os 301 têm código Java, e 199 dependem de mixins —
 exatamente o mecanismo que o Horizon não possui.
+
+## Resultado do inventário
+
+Classificação heurística por tier (detalhes em [`horizon-inventory.md`](horizon-inventory.md)):
+
+| Tier                                | Mods |
+| ----------------------------------- | ---: |
+| deep (entidades/worldgen)           |   73 |
+| machines (GUI/block entities)       |   27 |
+| logic (mixins/comportamento)        |   13 |
+| data (só registries)                |   37 |
+| library (API/base para outros mods) |   47 |
+| client (GUI sem conteúdo)           |   19 |
+| none (performance/ferramenta)       |   85 |
+
+Licenças:
+
+| Licença                            | Mods |
+| ---------------------------------- | ---: |
+| permissiva (MIT/Apache/BSD/CC0...) |   91 |
+| copyleft (GPL/LGPL/MPL...)         |   60 |
+| restritiva (NC/ND)                 |    8 |
+| All Rights Reserved                |   79 |
+| custom                             |   53 |
+| desconhecida                       |   10 |
+
+Cruzando as duas coisas: só **14 mods** de conteúdo `data`/`logic` têm licença permissiva ou copyleft
+— os candidatos baratos para uma prova de conceito. Entre eles: Macaw's Doors, Macaw's Trapdoors,
+Night Lights, Chisel, Another Furniture e Construction Wand.
+
+> Achado colateral: o pack tem **duas versões do SignPlates** (`1.0.2` e `1.1.2`) na mesma pasta
+> `mods/`. Isso é um problema do modpack atual, independente do Horizon: o Forge recusa mods
+> duplicados. Vale corrigir na próxima publicação.
 
 ## O pipeline de port do Horizon
 
@@ -69,7 +103,7 @@ Portar um mod é **obra derivada**. O Horizon é explícito: só se publica um p
 (permissiva, ou copyleft com o port na mesma licença e código publicado) ou se o autor der permissão
 por escrito. No ATM10, **89 mods eram All Rights Reserved** e 14 não permitiam derivados.
 
-Não temos a licença de todos os 300 mods do pack. Sem permissão dos autores, não dá para distribuir
+Não temos a licença de todos os 301 mods do pack. Sem permissão dos autores, não dá para distribuir
 uma versão portada — mesmo que tecnicamente funcionasse.
 
 ## O que é realisticamente possível
@@ -107,13 +141,16 @@ compatibilidade Java (não está no roadmap: eles portam, não emulam).
 
 ## Plano se formos pelo Caminho A/B
 
-### Fase 0 — Inventário e licenças (2–3 dias)
+### Fase 0 — Inventário e licenças ✅ concluída
 
-- [ ] Extrair `mods.toml`/`fabric.mod.json` de cada jar: id, nome, versão, licença, dependências.
-- [ ] Classificar por tier (data/logic/machines/deep/client) usando assets + classes + mixins.
-- [ ] Marcar o que é biblioteca, performance ou ferramenta de cliente (não precisa port).
-- [ ] Separar o que tem licença permissiva do que é ARR/sem permissão.
-- [ ] Saída: `docs/horizon-inventory.csv` + lista curta de candidatos.
+- [x] Extrair `mods.toml`/`fabric.mod.json` de cada jar: id, nome, versão, licença, dependências.
+- [x] Classificar por tier (data/logic/machines/deep/client/library) usando assets + classes + mixins.
+- [x] Marcar o que é biblioteca, performance ou ferramenta de cliente (não precisa port).
+- [x] Separar o que tem licença permissiva do que é ARR/sem permissão.
+- [x] Saída: [`docs/horizon-inventory.csv`](horizon-inventory.csv),
+      [`docs/horizon-inventory.md`](horizon-inventory.md) e `scripts/horizon-inventory.py`.
+
+O script pode ser rodado de novo a cada mudança no pack: `python scripts/horizon-inventory.py`.
 
 ### Fase 1 — Prova de conceito (1–2 semanas)
 
@@ -142,7 +179,7 @@ compatibilidade Java (não está no roadmap: eles portam, não emulam).
 
 ## Fora de escopo
 
-- Rodar os 300 jars atuais no Horizon.
+- Rodar os 301 mods atuais no Horizon.
 - Emular JVM/Forge dentro do Horizon.
 - Distribuir ports sem permissão de licença.
 - Reaproveitar o `modpack.json`/`eml-lib` atuais para o Horizon.
