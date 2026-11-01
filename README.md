@@ -98,6 +98,7 @@ O modpack é sincronizado entre o repositório e os clientes via um arquivo `mod
 3.  Copie o `modpack.json` gerado pra raiz do repo e faça commit + push.
 
 > **Scripts disponíveis**:
+>
 > - `modpack:build` — gera `modpack.json` localmente (rápido, sem upload)
 > - `modpack:publish` — sobe mods no GitHub Releases, gera e envia o manifest (lento, para novos mods)
 > - `modpack:update` — recalcula hashes de mods já hospedados (sem reenviar arquivos)
@@ -120,13 +121,16 @@ Para alterar a identidade visual, substitua os arquivos da pasta `build/`:
 
 ### Build (distribuição)
 
-| Plataforma | Comando               | Formato de saída           |
-| ---------- | --------------------- | -------------------------- |
-| Windows    | `npm run release:win` | `.exe` (instalador NSIS)   |
-| macOS      | `npm run release:mac` | `.dmg` (imagem de disco)   |
-| Linux      | `npm run release:lin` | `.AppImage`                |
+| Plataforma | Comando               | Formato de saída         |
+| ---------- | --------------------- | ------------------------ |
+| Windows    | `npm run release:win` | `.exe` (instalador NSIS) |
+| macOS      | `npm run release:mac` | `.dmg` (imagem de disco) |
+| Linux      | `npm run release:lin` | `.AppImage`              |
 
 Os arquivos compilados ficam na pasta `release/`.
+
+No Linux, se o AppImage não abrir, veja [`docs/linux-appimage.md`](docs/linux-appimage.md) — cobre
+permissão de execução, `libfuse2`, sandbox do Electron e extração manual.
 
 ## Testes
 
