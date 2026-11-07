@@ -1,7 +1,8 @@
 diff --git a/lib/launcher/filesmanager.js b/lib/launcher/filesmanager.js
+index 2929e2b..4d38c36 100644
 --- a/lib/launcher/filesmanager.js
 +++ b/lib/launcher/filesmanager.js
-@@ -178,12 +178,17 @@
+@@ -178,12 +178,17 @@ export default class FilesManager extends EventEmitter {
              return { injector: [], files: [] };
          const url = 'https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.7/authlib-injector-1.2.7.jar';
          const size = await utils.getRemoteFileSize(url, 'Failed to get authlib-injector file size');
@@ -20,10 +21,195 @@ diff --git a/lib/launcher/filesmanager.js b/lib/launcher/filesmanager.js
                  size: size,
                  type: 'LIBRARY'
              }
+diff --git a/lib/launcher/loaders/patcher.js b/lib/launcher/loaders/patcher.js
+index 9db4574..1ae7f27 100644
+--- a/lib/launcher/loaders/patcher.js
++++ b/lib/launcher/loaders/patcher.js
+@@ -9,6 +9,32 @@ import { existsSync } from 'node:fs';
+ import path_ from 'node:path';
+ import { spawn } from 'node:child_process';
+ import EventEmitter from '../../utils/events.js';
++import { EMLLibError, ErrorType } from '../../../types/errors.js';
++/**
++ * O instalador do Forge baixa os mappings da Mojang com `URL.openStream()`, que não tem timeout:
++ * numa rede que engole os pacotes de um desses hosts o processo Java nunca termina e o launcher
++ * fica preso em "Finalizando...". Baixamos pelo Node, com prazo e retry, e usamos o host atual
++ * (`piston-meta`) antes do antigo (`launchermeta`), que não responde em algumas redes.
++ */
++const MOJANG_MANIFEST_URLS = [
++    'https://piston-meta.mojang.com/mc/game/version_manifest.json',
++    'https://launchermeta.mojang.com/mc/game/version_manifest.json'
++];
++const PATCH_NETWORK_TIMEOUT_MS = 60 * 1000;
++/** `fetch` com prazo: uma conexão travada nunca pode deixar o launcher em "Finalizando...". */
++async function fetchWithTimeout(url, timeoutMs = PATCH_NETWORK_TIMEOUT_MS) {
++    const controller = new AbortController();
++    const timer = setTimeout(() => controller.abort(), timeoutMs);
++    try {
++        const res = await fetch(url, { signal: controller.signal, headers: { 'User-Agent': 'AuroraStudiosLauncher' } });
++        if (!res.ok)
++            throw new Error(`HTTP ${res.status} for ${url}`);
++        return res;
++    }
++    finally {
++        clearTimeout(timer);
++    }
++}
+ export default class Patcher extends EventEmitter {
+     constructor(config, manifest, loader, installProfile) {
+         super();
+@@ -32,22 +58,70 @@ export default class Patcher extends EventEmitter {
+         for (const processor of processors) {
+             if (processor?.sides && !processor.sides.includes('client'))
+                 continue;
++            const processorName = utils.getLibraryName(processor.jar);
+             const jarExtractPathName = path_.join(this.config.root, 'libraries', utils.getLibraryPath(processor.jar), utils.getLibraryName(processor.jar));
+             const args = processor.args.map((arg) => this.mapPath(this.mapArg(arg)));
+             const classpath = processor.classpath.map((cp) => `"${path_.join(this.config.root, 'libraries', utils.getLibraryPath(cp), utils.getLibraryName(cp))}"`);
++            // Esse é o único processador que acessa a rede, e o download tem prazo/retry aqui.
++            if (await this.downloadMojmaps(args)) {
++                this.emit('patch_progress', { filename: processorName });
++                i++;
++                continue;
++            }
+             const mainClass = await this.getJarMain(jarExtractPathName);
+             if (!mainClass) {
+                 console.warn(`[Patcher] Could not find Main-Class for processor ${processor.jar}`);
+                 continue;
+             }
+-            await new Promise((resolve) => {
+-                const patch = spawn(`"${this.config.java.absolutePath.replace('${X}', this.manifest.javaVersion?.majorVersion + '' || '8')}"`, ['-Xmx2G', '-classpath', [`"${jarExtractPathName}"`, ...classpath].join(path_.delimiter), mainClass, ...args], { shell: true });
++            await new Promise((resolve, reject) => {
++                const patch = spawn(`"${this.config.java.absolutePath.replace('${X}', this.manifest.javaVersion?.majorVersion + '' || '8')}"`, [
++                    '-Xmx2G',
++                    // Rede sem prazo é a causa do travamento; valem para qualquer processador que use URLConnection.
++                    '-Dsun.net.client.defaultConnectTimeout=15000',
++                    '-Dsun.net.client.defaultReadTimeout=60000',
++                    '-classpath',
++                    [`"${jarExtractPathName}"`, ...classpath].join(path_.delimiter),
++                    mainClass,
++                    ...args
++                ], { shell: true });
++                let settled = false;
++                let stderr = '';
++                const heartbeat = setInterval(() => this.emit('patch_debug', `Still running ${processorName}...`), 30 * 1000);
++                const finish = (callback, value) => {
++                    if (settled)
++                        return;
++                    settled = true;
++                    clearTimeout(timeout);
++                    clearInterval(heartbeat);
++                    callback(value);
++                };
++                // Sem isso, um processador que nunca fecha deixa `launch()` pendurado para sempre.
++                const timeout = setTimeout(() => {
++                    try {
++                        if (process.platform === 'win32' && patch.pid)
++                            spawn('taskkill', ['/pid', `${patch.pid}`, '/t', '/f'], { windowsHide: true });
++                        else
++                            patch.kill('SIGKILL');
++                    }
++                    catch { }
++                    finish(reject, new EMLLibError(ErrorType.PATCHER_ERROR, `Patch processor ${processorName} timed out`));
++                }, 8 * 60 * 1000);
+                 patch.stdout.on('data', (data) => this.emit('patch_debug', data.toString('utf8').replace(/\n$/, '')));
+-                patch.stderr.on('data', (data) => this.emit('patch_debug', data.toString('utf8').replace(/\n$/, '')));
++                patch.stderr.on('data', (data) => {
++                    stderr += data.toString('utf8');
++                    this.emit('patch_debug', data.toString('utf8').replace(/\n$/, ''));
++                });
++                patch.on('error', (err) => finish(reject, new EMLLibError(ErrorType.PATCHER_ERROR, `Failed to run patch processor ${processorName}: ${err.message}`)));
+                 patch.on('close', (code) => {
+-                    this.emit('patch_progress', { filename: utils.getLibraryName(processor.jar) });
++                    this.emit('patch_progress', { filename: processorName });
+                     i++;
+-                    resolve(code);
++                    if (code !== 0) {
++                        const detail = stderr.trim().split(/\r?\n/).slice(-5).join(' | ');
++                        finish(reject, new EMLLibError(ErrorType.PATCHER_ERROR, `Patch processor ${processorName} failed with code ${code}${detail ? `: ${detail}` : ''}`));
++                    }
++                    else {
++                        finish(resolve, code);
++                    }
+                 });
+             });
+         }
+@@ -55,6 +129,63 @@ export default class Patcher extends EventEmitter {
+         this.emit('patch_end', { amount: i });
+         return resultAfterPatch.files;
+     }
++    /**
++     * Executa a tarefa `DOWNLOAD_MOJMAPS` do installertools pelo Node.
++     * @returns `true` quando o processador foi tratado aqui (e não deve ser spawnado).
++     */
++    async downloadMojmaps(args) {
++        const taskIndex = args.indexOf('--task');
++        if (taskIndex === -1 || args[taskIndex + 1] !== 'DOWNLOAD_MOJMAPS')
++            return false;
++        const valueOf = (name) => {
++            const index = args.indexOf(name);
++            return index === -1 ? null : args[index + 1];
++        };
++        const version = valueOf('--version');
++        const side = valueOf('--side');
++        let output = valueOf('--output');
++        if (!version || !side || !output)
++            return false;
++        output = output.replace(/^"|"$/g, '');
++        if (args.includes('--skipIfExists') && existsSync(output)) {
++            this.emit('patch_debug', `Mojang mappings already exist at ${output}.`);
++            return true;
++        }
++        let lastError = null;
++        // Mantém o watchdog do launcher vivo enquanto o arquivo (8 MB) desce.
++        const heartbeat = setInterval(() => this.emit('patch_debug', `Still downloading Mojang mappings for ${version}...`), 30 * 1000);
++        try {
++            for (const manifestUrl of MOJANG_MANIFEST_URLS) {
++                const host = new URL(manifestUrl).host;
++                try {
++                    this.emit('patch_debug', `Downloading Mojang mappings for ${version} (${side}) from ${host}...`);
++                    const manifest = await (await fetchWithTimeout(manifestUrl)).json();
++                    const entry = (manifest.versions || []).find((v) => v.id === version);
++                    if (!entry?.url)
++                        throw new Error(`version ${version} not found in manifest`);
++                    const versionJson = await (await fetchWithTimeout(entry.url)).json();
++                    const url = versionJson?.downloads?.[`${side}_mappings`]?.url;
++                    if (!url)
++                        throw new Error(`no ${side}_mappings download for ${version}`);
++                    const buffer = Buffer.from(await (await fetchWithTimeout(url, 3 * 60 * 1000)).arrayBuffer());
++                    if (buffer.length === 0)
++                        throw new Error('downloaded mappings file is empty');
++                    await fs.mkdir(path_.dirname(output), { recursive: true });
++                    await fs.writeFile(output, buffer);
++                    this.emit('patch_debug', `Downloaded Mojang mappings for ${version} (${buffer.length} bytes).`);
++                    return true;
++                }
++                catch (err) {
++                    lastError = err;
++                    this.emit('patch_debug', `Could not download Mojang mappings from ${host}: ${err.message}`);
++                }
++            }
++        }
++        finally {
++            clearInterval(heartbeat);
++        }
++        throw new EMLLibError(ErrorType.PATCHER_ERROR, `Failed to download Mojang mappings for ${version}: ${lastError?.message ?? 'unknown error'}`);
++    }
+     async isPatched() {
+         const processors = this.installProfile.processors;
+         let libraries = [];
+@@ -166,4 +297,4 @@ export default class Patcher extends EventEmitter {
+         return arg;
+     }
+ }
+-//# sourceMappingURL=patcher.js.map
+\ No newline at end of file
++//# sourceMappingURL=patcher.js.map
 diff --git a/lib/utils/cleaner.js b/lib/utils/cleaner.js
+index aae2cfa..457cd39 100644
 --- a/lib/utils/cleaner.js
 +++ b/lib/utils/cleaner.js
-@@ -25,19 +25,20 @@
+@@ -25,19 +25,20 @@ export default class Cleaner extends EventEmitter {
      async clean(files, ignore = [], skipClean = false) {
          if (skipClean)
              return;
@@ -49,7 +235,7 @@ diff --git a/lib/utils/cleaner.js b/lib/utils/cleaner.js
                      .then(() => {
                      i++;
                      this.emit('clean_progress', { filename: file.name });
-@@ -46,7 +47,6 @@
+@@ -46,7 +47,6 @@ export default class Cleaner extends EventEmitter {
                      this.emit('clean_error', { filename: file.name, message: err });
                  }));
              }
@@ -57,7 +243,7 @@ diff --git a/lib/utils/cleaner.js b/lib/utils/cleaner.js
          }
          await Promise.all(deletePromises);
          this.emit('clean_end', { amount: i });
-@@ -64,7 +64,7 @@
+@@ -64,7 +64,7 @@ export default class Cleaner extends EventEmitter {
              else {
                  browsed.push({
                      name: file,
@@ -67,9 +253,10 @@ diff --git a/lib/utils/cleaner.js b/lib/utils/cleaner.js
              }
          });
 diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
+index e830a72..2658c0a 100644
 --- a/lib/utils/downloader.js
 +++ b/lib/utils/downloader.js
-@@ -32,17 +32,24 @@
+@@ -32,17 +32,24 @@ export default class Downloader extends EventEmitter {
       */
      async download(files, skipCheck = false) {
          const filesToDownload = !skipCheck ? await this.getFilesToDownload(files) : files;
@@ -98,7 +285,7 @@ diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
          const workers = Array(this.CONCURRENCY_LIMIT)
              .fill(null)
              .map(async () => {
-@@ -77,13 +84,23 @@
+@@ -77,13 +84,23 @@ export default class Downloader extends EventEmitter {
                  catch {
                      await fs.mkdir(filePath, { recursive: true });
                  }
@@ -124,7 +311,7 @@ diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
              }
              catch {
                  needsDownload = true;
-@@ -98,11 +115,13 @@
+@@ -98,11 +115,13 @@ export default class Downloader extends EventEmitter {
      async downloadFileWithRetry(file, attempt = 0) {
          try {
              await this.downloadFile(file);
@@ -139,7 +326,7 @@ diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
                  return this.downloadFileWithRetry(file, attempt + 1);
              }
              else {
-@@ -115,11 +134,46 @@
+@@ -115,11 +134,46 @@ export default class Downloader extends EventEmitter {
              }
          }
      }
@@ -186,7 +373,7 @@ diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
          const req = await fetch(file.url, {
              headers: { Accept: 'application/octet-stream' }
          });
-@@ -127,7 +181,7 @@
+@@ -127,7 +181,7 @@ export default class Downloader extends EventEmitter {
              const errorText = await req.text();
              throw new EMLLibError(ErrorType.FETCH_ERROR, `Error while fetching ${file.name}: HTTP ${req.status} ${errorText}`);
          }
@@ -195,7 +382,7 @@ diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
          const nodeStream = Readable.fromWeb(req.body);
          return new Promise((resolve, reject) => {
              const cleanup = () => {
-@@ -146,41 +200,75 @@
+@@ -146,41 +200,75 @@ export default class Downloader extends EventEmitter {
                      this.lastTime = now;
                      this.lastSize = this.downloaded.size;
                  }
@@ -283,9 +470,10 @@ diff --git a/lib/utils/downloader.js b/lib/utils/downloader.js
  //# sourceMappingURL=downloader.js.map
 \ No newline at end of file
 diff --git a/types/events.d.ts b/types/events.d.ts
+index c30f730..f9c34b5 100644
 --- a/types/events.d.ts
 +++ b/types/events.d.ts
-@@ -69,6 +69,22 @@
+@@ -69,6 +69,22 @@ export interface DownloaderEvents {
         * @workInProgress Currently not working well.
         */
        type: string
@@ -308,54 +496,3 @@ diff --git a/types/events.d.ts b/types/events.d.ts
      }
    ]
    download_error: [{ filename: string; type: string; message: Error | string }]
-diff --git a/lib/launcher/loaders/patcher.js b/lib/launcher/loaders/patcher.js
-index 9db4574..e0c0d3f 100644
---- a/lib/launcher/loaders/patcher.js
-+++ b/lib/launcher/loaders/patcher.js
-@@ -9,6 +9,7 @@ import { existsSync } from 'node:fs';
- import path_ from 'node:path';
- import { spawn } from 'node:child_process';
- import EventEmitter from '../../utils/events.js';
-+import { EMLLibError, ErrorType } from '../../../types/errors.js';
- export default class Patcher extends EventEmitter {
-     constructor(config, manifest, loader, installProfile) {
-         super();
-@@ -40,14 +41,35 @@ export default class Patcher extends EventEmitter {
-                 console.warn(`[Patcher] Could not find Main-Class for processor ${processor.jar}`);
-                 continue;
-             }
--            await new Promise((resolve) => {
-+            await new Promise((resolve, reject) => {
-                 const patch = spawn(`"${this.config.java.absolutePath.replace('${X}', this.manifest.javaVersion?.majorVersion + '' || '8')}"`, ['-Xmx2G', '-classpath', [`"${jarExtractPathName}"`, ...classpath].join(path_.delimiter), mainClass, ...args], { shell: true });
-+                const processorName = utils.getLibraryName(processor.jar);
-+                let settled = false;
-+                const finish = (callback, value) => {
-+                    if (settled)
-+                        return;
-+                    settled = true;
-+                    clearTimeout(timeout);
-+                    callback(value);
-+                };
-+                // Sem isso, um processador que nunca fecha deixa `launch()` pendurado para sempre.
-+                const timeout = setTimeout(() => {
-+                    try {
-+                        if (process.platform === 'win32' && patch.pid)
-+                            spawn('taskkill', ['/pid', `${patch.pid}`, '/t', '/f'], { windowsHide: true });
-+                        else
-+                            patch.kill('SIGKILL');
-+                    }
-+                    catch { }
-+                    finish(reject, new EMLLibError(ErrorType.PATCHER_ERROR, `Patch processor ${processorName} timed out`));
-+                }, 15 * 60 * 1000);
-                 patch.stdout.on('data', (data) => this.emit('patch_debug', data.toString('utf8').replace(/\n$/, '')));
-                 patch.stderr.on('data', (data) => this.emit('patch_debug', data.toString('utf8').replace(/\n$/, '')));
-+                patch.on('error', (err) => finish(reject, new EMLLibError(ErrorType.PATCHER_ERROR, `Failed to run patch processor ${processorName}: ${err.message}`)));
-                 patch.on('close', (code) => {
--                    this.emit('patch_progress', { filename: utils.getLibraryName(processor.jar) });
-+                    this.emit('patch_progress', { filename: processorName });
-                     i++;
--                    resolve(code);
-+                    finish(resolve, code);
-                 });
-             });
-         }

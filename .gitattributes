@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Os patches são aplicados com patch(1), que compara bytes: CRLF quebraria as hunks.
+*.patch text eol=lf

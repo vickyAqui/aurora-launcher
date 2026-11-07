@@ -26,6 +26,14 @@ function toDataUrl(manifest: unknown): string {
 const LAUNCH_IDLE_TIMEOUT_MS = 5 * 60 * 1000
 const WATCHDOG_INTERVAL_MS = 15 * 1000
 
+/**
+ * O FART (ForgeAutoRenamingTool) despeja uma linha `Patching ...` para cada classe do jogo — são
+ * ~33 mil linhas no patch do 1.20.1. Elas não ajudam a diagnosticar nada e incham o `main.log`,
+ * então só registramos o resto (download dos mappings, heartbeat, erros) e limitamos o total.
+ */
+const PATCH_DEBUG_LOG_LIMIT = 200
+const FART_PROGRESS_LINE = /^\s+Patching /
+
 /** Traduz o erro do eml-lib para algo que o jogador consiga entender. */
 function describeLaunchError(err: unknown): string {
   const code = (err as { code?: string } | null)?.code
@@ -67,6 +75,7 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     let lastActivity = Date.now()
     let failureReported = false
     let watchdog: ReturnType<typeof setInterval> | null = null
+    let patchDebugLogged = 0
 
     const stopWatchdog = () => {
       if (watchdog) {
@@ -244,6 +253,7 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     })
     launcher.on('patch_progress', (progress) => {
       touch()
+      logger.log(`Patched ${progress.filename}.`)
       send('game:patch_progress', progress)
     })
     launcher.on('patch_error', (error) => {
@@ -317,6 +327,17 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     })
     launcher.on('patch_debug', (message) => {
       touch()
+      const line = typeof message === 'string' ? message : String(message)
+      // As linhas por classe do FART não dizem nada sobre o progresso real do patch.
+      if (!FART_PROGRESS_LINE.test(line)) {
+        if (patchDebugLogged < PATCH_DEBUG_LOG_LIMIT) {
+          patchDebugLogged++
+          logger.log(`[patch] ${line}`)
+        } else if (patchDebugLogged === PATCH_DEBUG_LOG_LIMIT) {
+          patchDebugLogged++
+          logger.log(`[patch] mais de ${PATCH_DEBUG_LOG_LIMIT} linhas de depuração; o restante foi omitido.`)
+        }
+      }
       send('game:patch_debug', message)
     })
 
