@@ -52,6 +52,7 @@ export function initHome() {
   let allProfiles: any[] = []
   let totalToDownload = 0
   let totalDownloadedByType: { type: string; size: number }[] = []
+  let patchedProcessors = 0
   const downloadItems = new Map<string, HTMLElement>()
 
   const formatPlayTime = (ms: number) => {
@@ -357,8 +358,15 @@ Ready to launch the game with the following settings:
     if (progressLabel) progressLabel.innerText = 'Extraindo arquivos...'
   })
   game.launchPatchLoader(() => {
+    patchedProcessors = 0
     setIndeterminate(progressBar, progressPercent, true)
     if (progressLabel) progressLabel.innerText = 'Finalizando...'
+  })
+  game.patchProgress(() => {
+    // O eml-lib só avisa quando um processador do Forge termina. Mostrar a contagem deixa claro
+    // que a etapa ainda está andando, em vez de parecer travada em "Finalizando...".
+    patchedProcessors++
+    if (progressLabel) progressLabel.innerText = `Finalizando... (${patchedProcessors})`
   })
   game.launchLaunch(() => {
     setIndeterminate(progressBar, progressPercent, true)

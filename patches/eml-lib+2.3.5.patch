@@ -308,3 +308,54 @@ diff --git a/types/events.d.ts b/types/events.d.ts
      }
    ]
    download_error: [{ filename: string; type: string; message: Error | string }]
+diff --git a/lib/launcher/loaders/patcher.js b/lib/launcher/loaders/patcher.js
+index 9db4574..e0c0d3f 100644
+--- a/lib/launcher/loaders/patcher.js
++++ b/lib/launcher/loaders/patcher.js
+@@ -9,6 +9,7 @@ import { existsSync } from 'node:fs';
+ import path_ from 'node:path';
+ import { spawn } from 'node:child_process';
+ import EventEmitter from '../../utils/events.js';
++import { EMLLibError, ErrorType } from '../../../types/errors.js';
+ export default class Patcher extends EventEmitter {
+     constructor(config, manifest, loader, installProfile) {
+         super();
+@@ -40,14 +41,35 @@ export default class Patcher extends EventEmitter {
+                 console.warn(`[Patcher] Could not find Main-Class for processor ${processor.jar}`);
+                 continue;
+             }
+-            await new Promise((resolve) => {
++            await new Promise((resolve, reject) => {
+                 const patch = spawn(`"${this.config.java.absolutePath.replace('${X}', this.manifest.javaVersion?.majorVersion + '' || '8')}"`, ['-Xmx2G', '-classpath', [`"${jarExtractPathName}"`, ...classpath].join(path_.delimiter), mainClass, ...args], { shell: true });
++                const processorName = utils.getLibraryName(processor.jar);
++                let settled = false;
++                const finish = (callback, value) => {
++                    if (settled)
++                        return;
++                    settled = true;
++                    clearTimeout(timeout);
++                    callback(value);
++                };
++                // Sem isso, um processador que nunca fecha deixa `launch()` pendurado para sempre.
++                const timeout = setTimeout(() => {
++                    try {
++                        if (process.platform === 'win32' && patch.pid)
++                            spawn('taskkill', ['/pid', `${patch.pid}`, '/t', '/f'], { windowsHide: true });
++                        else
++                            patch.kill('SIGKILL');
++                    }
++                    catch { }
++                    finish(reject, new EMLLibError(ErrorType.PATCHER_ERROR, `Patch processor ${processorName} timed out`));
++                }, 15 * 60 * 1000);
+                 patch.stdout.on('data', (data) => this.emit('patch_debug', data.toString('utf8').replace(/\n$/, '')));
+                 patch.stderr.on('data', (data) => this.emit('patch_debug', data.toString('utf8').replace(/\n$/, '')));
++                patch.on('error', (err) => finish(reject, new EMLLibError(ErrorType.PATCHER_ERROR, `Failed to run patch processor ${processorName}: ${err.message}`)));
+                 patch.on('close', (code) => {
+-                    this.emit('patch_progress', { filename: utils.getLibraryName(processor.jar) });
++                    this.emit('patch_progress', { filename: processorName });
+                     i++;
+-                    resolve(code);
++                    finish(resolve, code);
+                 });
+             });
+         }
