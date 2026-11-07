@@ -22,10 +22,14 @@ index 2929e2b..4d38c36 100644
                  type: 'LIBRARY'
              }
 diff --git a/lib/launcher/loaders/patcher.js b/lib/launcher/loaders/patcher.js
-index 9db4574..1ae7f27 100644
+index 9db4574..1aacb2d 100644
 --- a/lib/launcher/loaders/patcher.js
 +++ b/lib/launcher/loaders/patcher.js
-@@ -9,6 +9,32 @@ import { existsSync } from 'node:fs';
+@@ -6,9 +6,36 @@ import yauzl from 'yauzl';
+ import utils from '../../utils/utils.js';
+ import fs from 'node:fs/promises';
+ import { existsSync } from 'node:fs';
++import zlib from 'node:zlib';
  import path_ from 'node:path';
  import { spawn } from 'node:child_process';
  import EventEmitter from '../../utils/events.js';
@@ -58,16 +62,21 @@ index 9db4574..1ae7f27 100644
  export default class Patcher extends EventEmitter {
      constructor(config, manifest, loader, installProfile) {
          super();
-@@ -32,22 +58,70 @@ export default class Patcher extends EventEmitter {
+@@ -32,22 +59,79 @@ export default class Patcher extends EventEmitter {
          for (const processor of processors) {
              if (processor?.sides && !processor.sides.includes('client'))
                  continue;
 +            const processorName = utils.getLibraryName(processor.jar);
              const jarExtractPathName = path_.join(this.config.root, 'libraries', utils.getLibraryPath(processor.jar), utils.getLibraryName(processor.jar));
-             const args = processor.args.map((arg) => this.mapPath(this.mapArg(arg)));
-             const classpath = processor.classpath.map((cp) => `"${path_.join(this.config.root, 'libraries', utils.getLibraryPath(cp), utils.getLibraryName(cp))}"`);
-+            // Esse é o único processador que acessa a rede, e o download tem prazo/retry aqui.
-+            if (await this.downloadMojmaps(args)) {
+-            const args = processor.args.map((arg) => this.mapPath(this.mapArg(arg)));
+-            const classpath = processor.classpath.map((cp) => `"${path_.join(this.config.root, 'libraries', utils.getLibraryPath(cp), utils.getLibraryName(cp))}"`);
++            // `mapArg`/`mapPath` colavam aspas para o `cmd.exe`; spawnar sem shell dispensa isso.
++            const unquote = (value) => value.replace(/^"|"$/g, '');
++            const args = processor.args.map((arg) => unquote(this.mapPath(this.mapArg(arg))));
++            const classpath = processor.classpath.map((cp) => path_.join(this.config.root, 'libraries', utils.getLibraryPath(cp), utils.getLibraryName(cp)));
++            // Os dois processadores que já causaram travamento (extração do MCP e download dos
++            // mappings) são feitos aqui, sem depender do Java.
++            if (await this.mcpData(args) || await this.downloadMojmaps(args)) {
 +                this.emit('patch_progress', { filename: processorName });
 +                i++;
 +                continue;
@@ -79,20 +88,26 @@ index 9db4574..1ae7f27 100644
              }
 -            await new Promise((resolve) => {
 -                const patch = spawn(`"${this.config.java.absolutePath.replace('${X}', this.manifest.javaVersion?.majorVersion + '' || '8')}"`, ['-Xmx2G', '-classpath', [`"${jarExtractPathName}"`, ...classpath].join(path_.delimiter), mainClass, ...args], { shell: true });
++            const taskIndex = processor.args.indexOf('--task');
++            const taskName = taskIndex === -1 ? mainClass : processor.args[taskIndex + 1];
 +            await new Promise((resolve, reject) => {
-+                const patch = spawn(`"${this.config.java.absolutePath.replace('${X}', this.manifest.javaVersion?.majorVersion + '' || '8')}"`, [
++                this.emit('patch_debug', `Running ${processorName} (${taskName})...`);
++                // Sem `shell: true`: o `cmd.exe` do Windows pode ficar esperando entrada se as aspas
++                // da linha de comando não fecharem, e aí o processo nunca produz saída nem termina.
++                // `stdin` ignorado garante que nada fique bloqueado esperando o launcher escrever.
++                const patch = spawn(this.config.java.absolutePath.replace('${X}', this.manifest.javaVersion?.majorVersion + '' || '8'), [
 +                    '-Xmx2G',
 +                    // Rede sem prazo é a causa do travamento; valem para qualquer processador que use URLConnection.
 +                    '-Dsun.net.client.defaultConnectTimeout=15000',
 +                    '-Dsun.net.client.defaultReadTimeout=60000',
 +                    '-classpath',
-+                    [`"${jarExtractPathName}"`, ...classpath].join(path_.delimiter),
++                    [jarExtractPathName, ...classpath].join(path_.delimiter),
 +                    mainClass,
 +                    ...args
-+                ], { shell: true });
++                ], { shell: false, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
 +                let settled = false;
 +                let stderr = '';
-+                const heartbeat = setInterval(() => this.emit('patch_debug', `Still running ${processorName}...`), 30 * 1000);
++                const heartbeat = setInterval(() => this.emit('patch_debug', `Still running ${processorName} (${taskName})...`), 30 * 1000);
 +                const finish = (callback, value) => {
 +                    if (settled)
 +                        return;
@@ -134,10 +149,102 @@ index 9db4574..1ae7f27 100644
                  });
              });
          }
-@@ -55,6 +129,63 @@ export default class Patcher extends EventEmitter {
+@@ -55,6 +139,155 @@ export default class Patcher extends EventEmitter {
          this.emit('patch_end', { amount: i });
          return resultAfterPatch.files;
      }
++    /**
++     * Executa a tarefa `MCP_DATA` do installertools pelo Node: é só copiar uma entrada do zip
++     * `mcp_config` para o arquivo de mappings. O Java fazia o mesmo, mas o processo podia ficar
++     * pendurado sem produzir saída nenhuma.
++     * @returns `true` quando o processador foi tratado aqui (e não deve ser spawnado).
++     */
++    async mcpData(args) {
++        const taskIndex = args.indexOf('--task');
++        if (taskIndex === -1 || args[taskIndex + 1] !== 'MCP_DATA')
++            return false;
++        const valueOf = (name) => {
++            const index = args.indexOf(name);
++            return index === -1 ? null : args[index + 1];
++        };
++        const input = valueOf('--input');
++        const output = valueOf('--output');
++        const key = valueOf('--key');
++        if (!input || !output || !key)
++            return false;
++        this.emit('patch_debug', `Extracting ${key} from ${path_.basename(input)}...`);
++        try {
++            const config = JSON.parse((await this.readZipEntry(input, 'config.json')).toString('utf8'));
++            let value = config.data;
++            for (const part of key.split('.'))
++                value = value?.[part];
++            // Diretórios (valor terminando em `/`) ficam para o Java; o Forge 1.20.1 usa um arquivo só.
++            if (typeof value !== 'string' || value.endsWith('/'))
++                return false;
++            const buffer = await this.readZipEntry(input, value);
++            await fs.mkdir(path_.dirname(output), { recursive: true });
++            await fs.writeFile(output, buffer);
++            this.emit('patch_debug', `Extracted ${value} (${buffer.length} bytes).`);
++            return true;
++        }
++        catch (error) {
++            // Formato inesperado (zip64, compressão exótica...): deixa o Java tentar.
++            this.emit('patch_debug', `Could not extract ${key} here (${error?.message ?? error}); falling back to Java.`);
++            return false;
++        }
++    }
++    /**
++     * Lê uma entrada de um zip inteira em memória.
++     * O `openReadStream` do yauzl trava no `config/joined.tsrg` deste zip (para de emitir dados
++     * no meio da entrada), então lemos o diretório central e inflamos os bytes crus com o `zlib`.
++     */
++    async readZipEntry(zipPath, entryName) {
++        const buffer = await fs.readFile(zipPath);
++        const fail = (message) => {
++            throw new Error(`${message} (${path_.basename(zipPath)})`);
++        };
++        // End of Central Directory: assinatura `PK\x05\x06`, no máximo 64 KiB antes do fim.
++        let eocd = -1;
++        for (let i = buffer.length - 22; i >= Math.max(0, buffer.length - 65557); i--) {
++            if (buffer.readUInt32LE(i) === 0x06054b50) {
++                eocd = i;
++                break;
++            }
++        }
++        if (eocd === -1)
++            return fail('Invalid zip, end of central directory not found');
++        const entryCount = buffer.readUInt16LE(eocd + 10);
++        const cdOffset = buffer.readUInt32LE(eocd + 16);
++        if (entryCount === 0xffff || cdOffset === 0xffffffff)
++            return fail('Zip64 is not supported');
++        let offset = cdOffset;
++        for (let i = 0; i < entryCount; i++) {
++            if (buffer.readUInt32LE(offset) !== 0x02014b50)
++                return fail('Invalid zip, bad central directory entry');
++            const method = buffer.readUInt16LE(offset + 10);
++            const compressedSize = buffer.readUInt32LE(offset + 20);
++            const nameLength = buffer.readUInt16LE(offset + 28);
++            const extraLength = buffer.readUInt16LE(offset + 30);
++            const commentLength = buffer.readUInt16LE(offset + 32);
++            const localOffset = buffer.readUInt32LE(offset + 42);
++            const name = buffer.toString('utf8', offset + 46, offset + 46 + nameLength);
++            if (name === entryName) {
++                if (buffer.readUInt32LE(localOffset) !== 0x04034b50)
++                    return fail('Invalid zip, bad local file header');
++                const localNameLength = buffer.readUInt16LE(localOffset + 26);
++                const localExtraLength = buffer.readUInt16LE(localOffset + 28);
++                const dataStart = localOffset + 30 + localNameLength + localExtraLength;
++                const raw = buffer.subarray(dataStart, dataStart + compressedSize);
++                if (method === 0)
++                    return Buffer.from(raw);
++                if (method === 8)
++                    return zlib.inflateRawSync(raw);
++                return fail(`Unsupported compression method ${method}`);
++            }
++            offset += 46 + nameLength + extraLength + commentLength;
++        }
++        return fail(`Entry ${entryName} not found`);
++    }
 +    /**
 +     * Executa a tarefa `DOWNLOAD_MOJMAPS` do installertools pelo Node.
 +     * @returns `true` quando o processador foi tratado aqui (e não deve ser spawnado).
@@ -198,7 +305,7 @@ index 9db4574..1ae7f27 100644
      async isPatched() {
          const processors = this.installProfile.processors;
          let libraries = [];
-@@ -166,4 +297,4 @@ export default class Patcher extends EventEmitter {
+@@ -166,4 +399,4 @@ export default class Patcher extends EventEmitter {
          return arg;
      }
  }
