@@ -13,6 +13,10 @@
  * `tsc` fails, and a warning at install time just moves the failure somewhere more
  * confusing. Set PATCH_SOFT=1 to downgrade that to a warning and keep working unpatched.
  *
+ * On Windows, prefer Git's GNU patch over whatever `patch` resolves to first: the
+ * Strawberry Perl build (2.5.9) aborts with "Assertation failed! ... Expression: hunk"
+ * on this patch, which broke `npm ci` on the Windows release runner.
+ *
  * Environment variables:
  *   PATCH_SOFT=1  warn instead of failing the install when a patch cannot be applied/confirmed
  */
@@ -37,6 +41,23 @@ const patches = [
 
 const run = (command, cwd) =>
   execSync(command, { cwd, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+
+/**
+ * No Windows, o `patch` do PATH pode ser o build do Strawberry Perl (2.5.9), que aborta com
+ * "Assertation failed! ... Expression: hunk" neste patch. O GNU patch do Git é o mesmo usado
+ * no Linux/macOS e aplica sem problema, então damos preferência a ele.
+ */
+function findPatchBinary() {
+  if (process.platform !== 'win32') return 'patch'
+  const candidates = [
+    'C:\\Program Files\\Git\\usr\\bin\\patch.exe',
+    'C:\\Program Files\\Git\\bin\\patch.exe',
+    'C:\\Program Files (x86)\\Git\\usr\\bin\\patch.exe',
+  ]
+  return candidates.find((candidate) => existsSync(candidate)) ?? 'patch'
+}
+
+const patchBinary = findPatchBinary()
 
 /** O patch está aplicado? Pergunta para o arquivo, não para o exit code do patch(1). */
 function isApplied({ verify }, pkgDir) {
@@ -68,7 +89,7 @@ for (const patch of patches) {
   console.log(`[apply-patches] Applying patch for ${name}@${version}...`)
   let output = ''
   try {
-    output = run(`patch -p1 --forward --no-backup-if-mismatch < "${patchFile}"`, pkgDir)
+    output = run(`"${patchBinary}" -p1 --forward --no-backup-if-mismatch < "${patchFile}"`, pkgDir)
     console.log(`[apply-patches] ${name} patched successfully.`)
     if (output.trim()) console.log(output.trim())
   } catch (err) {
