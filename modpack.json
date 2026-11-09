@@ -87,6 +87,14 @@
       "type": "MOD"
     },
     {
+      "name": "antiswapfix-1.1.0.jar",
+      "path": "mods/",
+      "size": 10962,
+      "sha1": "27d18a97a97391a2dbfb7d7983765790f5993bea",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/antiswapfix-1.1.0.jar",
+      "type": "MOD"
+    },
+    {
       "name": "ApothicAttributes-1.20.1-1.3.7.jar",
       "path": "mods/",
       "size": 227511,
@@ -100,6 +108,14 @@
       "size": 47428,
       "sha1": "81919356f84eab14258db98924b66c3c38e372b1",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/appleskin-forge-mc1.20.1-2.5.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "aquamirae-forge-1.20.1-6.4.0.jar",
+      "path": "mods/",
+      "size": 19073985,
+      "sha1": "f802327ab6c738ff3c29e4b39a28c224ee7b29fa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aquamirae-forge-1.20.1-6.4.0.jar",
       "type": "MOD"
     },
     {
@@ -188,6 +204,14 @@
       "size": 47163660,
       "sha1": "545bb635cea1b3c7b0d4976f8373161ab86b13a9",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Axiom-6.0.5-for-MC1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "babel_core-2.0.0.jar",
+      "path": "mods/",
+      "size": 17402448,
+      "sha1": "6cf972da31f876a2c5ff44205cf37ed72bd5d0fa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/babel_core-2.0.0.jar",
       "type": "MOD"
     },
     {
@@ -308,22 +332,6 @@
       "size": 12201393,
       "sha1": "6edbc705ccb1ca075c8155f99144646a8168e8ee",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Botania-1.20.1-451-FORGE.jar",
-      "type": "MOD"
-    },
-    {
-      "name": "BotanyPots-Forge-1.20.1-13.0.43.jar",
-      "path": "mods/",
-      "size": 1050211,
-      "sha1": "36d5c12071293df90a3599df6076b974e94b26d3",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/BotanyPots-Forge-1.20.1-13.0.43.jar",
-      "type": "MOD"
-    },
-    {
-      "name": "BotanyTrees-Forge-1.20.1-9.0.20.jar",
-      "path": "mods/",
-      "size": 261756,
-      "sha1": "de22565d05cfb2b9995ae622055e592b5c8f0a9a",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/BotanyTrees-Forge-1.20.1-9.0.20.jar",
       "type": "MOD"
     },
     {
@@ -460,6 +468,14 @@
       "size": 382083,
       "sha1": "e7b9fe89566bb1ee013e33745f22f309f679536e",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/comforts-forge-6.4.0%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "companions-forge-1.20.1-1.3.7.jar",
+      "path": "mods/",
+      "size": 7225421,
+      "sha1": "f5fbbf2e484613337b354c3101de3749e21e0524",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/companions-forge-1.20.1-1.3.7.jar",
       "type": "MOD"
     },
     {
@@ -612,14 +628,6 @@
       "size": 358535,
       "sha1": "60eff24cdd0f167643e75f14062845c584245e80",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/createutilities-0.3.2%2B1.20.1.jar",
-      "type": "MOD"
-    },
-    {
-      "name": "create_wizardry-0.2.3-forge-1.20.1.jar",
-      "path": "mods/",
-      "size": 237385,
-      "sha1": "e3960cd08c218fc4571ca59aea8f4e348343af7d",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/create_wizardry-0.2.3-forge-1.20.1.jar",
       "type": "MOD"
     },
     {
@@ -796,6 +804,14 @@
       "size": 1610362,
       "sha1": "acc9eeb82cbdc975527f10dbde34985d8936908a",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/easy_npc-forge-1.20.1-5.9.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "eclipse_arcana-1.20.1-1.5.0.jar",
+      "path": "mods/",
+      "size": 1528846,
+      "sha1": "5da63fd22d8c1c97a02cea8fa2f5d536da620dbb",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/eclipse_arcana-1.20.1-1.5.0.jar",
       "type": "MOD"
     },
     {
@@ -1047,6 +1063,22 @@
       "type": "MOD"
     },
     {
+      "name": "ftb-quests-forge-2001.4.22.jar",
+      "path": "mods/",
+      "size": 1255469,
+      "sha1": "70f3bd771ab3b5921ce1ff5f14166fab694ca1aa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ftb-quests-forge-2001.4.22.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ftb-teams-forge-2001.3.2.jar",
+      "path": "mods/",
+      "size": 252579,
+      "sha1": "c49023f5d471aa1ba7fc624d2565fe9e82b7117e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ftb-teams-forge-2001.3.2.jar",
+      "type": "MOD"
+    },
+    {
       "name": "fusion-1.2.12-forge-mc1.20.1.jar",
       "path": "mods/",
       "size": 544586,
@@ -1143,6 +1175,14 @@
       "type": "MOD"
     },
     {
+      "name": "hexerei-0.4.2.2.jar",
+      "path": "mods/",
+      "size": 11376755,
+      "sha1": "b8ae064ccfbdefa12718f97ae80e220ff6801ed5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/hexerei-0.4.2.2.jar",
+      "type": "MOD"
+    },
+    {
       "name": "IAS-Forge-1.20.1-9.0.0.jar",
       "path": "mods/",
       "size": 312332,
@@ -1223,6 +1263,14 @@
       "type": "MOD"
     },
     {
+      "name": "itemeditor-2.0.0.jar",
+      "path": "mods/",
+      "size": 315851,
+      "sha1": "4545f52d18c609cdbfa151b9d2f80dcfe2a4dced",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/itemeditor-2.0.0.jar",
+      "type": "MOD"
+    },
+    {
       "name": "Jade-1.20.1-Forge-11.13.2.jar",
       "path": "mods/",
       "size": 552486,
@@ -1276,6 +1324,14 @@
       "size": 1677051,
       "sha1": "f8d2fdd1cda71b7b60d8e4ad68ee0070b255b74f",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Kiwi-1.20.1-Forge-11.10.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "knightlib-forge-1.20.1-2.0.5.jar",
+      "path": "mods/",
+      "size": 1081342,
+      "sha1": "9b8d89d2e3128ca061208d8f7b725a65c26a8928",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/knightlib-forge-1.20.1-2.0.5.jar",
       "type": "MOD"
     },
     {
@@ -1652,6 +1708,14 @@
       "size": 377881,
       "sha1": "2b5c261e6287858bd221f2a11756774a4398ce8e",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/nightlights-1.20.1-1.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "obscure_api-18.jar",
+      "path": "mods/",
+      "size": 1128392,
+      "sha1": "d395153341a9a732fc80463c475b202d78675e28",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/obscure_api-18.jar",
       "type": "MOD"
     },
     {
