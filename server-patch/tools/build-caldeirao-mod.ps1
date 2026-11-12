@@ -1,4 +1,4 @@
-# Builds the client mod that carries the Caldeirao Futuro assets.
+# Builds the client mod that carries the Caldeirao Futuro assets (mod id aurora_vicky).
 #
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File server-patch/tools/build-caldeirao-mod.ps1
@@ -14,7 +14,7 @@
 param(
   [string]$ModSource = (Join-Path $PSScriptRoot '..\mod'),
   [string]$AssetsDir = (Join-Path $PSScriptRoot '..\resourcepack\assets'),
-  [string]$Output = (Join-Path $PSScriptRoot '..\aurora_caldeirao-1.0.0.jar'),
+  [string]$Output = (Join-Path $PSScriptRoot '..\aurora_vicky-1.0.0.jar'),
   [string]$ModpackMods = (Join-Path $PSScriptRoot '..\..\modpack\mods'),
   [string]$JdkHome = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\runtime\jre-17'),
   [string]$ForgeJar = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\libraries\net\minecraftforge\javafmllanguage\1.20.1-47.4.10\javafmllanguage-1.20.1-47.4.10.jar'),

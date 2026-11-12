@@ -142,7 +142,7 @@ Por que mod e não pack de servidor:
 - assets de mod (`mod_resources`) **não aparecem** na tela de resource packs,
   então o jogador não consegue desativar o modelo.
 
-O mod é `aurora_caldeirao-1.0.0.jar`: uma classe `@Mod` vazia (só para o Forge
+O mod é `aurora_vicky-1.0.0.jar` (mod id `aurora_vicky`): uma classe `@Mod` vazia (só para o Forge
 registrar o jar) + `META-INF/mods.toml` + `pack.mcmeta` + `assets/`. Ele usa
 `displayTest="IGNORE_SERVER_VERSION"`, então o cliente entra em servidores que
 não têm o mod sem aviso de incompatibilidade. O servidor **não precisa** do mod.
@@ -154,7 +154,7 @@ não têm o mod sem aviso de incompatibilidade. O servidor **não precisa** do m
 | `assets/minecraft/blockstates/brewing_stand.json` | um único `multipart` com `apply`, sem os modelos de bule/garrafa do vanilla |
 | `assets/minecraft/models/block/brewing_stand.json` | geometria do caldeirão (18 elementos) |
 | `assets/minecraft/models/item/brewing_stand.json` | item usa o modelo do bloco (aparece como bloco 3D) |
-| `assets/aurora_caldeirao/textures/block/caldeirao_futuro.png` | textura 128×128 |
+| `assets/aurora_vicky/textures/block/caldeirao_futuro.png` | textura 128×128 |
 
 A GUI da brewing stand não é afetada (usa textura própria) e os bules continuam
 sendo renderizados pelo block entity; só a geometria do bloco e o ícone do item
@@ -178,7 +178,7 @@ estão na escala 0–16 (16 unidades = textura inteira).
 ### Estrutura
 
 - `mod/mods.toml`, `mod/pack.mcmeta` — metadados do mod
-- `mod/src/com/aurorastudios/caldeirao/AuroraCaldeirao.java` — classe `@Mod` vazia
+- `mod/src/com/aurorastudios/vicky/AuroraVicky.java` — classe `@Mod` vazia
 - `resourcepack/assets/` — assets reaproveitados (blockstate, modelos, textura)
 
 ### Build e publicação
@@ -198,7 +198,7 @@ node scripts/publish-modpack.mjs
 O `build-caldeirao-mod.ps1` usa o JDK 17 do launcher
 (`%APPDATA%\.aurora_studios\aurora-studios\runtime\jre-17`) e o jar
 `javafmllanguage` do Forge como classpath. Se o jar mudar de conteúdo, **suba a
-versão no nome** (`aurora_caldeirao-1.0.1.jar`): o launcher compara tamanho e
+versão no nome** (`aurora_vicky-1.0.1.jar`): o launcher compara tamanho e
 SHA1 do manifesto.
 
 ### Servidor
@@ -209,7 +209,7 @@ release `server-pack` (com o zip antigo) foi apagada.
 
 ### Validar em jogo
 
-- O jar aparece em `mods/` e o Forge o carrega no boot (log: `aurora_caldeirao`).
+- O jar aparece em `mods/` e o Forge o carrega no boot (log: `aurora_vicky`).
 - Colocar uma brewing stand: deve aparecer o caldeirão.
 - Item no inventário e na mão: bloco 3D.
 - Tela de resource packs: o mod **não** aparece na lista, então não há como
@@ -223,12 +223,8 @@ release `server-pack` (com o zip antigo) foi apagada.
 - `tools/patch.ps1` — atalho para Windows
 - `resourcepack/assets/` — assets do caldeirão (blockstate, modelos, textura)
 - `mod/` — fonte do mod de recursos (`mods.toml`, `pack.mcmeta`, `@Mod`)
-- `aurora_caldeirao-1.0.0.jar` — mod gerado, copiado para `modpack/mods/`
+- `aurora_vicky-1.0.0.jar` — mod gerado, copiado para `modpack/mods/`
 - `tools/build-caldeirao-mod.ps1` — compila o mod e copia para o modpack
-- `aurora_caldeirao.zip` — resource pack antigo (não usado; guardado como histórico)
-- `tools/build-resourcepack.ps1` — gera o zip antigo
-- `tools/publish-resourcepack.mjs` — publica o zip antigo (script histórico; a
-  release `server-pack` foi apagada)
 - `NOTICE.md` — atribuição e aviso de modificação
 - `licenses/` — textos das licenças Apache-2.0 e AFL-3.0
 - `CHECKSUMS.txt` — hashes para conferência

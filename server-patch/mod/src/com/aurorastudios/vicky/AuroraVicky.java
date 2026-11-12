@@ -1,4 +1,4 @@
-package com.aurorastudios.caldeirao;
+package com.aurorastudios.vicky;
 
 import net.minecraftforge.fml.common.Mod;
 
@@ -9,11 +9,11 @@ import net.minecraftforge.fml.common.Mod;
  * Nao registra blocos, itens nem eventos. O pack de mods nao aparece na tela de
  * resource packs, entao o jogador nao consegue desativar o modelo.
  */
-@Mod(AuroraCaldeirao.MOD_ID)
-public final class AuroraCaldeirao {
-    public static final String MOD_ID = "aurora_caldeirao";
+@Mod(AuroraVicky.MOD_ID)
+public final class AuroraVicky {
+    public static final String MOD_ID = "aurora_vicky";
 
-    public AuroraCaldeirao() {
+    public AuroraVicky() {
         // Sem inicializacao: o conteudo do mod sao os assets em assets/.
     }
 }

@@ -175,14 +175,6 @@
       "type": "MOD"
     },
     {
-      "name": "aurora_caldeirao-1.0.0.jar",
-      "path": "mods/",
-      "size": 9196,
-      "sha1": "7bcca0d35061ae876291cd29a16a8e8e412a6d6e",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_caldeirao-1.0.0.jar",
-      "type": "MOD"
-    },
-    {
       "name": "aurora_mortis_biomes-1.0.3-forge-1.20.1.jar",
       "path": "mods/",
       "size": 19748099,
@@ -204,6 +196,14 @@
       "size": 29320001,
       "sha1": "8da098030a9da13720a44b1c2cd1524cf699c9f0",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_mortis_lib-0.0.6-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "aurora_vicky-1.0.0.jar",
+      "path": "mods/",
+      "size": 9139,
+      "sha1": "220e053f021de3b05dc199af9a861c87786b3be8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_vicky-1.0.0.jar",
       "type": "MOD"
     },
     {

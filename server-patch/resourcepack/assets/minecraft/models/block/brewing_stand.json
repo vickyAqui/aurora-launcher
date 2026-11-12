@@ -1,8 +1,8 @@
 {
   "credit": "Made with Blockbench - converted for 1.20.1 by Aurora Studios",
   "textures": {
-    "particle": "aurora_caldeirao:block/caldeirao_futuro",
-    "tex": "aurora_caldeirao:block/caldeirao_futuro"
+    "particle": "aurora_vicky:block/caldeirao_futuro",
+    "tex": "aurora_vicky:block/caldeirao_futuro"
   },
   "elements": [
     {
