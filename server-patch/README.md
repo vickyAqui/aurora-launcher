@@ -191,6 +191,23 @@ Reinicie o servidor depois de editar (não use `/reload`). Sempre que o zip muda
 rode o build de novo, publique e atualize `resource-pack-sha1`; com o SHA1 errado
 o cliente recusa o pack e, como ele é obrigatório, ninguém consegue entrar.
 
+**Atenção:** o cliente guarda o pack em `server-resource-packs/<sha1 da URL>` e, se
+essa pasta já existe, ele **não baixa de novo** (verificado no bytecode do
+`DownloadedPackSource` do 1.20.1). Trocar o conteúdo do zip mantendo a mesma URL
+não chega a quem já baixou. Para publicar uma versão nova, use outro nome de
+arquivo e mude a URL:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File server-patch/tools/build-resourcepack.ps1 `
+  -Output server-patch/aurora_caldeirao-v2.zip
+$env:PACK_FILE = 'server-patch/aurora_caldeirao-v2.zip'
+node server-patch/tools/publish-resourcepack.mjs
+```
+
+Depois atualize `resource-pack=` (novo nome) e `resource-pack-sha1=` e reinicie.
+Para forçar o re-download sem mudar a URL, o jogador precisa apagar a pasta
+`server-resource-packs/<hash>` do diretório do jogo.
+
 Para desativar: apague as quatro linhas e reinicie.
 
 ### Validar em jogo
