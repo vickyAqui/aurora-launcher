@@ -121,19 +121,35 @@ mudar. Nesse caso, revise o `tools/Patch.java` e recompile. O fonte está inclu�
 - `kubejs/` — scripts KubeJS: aviso **somente para operadores** ao entrar em um
   bioma do mod `aurora_mortis` e aviso de fronteira para o jogador que cruza a
   borda. Instruções em `kubejs/README.md`. É independente deste patch.
-- `resourcepack/` — resource pack que troca o modelo e a textura da **brewing
-  stand** pelo caldeirão "Caldeirão Futuro". Instruções abaixo.
+- `mod/` + `resourcepack/assets/` — mod de recursos que troca o modelo e a
+  textura da **brewing stand** pelo caldeirão "Caldeirão Futuro". Instruções
+  abaixo.
 
-## Resource pack do caldeirão
+## Caldeirão Futuro (mod de recursos)
 
-Modelos e texturas de bloco são renderizados pelo **cliente**; o servidor só
-distribui o pacote. O pack é servido por `resource-pack=` no `server.properties`
-e é **obrigatório** (`require-resource-pack=true`): quem recusar o download é
-expulso, então todo mundo vê o caldeirão.
+Modelos e texturas de bloco são renderizados pelo **cliente**. Antes isso era um
+resource pack servido pelo servidor (`resource-pack=`); agora é um **mod de
+recursos** que viaja no modpack e carrega automaticamente junto com o jogo.
 
-### O que o pack muda
+Por que mod e não pack de servidor:
 
-| Arquivo no pack | Efeito |
+- o pack de servidor fica em `server-resource-packs/<sha1 da URL>` e o cliente
+  **não rebaixa** se a pasta existe — trocar o zip mantendo a URL não chegava a
+  quem já tinha baixado;
+- pack de servidor pode ser recusado ou falhar no download, e com
+  `require-resource-pack=true` isso expulsa o jogador (fonte de reclamação e de
+  erro de conexão);
+- assets de mod (`mod_resources`) **não aparecem** na tela de resource packs,
+  então o jogador não consegue desativar o modelo.
+
+O mod é `aurora_caldeirao-1.0.0.jar`: uma classe `@Mod` vazia (só para o Forge
+registrar o jar) + `META-INF/mods.toml` + `pack.mcmeta` + `assets/`. Ele usa
+`displayTest="IGNORE_SERVER_VERSION"`, então o cliente entra em servidores que
+não têm o mod sem aviso de incompatibilidade. O servidor **não precisa** do mod.
+
+### O que o mod muda
+
+| Arquivo | Efeito |
 |---|---|
 | `assets/minecraft/blockstates/brewing_stand.json` | um único `multipart` com `apply`, sem os modelos de bule/garrafa do vanilla |
 | `assets/minecraft/models/block/brewing_stand.json` | geometria do caldeirão (18 elementos) |
@@ -159,63 +175,45 @@ distorção de UV é imperceptível.
 O campo `texture_size` do export foi removido: o 1.20.1 não o lê, e as UVs já
 estão na escala 0–16 (16 unidades = textura inteira).
 
-### Publicar o pack
+### Estrutura
+
+- `mod/mods.toml`, `mod/pack.mcmeta` — metadados do mod
+- `mod/src/com/aurorastudios/caldeirao/AuroraCaldeirao.java` — classe `@Mod` vazia
+- `resourcepack/assets/` — assets reaproveitados (blockstate, modelos, textura)
+
+### Build e publicação
 
 ```powershell
-# 1. (re)gera o zip a partir de resourcepack/
-powershell -ExecutionPolicy Bypass -File server-patch/tools/build-resourcepack.ps1
+# compila o jar e copia para modpack/mods/
+powershell -ExecutionPolicy Bypass -File server-patch/tools/build-caldeirao-mod.ps1
 
-# 2. sobe o zip para a release "server-pack" (usa GH_TOKEN do .env)
-node server-patch/tools/publish-resourcepack.mjs
+# regenera o modpack.json (inclui o jar novo)
+node scripts/build-modpack.mjs
+
+# publica na release "modpack" (confira o plano antes)
+node scripts/publish-modpack.mjs --dry-run
+node scripts/publish-modpack.mjs
 ```
 
-O zip vai para
-`https://github.com/vickyAqui/aurora-launcher/releases/download/server-pack/aurora_caldeirao.zip`.
+O `build-caldeirao-mod.ps1` usa o JDK 17 do launcher
+(`%APPDATA%\.aurora_studios\aurora-studios\runtime\jre-17`) e o jar
+`javafmllanguage` do Forge como classpath. Se o jar mudar de conteúdo, **suba a
+versão no nome** (`aurora_caldeirao-1.0.1.jar`): o launcher compara tamanho e
+SHA1 do manifesto.
 
-A release é separada de propósito: o `publish-modpack.mjs` apaga todo asset da
-release `modpack` que não esteja em `modpack/`, então o pack sumiria no próximo
-publish do modpack.
+### Servidor
 
-### Configurar o servidor
-
-No `server.properties` (backup em `server.properties.bak-20261112`):
-
-```properties
-resource-pack=https://github.com/vickyAqui/aurora-launcher/releases/download/server-pack/aurora_caldeirao.zip
-resource-pack-sha1=953a01a7e7e8becb7cafde57396d896b8a9dd1fe
-resource-pack-prompt={"text":"Aurora Studios: aceite o pacote de recursos para ver o Caldeirao Futuro.","color":"gold"}
-require-resource-pack=true
-```
-
-Reinicie o servidor depois de editar (não use `/reload`). Sempre que o zip mudar,
-rode o build de novo, publique e atualize `resource-pack-sha1`; com o SHA1 errado
-o cliente recusa o pack e, como ele é obrigatório, ninguém consegue entrar.
-
-**Atenção:** o cliente guarda o pack em `server-resource-packs/<sha1 da URL>` e, se
-essa pasta já existe, ele **não baixa de novo** (verificado no bytecode do
-`DownloadedPackSource` do 1.20.1). Trocar o conteúdo do zip mantendo a mesma URL
-não chega a quem já baixou. Para publicar uma versão nova, use outro nome de
-arquivo e mude a URL:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File server-patch/tools/build-resourcepack.ps1 `
-  -Output server-patch/aurora_caldeirao-v2.zip
-$env:PACK_FILE = 'server-patch/aurora_caldeirao-v2.zip'
-node server-patch/tools/publish-resourcepack.mjs
-```
-
-Depois atualize `resource-pack=` (novo nome) e `resource-pack-sha1=` e reinicie.
-Para forçar o re-download sem mudar a URL, o jogador precisa apagar a pasta
-`server-resource-packs/<hash>` do diretório do jogo.
-
-Para desativar: apague as quatro linhas e reinicie.
+O `server.properties` voltou ao original, sem `resource-pack`. O backup da
+configuração antiga (pack obrigatório) é `server.properties.bak-20261112`, e a
+release `server-pack` ficou sem uso.
 
 ### Validar em jogo
 
-- Ao entrar, o cliente baixa o pack e o aceita sozinho (é obrigatório).
+- O jar aparece em `mods/` e o Forge o carrega no boot (log: `aurora_caldeirao`).
 - Colocar uma brewing stand: deve aparecer o caldeirão.
 - Item no inventário e na mão: bloco 3D.
-- Colocar bules e abrir a GUI: a funcionalidade e os bules continuam normais.
+- Tela de resource packs: o mod **não** aparece na lista, então não há como
+  desativar por ali.
 
 ## Arquivos
 
@@ -223,10 +221,13 @@ Para desativar: apague as quatro linhas e reinicie.
 - `tools/patch.jar` — patcher autocontido (Java 17+)
 - `tools/Patch.java` — fonte do patcher
 - `tools/patch.ps1` — atalho para Windows
-- `resourcepack/` — conteúdo do resource pack (pack.mcmeta + assets)
-- `aurora_caldeirao.zip` — resource pack pronto para o `resource-pack=`
-- `tools/build-resourcepack.ps1` — gera o zip
-- `tools/publish-resourcepack.mjs` — publica o zip na release `server-pack`
+- `resourcepack/assets/` — assets do caldeirão (blockstate, modelos, textura)
+- `mod/` — fonte do mod de recursos (`mods.toml`, `pack.mcmeta`, `@Mod`)
+- `aurora_caldeirao-1.0.0.jar` — mod gerado, copiado para `modpack/mods/`
+- `tools/build-caldeirao-mod.ps1` — compila o mod e copia para o modpack
+- `aurora_caldeirao.zip` — resource pack antigo (não usado; guardado como histórico)
+- `tools/build-resourcepack.ps1` — gera o zip antigo
+- `tools/publish-resourcepack.mjs` — publica o zip antigo na release `server-pack`
 - `NOTICE.md` — atribuição e aviso de modificação
 - `licenses/` — textos das licenças Apache-2.0 e AFL-3.0
 - `CHECKSUMS.txt` — hashes para conferência
