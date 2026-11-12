@@ -205,7 +205,7 @@ SHA1 do manifesto.
 
 O `server.properties` voltou ao original, sem `resource-pack`. O backup da
 configuração antiga (pack obrigatório) é `server.properties.bak-20261112`, e a
-release `server-pack` ficou sem uso.
+release `server-pack` (com o zip antigo) foi apagada.
 
 ### Validar em jogo
 
@@ -227,7 +227,8 @@ release `server-pack` ficou sem uso.
 - `tools/build-caldeirao-mod.ps1` — compila o mod e copia para o modpack
 - `aurora_caldeirao.zip` — resource pack antigo (não usado; guardado como histórico)
 - `tools/build-resourcepack.ps1` — gera o zip antigo
-- `tools/publish-resourcepack.mjs` — publica o zip antigo na release `server-pack`
+- `tools/publish-resourcepack.mjs` — publica o zip antigo (script histórico; a
+  release `server-pack` foi apagada)
 - `NOTICE.md` — atribuição e aviso de modificação
 - `licenses/` — textos das licenças Apache-2.0 e AFL-3.0
 - `CHECKSUMS.txt` — hashes para conferência
