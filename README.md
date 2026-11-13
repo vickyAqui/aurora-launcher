@@ -22,6 +22,7 @@ O **Aurora Studios Launcher** é um launcher moderno e rápido para o servidor M
 - **Gerenciamento de arquivos**: Download inteligente dos arquivos do jogo (Java, bibliotecas, assets, mods) com validação de hash via EML Lib.
 - **Auto-update**: Sistema de atualização automática via GitHub Releases.
 - **Skin & cape**: Visualize e equipe skins e capes diretamente no launcher.
+- **Modelos CPM**: Escolha o modelo do Customizable Player Models na aba **Modelos**; o launcher grava `config/cpm.json` e o jogo já entra com ele.
 
 ## Instalação & Desenvolvimento
 
@@ -139,8 +140,8 @@ npm test          # uma vez
 npm run test:watch # durante o desenvolvimento
 ```
 
-Suíte com [Vitest](https://vitest.dev), cobrindo a lógica de mods, o manifesto do modpack e a pasta
-do jogo. Os testes usam a pasta de jogo real num diretório temporário (via `AURORA_APPDATA_DIR`), sem
+Suíte com [Vitest](https://vitest.dev), cobrindo a lógica de mods, o manifesto do modpack, a seleção
+de modelos CPM (`config/cpm.json`) e a pasta do jogo. Os testes usam a pasta de jogo real num diretório temporário (via `AURORA_APPDATA_DIR`), sem
 mock de `fs`, e `tests/download-integration.test.ts` roda contra o `Downloader` do próprio `eml-lib`
 para garantir que o manifesto entregue é interpretado como o launcher realmente lê.
 
