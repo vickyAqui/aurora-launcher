@@ -4,6 +4,7 @@ import type { IAuthResponse, IAccountSummary } from './handlers/auth'
 import type { IDetectedJava } from './handlers/java'
 import type { IPackEntry } from './handlers/packs'
 import type { IModEntry } from './handlers/mods'
+import type { ICpmState } from './handlers/cpm'
 import type { ILogFile } from './handlers/logs'
 import type { IPlayStats } from './handlers/stats'
 import type { IScreenshot } from './handlers/screenshots'
@@ -272,6 +273,11 @@ contextBridge.exposeInMainWorld('api', {
     list: (): Promise<{ mods: IModEntry[]; modsDir: string }> => ipcRenderer.invoke('mods:list'),
     setEnabled: (name: string, enabled: boolean): Promise<boolean> => ipcRenderer.invoke('mods:set_enabled', name, enabled),
     openFolder: (): Promise<boolean> => ipcRenderer.invoke('mods:open_folder')
+  },
+  cpm: {
+    list: (): Promise<ICpmState> => ipcRenderer.invoke('cpm:list'),
+    setModel: (name: string | null): Promise<boolean> => ipcRenderer.invoke('cpm:set_model', name),
+    openFolder: (): Promise<boolean> => ipcRenderer.invoke('cpm:open_folder')
   },
   update: {
     check: (): Promise<{ ok: boolean; dev?: boolean; message?: string; updateAvailable?: boolean; version?: string }> => ipcRenderer.invoke('update:check'),

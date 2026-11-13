@@ -514,6 +514,20 @@ input[type="range"] {
   }
 }
 
+/* --- CPM MODELS TAB --- */
+.cpm-model {
+  cursor: pointer;
+
+  &.active {
+    border-color: var(--accent-green);
+    background: rgba(93, 202, 165, 0.08);
+
+    .mod-icon {
+      color: var(--accent-green);
+    }
+  }
+}
+
 /* --- ACCOUNT SETTINGS --- */
 .account-card {
   background: rgba(255, 255, 255, 0.02);

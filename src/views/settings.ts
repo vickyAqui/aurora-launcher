@@ -1,5 +1,5 @@
 import { setView, closeOverlay } from '../state'
-import { settings, system, java, packs, update, logs, mods } from '../ipc'
+import { settings, system, java, packs, update, logs, mods, cpm } from '../ipc'
 import { logoutCurrentAccount } from '../account'
 import { Dialog } from './dialog'
 import { enhanceSelect, type CustomSelect } from './dropdown'
@@ -7,6 +7,7 @@ import type { IGameSettings } from '../../electron/handlers/settings'
 import type { IDetectedJava } from '../../electron/handlers/java'
 import type { IPackEntry } from '../../electron/handlers/packs'
 import type { IModEntry } from '../../electron/handlers/mods'
+import type { ICpmState } from '../../electron/handlers/cpm'
 import logger from 'electron-log/renderer'
 import { formatRemaining, formatSpeed, formatBytes } from '../format'
 import type { UpdateProgress } from '../../electron/handlers/update'
@@ -38,6 +39,7 @@ export async function initSettings() {
   initJavaDetection()
   initModsTab()
   initPacksTab()
+  initCpmTab()
   initUpdateCheck()
   initLogsTab()
 
@@ -82,6 +84,7 @@ function initUIListeners() {
       btn.classList.add('active')
       const targetTab = btn.getAttribute('data-tab')
       tabContents.forEach((c) => (c.id === `tab-${targetTab}` ? c.classList.add('active') : c.classList.remove('active')))
+      if (targetTab === 'models') loadCpmModels()
     })
   })
 }
@@ -484,6 +487,123 @@ function renderPackList(container: HTMLElement, packEntries: IPackEntry[], kind:
 
     container.appendChild(item)
   }
+}
+
+let cpmState: ICpmState | null = null
+
+function initCpmTab() {
+  const openBtn = document.getElementById('btn-open-models')
+  const refreshBtn = document.getElementById('btn-refresh-models')
+
+  openBtn?.addEventListener('click', async () => {
+    await cpm.openFolder()
+  })
+
+  refreshBtn?.addEventListener('click', () => {
+    loadCpmModels()
+  })
+
+  loadCpmModels()
+}
+
+async function loadCpmModels() {
+  const container = document.getElementById('models-list')
+  if (!container) return
+
+  container.innerHTML = '<div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando...</span></div>'
+
+  try {
+    cpmState = await cpm.list()
+    renderCpmModels()
+  } catch (err) {
+    logger.error('Error loading CPM models:', err)
+    container.innerHTML = '<p class="mods-error">Erro ao carregar os modelos.</p>'
+  }
+}
+
+function renderCpmModels() {
+  const container = document.getElementById('models-list')
+  if (!container || !cpmState) return
+
+  const { models, selected } = cpmState
+  container.innerHTML = ''
+
+  const countEl = document.getElementById('models-count')
+  if (countEl) {
+    const total = `${models.length} ${models.length === 1 ? 'modelo' : 'modelos'}`
+    countEl.innerText = selected ? `${total} · em uso: ${selected}` : `${total} · usando a skin padrão`
+  }
+
+  container.appendChild(buildCpmModelItem(null, 'Skin padrão', 'Nenhum modelo CPM aplicado', selected === null))
+
+  for (const model of models) {
+    const label = model.name.replace(/\.cpmmodel$/i, '')
+    container.appendChild(buildCpmModelItem(model.name, label, `${formatBytes(model.size)} · arquivo .cpmmodel`, model.name === selected))
+  }
+
+  if (selected && !models.some((model) => model.name === selected)) {
+    const warning = document.createElement('p')
+    warning.className = 'mods-empty'
+    warning.innerText = `O modelo "${selected}" está selecionado no CPM, mas o arquivo não está mais na pasta player_models.`
+    container.appendChild(warning)
+  }
+}
+
+function buildCpmModelItem(name: string | null, title: string, subtitle: string, active: boolean): HTMLElement {
+  const item = document.createElement('div')
+  item.className = `mod-item cpm-model${active ? ' active' : ''}`
+
+  item.innerHTML = `
+    <div class="mod-info">
+      <div class="mod-icon">
+        <i class="fa-solid ${name === null ? 'fa-user' : 'fa-user-astronaut'}"></i>
+      </div>
+      <div class="mod-details">
+        <span class="mod-name"></span>
+        <span class="mod-filename"></span>
+      </div>
+    </div>
+    <div class="pack-item-actions"></div>
+  `
+
+  const nameEl = item.querySelector('.mod-name') as HTMLElement
+  const filenameEl = item.querySelector('.mod-filename') as HTMLElement
+  nameEl.textContent = title
+  filenameEl.textContent = subtitle
+
+  const actions = item.querySelector('.pack-item-actions') as HTMLElement
+
+  if (active) {
+    const badge = document.createElement('span')
+    badge.className = 'java-detected-badge'
+    badge.innerText = 'Em uso'
+    actions.appendChild(badge)
+    return item
+  }
+
+  const applyBtn = document.createElement('button')
+  applyBtn.className = 'btn btn-ghost btn-sm'
+  applyBtn.innerText = 'Aplicar'
+  applyBtn.addEventListener('click', (e) => {
+    e.stopPropagation()
+    applyCpmModel(name)
+  })
+  actions.appendChild(applyBtn)
+
+  item.addEventListener('click', () => applyCpmModel(name))
+
+  return item
+}
+
+async function applyCpmModel(name: string | null) {
+  const ok = await cpm.setModel(name)
+
+  if (!ok) {
+    await Dialog.show('Não foi possível aplicar este modelo.', [{ text: 'OK', type: 'ok' }])
+    return
+  }
+
+  await loadCpmModels()
 }
 
 function initUpdateCheck() {

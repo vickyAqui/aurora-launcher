@@ -5,6 +5,7 @@ import type { IScreenshot } from '../electron/handlers/screenshots'
 import type { IPlayStats } from '../electron/handlers/stats'
 import type { IPackEntry } from '../electron/handlers/packs'
 import type { IModEntry } from '../electron/handlers/mods'
+import type { ICpmState } from '../electron/handlers/cpm'
 import type { UpdateStatus, UpdateProgress } from '../electron/handlers/update'
 import type { ILogFile } from '../electron/handlers/logs'
 import type {
@@ -144,6 +145,11 @@ declare global {
         setEnabled: (name: string, enabled: boolean) => Promise<boolean>
         openFolder: () => Promise<boolean>
       }
+      cpm: {
+        list: () => Promise<ICpmState>
+        setModel: (name: string | null) => Promise<boolean>
+        openFolder: () => Promise<boolean>
+      }
       update: {
         check: () => Promise<{ ok: boolean; dev?: boolean; message?: string; updateAvailable?: boolean; version?: string }>
         download: () => Promise<{ ok: boolean; message?: string }>
@@ -277,6 +283,12 @@ export const mods = {
   list: async (): Promise<{ mods: IModEntry[]; modsDir: string }> => await window.api.mods.list(),
   setEnabled: async (name: string, enabled: boolean): Promise<boolean> => await window.api.mods.setEnabled(name, enabled),
   openFolder: async (): Promise<boolean> => await window.api.mods.openFolder()
+}
+
+export const cpm = {
+  list: async (): Promise<ICpmState> => await window.api.cpm.list(),
+  setModel: async (name: string | null): Promise<boolean> => await window.api.cpm.setModel(name),
+  openFolder: async (): Promise<boolean> => await window.api.cpm.openFolder()
 }
 
 export const update = {

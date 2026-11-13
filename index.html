@@ -223,6 +223,7 @@
               <button class="btn nav-btn active" data-tab="game"><i class="fa-fw fa-solid fa-cubes"></i><span>Jogo</span></button>
               <button class="btn nav-btn" data-tab="mods"><i class="fa-fw fa-solid fa-cube"></i><span>Mods</span></button>
               <button class="btn nav-btn" data-tab="packs"><i class="fa-fw fa-solid fa-palette"></i><span>Packs</span></button>
+              <button class="btn nav-btn" data-tab="models"><i class="fa-fw fa-solid fa-user-astronaut"></i><span>Modelos</span></button>
               <button class="btn nav-btn" data-tab="account"><i class="fa-fw fa-solid fa-user"></i><span>Conta</span></button>
               <button class="btn nav-btn" data-tab="logs"><i class="fa-fw fa-solid fa-bug"></i><span>Logs & Erros</span></button>
             </nav>
@@ -353,6 +354,34 @@
 
               <h4 class="packs-section-title"><i class="fa-fw fa-solid fa-wand-magic-sparkles"></i>&nbsp;&nbsp;Shader packs</h4>
               <div id="shaderpacks-list" class="packs-list">
+                <div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando...</span></div>
+              </div>
+            </section>
+
+            <section id="tab-models" class="tab-content">
+              <h3>Modelo CPM</h3>
+              <p class="mods-description">
+                Escolha o modelo que o Customizable Player Models vai carregar quando você entrar no servidor. Os arquivos
+                <code>.cpmmodel</code> ficam na pasta <code>player_models</code> do jogo. Troque com o jogo fechado: o CPM grava essa
+                configuração ao sair e pode sobrescrever a escolha.
+              </p>
+
+              <div class="packs-toolbar">
+                <button id="btn-open-models" class="btn btn-ghost">
+                  <i class="fa-fw fa-solid fa-folder-open"></i>
+                  <span>Pasta de modelos</span>
+                </button>
+                <button id="btn-refresh-models" class="btn btn-ghost">
+                  <i class="fa-fw fa-solid fa-rotate"></i>
+                  <span>Atualizar</span>
+                </button>
+              </div>
+
+              <div class="mods-summary">
+                <span id="models-count"></span>
+              </div>
+
+              <div id="models-list" class="mods-list">
                 <div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando...</span></div>
               </div>
             </section>
