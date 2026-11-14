@@ -727,14 +727,6 @@
       "type": "MOD"
     },
     {
-      "name": "custommobeffects-forge-1.20.1-1.0.0.jar",
-      "path": "mods/",
-      "size": 706057,
-      "sha1": "614d102d34be6db5991af5eda4b35678ff39e893",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/custommobeffects-forge-1.20.1-1.0.0.jar",
-      "type": "MOD"
-    },
-    {
       "name": "CustomPlayerModels-1.20-0.6.25a.jar",
       "path": "mods/",
       "size": 2792497,
