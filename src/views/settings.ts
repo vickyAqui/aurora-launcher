@@ -525,13 +525,15 @@ function renderCpmModels() {
   const container = document.getElementById('models-list')
   if (!container || !cpmState) return
 
-  const { models, selected } = cpmState
+  const { models, selected, savedInLauncher } = cpmState
   container.innerHTML = ''
 
   const countEl = document.getElementById('models-count')
   if (countEl) {
     const total = `${models.length} ${models.length === 1 ? 'modelo' : 'modelos'}`
-    countEl.innerText = selected ? `${total} · em uso: ${selected}` : `${total} · usando a skin padrão`
+    if (!selected) countEl.innerText = `${total} · usando a skin padrão`
+    else if (savedInLauncher) countEl.innerText = `${total} · em uso: ${selected} · reaplicado ao iniciar`
+    else countEl.innerText = `${total} · em uso: ${selected} · definido no jogo`
   }
 
   container.appendChild(buildCpmModelItem(null, 'Skin padrão', 'Nenhum modelo CPM aplicado', selected === null))

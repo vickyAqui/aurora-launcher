@@ -6,6 +6,7 @@ import logger from 'electron-log/main'
 import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
 import { endSession, startSession } from './stats'
 import { ModpackUnavailableError, prepareMods, type IPreparedMods } from './mods'
+import { applySelectedModel } from './cpm'
 import { ensureFreshAccount } from './auth'
 
 /**
@@ -153,6 +154,14 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     }
 
     const minecraft = { ...MINECRAFT, modpackUrl: toDataUrl(prepared.manifest) }
+
+    // O CPM regrava `config/cpm.json` quando o jogo fecha, então a escolha feita na aba Modelos
+    // é reaplicada agora, imediatamente antes de abrir o jogo. Sem escolha no launcher, nada muda.
+    try {
+      applySelectedModel(slug)
+    } catch (err) {
+      logger.error('Could not apply the CPM model before launch:', err)
+    }
 
     let launcher: Launcher
     try {

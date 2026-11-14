@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { isModelFileName, listModelFiles, readSelectedModel, withSelectedModel } from '../electron/cpm'
+import { isModelFileName, listModelFiles, readSelectedModel, readSelection, withSelectedModel, withSelection } from '../electron/cpm'
 
 let dir: string
 
@@ -87,5 +87,47 @@ describe('withSelectedModel', () => {
   it('creates a minimal config when the file is missing or corrupt', () => {
     expect(JSON.parse(withSelectedModel(null, 'a.cpmmodel'))).toEqual({ selectedModel: 'a.cpmmodel' })
     expect(JSON.parse(withSelectedModel('{broken', 'a.cpmmodel'))).toEqual({ selectedModel: 'a.cpmmodel' })
+  })
+})
+
+describe('readSelection', () => {
+  it('reads the launcher choice for the profile', () => {
+    expect(readSelection('{"aurora-studios":"a.cpmmodel"}', 'aurora-studios')).toEqual({ saved: true, selected: 'a.cpmmodel' })
+  })
+
+  it('treats an explicit null as the vanilla skin', () => {
+    expect(readSelection('{"aurora-studios":null}', 'aurora-studios')).toEqual({ saved: true, selected: null })
+  })
+
+  it('reports no saved choice for another profile, missing, invalid or corrupt data', () => {
+    expect(readSelection('{"other":"a.cpmmodel"}', 'aurora-studios')).toEqual({ saved: false, selected: null })
+    expect(readSelection(null, 'aurora-studios')).toEqual({ saved: false, selected: null })
+    expect(readSelection('{broken', 'aurora-studios')).toEqual({ saved: false, selected: null })
+    expect(readSelection('[]', 'aurora-studios')).toEqual({ saved: false, selected: null })
+    expect(readSelection('{"aurora-studios":"../a.cpmmodel"}', 'aurora-studios')).toEqual({ saved: false, selected: null })
+    expect(readSelection('{"aurora-studios":42}', 'aurora-studios')).toEqual({ saved: false, selected: null })
+  })
+})
+
+describe('withSelection', () => {
+  it('sets the choice for one profile and keeps the others', () => {
+    const raw = JSON.stringify({ 'aurora-studios': 'old.cpmmodel', other: null }, null, 2)
+
+    expect(JSON.parse(withSelection(raw, 'aurora-studios', 'new.cpmmodel'))).toEqual({
+      'aurora-studios': 'new.cpmmodel',
+      other: null
+    })
+    expect(withSelection(raw, 'aurora-studios', 'new.cpmmodel').endsWith('\n')).toBe(true)
+  })
+
+  it('stores the vanilla skin as null', () => {
+    expect(JSON.parse(withSelection('{"aurora-studios":"a.cpmmodel"}', 'aurora-studios', null))).toEqual({
+      'aurora-studios': null
+    })
+  })
+
+  it('starts a fresh file when the contents are missing or corrupt', () => {
+    expect(JSON.parse(withSelection(null, 'aurora-studios', 'a.cpmmodel'))).toEqual({ 'aurora-studios': 'a.cpmmodel' })
+    expect(JSON.parse(withSelection('{broken', 'aurora-studios', 'a.cpmmodel'))).toEqual({ 'aurora-studios': 'a.cpmmodel' })
   })
 })

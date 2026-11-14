@@ -10,9 +10,23 @@ export const CPM_CONFIG_FILE = path.join('config', 'cpm.json')
 /** Key of the selected model inside `config/cpm.json`. */
 export const CPM_SELECTED_KEY = 'selectedModel'
 
+/**
+ * File in the launcher userData folder that remembers the model chosen in the launcher, per
+ * profile. CPM rewrites `config/cpm.json` when the game closes, so the launcher needs its own copy
+ * of the choice to reapply it right before the game starts.
+ */
+export const CPM_SELECTION_FILE = 'cpm-selection.json'
+
 export interface ICpmModelFile {
   name: string
   size: number
+}
+
+export interface ICpmSelection {
+  /** Whether the launcher has a choice saved for this profile. */
+  saved: boolean
+  /** Model file name, or null for the vanilla skin. */
+  selected: string | null
 }
 
 /**
@@ -94,6 +108,53 @@ export function withSelectedModel(raw: string | null, name: string | null): stri
 
   if (name) data[CPM_SELECTED_KEY] = name
   else delete data[CPM_SELECTED_KEY]
+
+  return `${JSON.stringify(data, null, 2)}\n`
+}
+
+/**
+ * Reads the launcher-side choice for `slug` from the contents of `cpm-selection.json`.
+ *
+ * `saved: false` means the player never chose a model in the launcher, so the game's own
+ * `config/cpm.json` is still the source of truth.
+ */
+export function readSelection(raw: string | null, slug: string): ICpmSelection {
+  if (!raw) return { saved: false, selected: null }
+
+  try {
+    const data: unknown = JSON.parse(raw)
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return { saved: false, selected: null }
+
+    const record = data as Record<string, unknown>
+    if (!Object.prototype.hasOwnProperty.call(record, slug)) return { saved: false, selected: null }
+
+    const value = record[slug]
+    if (value === null) return { saved: true, selected: null }
+    if (typeof value === 'string' && isModelFileName(value)) return { saved: true, selected: value }
+
+    return { saved: false, selected: null }
+  } catch {
+    return { saved: false, selected: null }
+  }
+}
+
+/**
+ * Returns the contents of `cpm-selection.json` with the choice for `slug` set to `name`
+ * (`null` = vanilla skin). Other profiles are kept as-is.
+ */
+export function withSelection(raw: string | null, slug: string, name: string | null): string {
+  let data: Record<string, unknown> = {}
+
+  if (raw) {
+    try {
+      const parsed: unknown = JSON.parse(raw)
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) data = parsed as Record<string, unknown>
+    } catch {
+      // Keep the empty object above; the file is rewritten with only this profile.
+    }
+  }
+
+  data[slug] = name
 
   return `${JSON.stringify(data, null, 2)}\n`
 }
