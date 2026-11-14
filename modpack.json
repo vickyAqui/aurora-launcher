@@ -1775,14 +1775,6 @@
       "type": "MOD"
     },
     {
-      "name": "oculus-mc1.20.1-1.8.0.jar",
-      "path": "mods/",
-      "size": 2851119,
-      "sha1": "984f774e71790deaec674c7587bd24e0711871b2",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/oculus-mc1.20.1-1.8.0.jar",
-      "type": "MOD"
-    },
-    {
       "name": "Oh-The-Biomes-Weve-Gone-Forge-1.7.5.jar",
       "path": "mods/",
       "size": 19308698,
