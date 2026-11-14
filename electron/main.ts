@@ -17,6 +17,7 @@ import { registerStatsHandlers } from './handlers/stats'
 import { registerPacksHandlers } from './handlers/packs'
 import { registerModsHandlers } from './handlers/mods'
 import { registerCpmHandlers } from './handlers/cpm'
+import { registerPerformanceHandlers } from './handlers/performance'
 import { registerUpdateHandlers } from './handlers/update'
 import { registerLogsHandlers } from './handlers/logs'
 
@@ -157,6 +158,7 @@ app.whenReady().then(() => {
     registerPacksHandlers()
     registerModsHandlers()
     registerCpmHandlers()
+    registerPerformanceHandlers()
     registerUpdateHandlers(mainWindow)
     registerLogsHandlers()
   }

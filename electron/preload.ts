@@ -5,7 +5,13 @@ import type { IDetectedJava } from './handlers/java'
 import type { IPackEntry } from './handlers/packs'
 import type { IModEntry } from './handlers/mods'
 import type { ICpmState } from './handlers/cpm'
+import type {
+  IPerformanceApplyResult,
+  IPerformanceRestoreResult,
+  IPerformanceStateResponse
+} from './handlers/performance'
 import type { ICpmPreviewResult } from './cpmmodel'
+import type { PerformanceProfileId } from '../src/performancePresets'
 import type { ILogFile } from './handlers/logs'
 import type { IPlayStats } from './handlers/stats'
 import type { IScreenshot } from './handlers/screenshots'
@@ -280,6 +286,12 @@ contextBridge.exposeInMainWorld('api', {
     setModel: (name: string | null): Promise<boolean> => ipcRenderer.invoke('cpm:set_model', name),
     preview: (name: string): Promise<ICpmPreviewResult> => ipcRenderer.invoke('cpm:preview', name),
     openFolder: (): Promise<boolean> => ipcRenderer.invoke('cpm:open_folder')
+  },
+  performance: {
+    get: (): Promise<IPerformanceStateResponse> => ipcRenderer.invoke('performance:get'),
+    apply: (profile: PerformanceProfileId, memory: number): Promise<IPerformanceApplyResult> =>
+      ipcRenderer.invoke('performance:apply', profile, memory),
+    restore: (): Promise<IPerformanceRestoreResult> => ipcRenderer.invoke('performance:restore')
   },
   update: {
     check: (): Promise<{ ok: boolean; dev?: boolean; message?: string; updateAvailable?: boolean; version?: string }> => ipcRenderer.invoke('update:check'),

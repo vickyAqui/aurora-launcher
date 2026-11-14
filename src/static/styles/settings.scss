@@ -1115,3 +1115,236 @@ p#version {
     background: rgba(127, 119, 221, 0.12);
   }
 }
+
+/* --- PERFORMANCE TAB --- */
+.perf-hardware {
+  padding: 14px;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.perf-hardware-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.perf-hardware-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 11px;
+  background: var(--surface-soft);
+  border-radius: var(--radius-sm);
+
+  span {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+}
+
+.perf-hardware-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+
+  i {
+    margin-top: 2px;
+    color: var(--accent-cyan);
+  }
+
+  strong {
+    color: var(--text-main);
+  }
+
+  code {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--accent-cyan);
+    background: var(--surface-soft);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+}
+
+.perf-profiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.perf-profile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--border-hover);
+  }
+
+  &.selected {
+    border-color: var(--accent-cyan);
+    background: var(--accent-cyan-soft);
+    box-shadow: 0 0 0 1px rgba(102, 210, 234, 0.25) inset;
+  }
+
+  &.active {
+    border-color: rgba(93, 202, 165, 0.55);
+  }
+}
+
+.perf-profile-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+  color: var(--accent-cyan);
+  font-size: 15px;
+}
+
+.perf-profile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.perf-profile-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.perf-profile-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.perf-profile-badge {
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(93, 202, 165, 0.16);
+  color: var(--accent-green);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.perf-profile-tagline {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+}
+
+.perf-profile-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.perf-profile-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.perf-profile-highlight {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--surface-soft);
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.perf-profile-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 15px;
+  color: var(--accent-cyan);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.perf-profile.selected .perf-profile-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.perf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.perf-status {
+  min-height: 18px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+
+  &.error {
+    color: var(--accent-pink);
+  }
+}
+
+.perf-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 13px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--btn-radius);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+
+  i {
+    margin-top: 2px;
+    color: var(--accent-yellow);
+  }
+
+  strong {
+    color: var(--text-main);
+  }
+}
+

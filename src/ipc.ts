@@ -6,6 +6,12 @@ import type { IPlayStats } from '../electron/handlers/stats'
 import type { IPackEntry } from '../electron/handlers/packs'
 import type { IModEntry } from '../electron/handlers/mods'
 import type { ICpmState } from '../electron/handlers/cpm'
+import type {
+  IPerformanceApplyResult,
+  IPerformanceRestoreResult,
+  IPerformanceStateResponse
+} from '../electron/handlers/performance'
+import type { PerformanceProfileId } from './performancePresets'
 import type { ICpmPreviewResult } from '../electron/cpmmodel'
 import type { UpdateStatus, UpdateProgress } from '../electron/handlers/update'
 import type { ILogFile } from '../electron/handlers/logs'
@@ -152,6 +158,11 @@ declare global {
         preview: (name: string) => Promise<ICpmPreviewResult>
         openFolder: () => Promise<boolean>
       }
+      performance: {
+        get: () => Promise<IPerformanceStateResponse>
+        apply: (profile: PerformanceProfileId, memory: number) => Promise<IPerformanceApplyResult>
+        restore: () => Promise<IPerformanceRestoreResult>
+      }
       update: {
         check: () => Promise<{ ok: boolean; dev?: boolean; message?: string; updateAvailable?: boolean; version?: string }>
         download: () => Promise<{ ok: boolean; message?: string }>
@@ -292,6 +303,13 @@ export const cpm = {
   setModel: async (name: string | null): Promise<boolean> => await window.api.cpm.setModel(name),
   preview: async (name: string): Promise<ICpmPreviewResult> => await window.api.cpm.preview(name),
   openFolder: async (): Promise<boolean> => await window.api.cpm.openFolder()
+}
+
+export const performance = {
+  get: async (): Promise<IPerformanceStateResponse> => await window.api.performance.get(),
+  apply: async (profile: PerformanceProfileId, memory: number): Promise<IPerformanceApplyResult> =>
+    await window.api.performance.apply(profile, memory),
+  restore: async (): Promise<IPerformanceRestoreResult> => await window.api.performance.restore()
 }
 
 export const update = {

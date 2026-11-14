@@ -7,6 +7,8 @@ import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
 import { endSession, startSession } from './stats'
 import { ModpackUnavailableError, prepareMods, type IPreparedMods } from './mods'
 import { applySelectedModel } from './cpm'
+import { applyStoredPerformanceProfile } from '../performance'
+import { getGameDir } from '../gamedir'
 import { ensureFreshAccount } from './auth'
 
 /**
@@ -163,6 +165,23 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
       logger.error('Could not apply the CPM model before launch:', err)
     }
 
+    // O jogo regrava `options.txt` e os configs ao fechar. O perfil de desempenho é reaplicado
+    // agora, e as flags JVM vêm do mesmo perfil. O valor do slider de RAM vence o valor salvo.
+    let javaArgs: string[] = []
+    try {
+      const applied = applyStoredPerformanceProfile(
+        getGameDir(slug),
+        app.getPath('userData'),
+        slug,
+        settings.memory.max
+      )
+      if (applied?.javaArgs) javaArgs = applied.javaArgs
+    } catch (err) {
+      logger.error('Could not apply the performance profile before launch:', err)
+    }
+
+    const javaWithArgs = javaArgs.length > 0 ? { ...java, args: javaArgs } : java
+
     let launcher: Launcher
     try {
       launcher = new Launcher({
@@ -173,7 +192,7 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
         cleaning: {
           enabled: false
         },
-        java: java,
+        java: javaWithArgs,
         memory: {
           min: +settings.memory.min * 1024,
           max: +settings.memory.max * 1024

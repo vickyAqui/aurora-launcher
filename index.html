@@ -221,6 +221,7 @@
             <h2>Configurações</h2>
             <nav>
               <button class="btn nav-btn active" data-tab="game"><i class="fa-fw fa-solid fa-cubes"></i><span>Jogo</span></button>
+              <button class="btn nav-btn" data-tab="performance"><i class="fa-fw fa-solid fa-gauge-high"></i><span>Desempenho</span></button>
               <button class="btn nav-btn" data-tab="mods"><i class="fa-fw fa-solid fa-cube"></i><span>Mods</span></button>
               <button class="btn nav-btn" data-tab="packs"><i class="fa-fw fa-solid fa-palette"></i><span>Packs</span></button>
               <button class="btn nav-btn" data-tab="models"><i class="fa-fw fa-solid fa-user-astronaut"></i><span>Modelos</span></button>
@@ -299,6 +300,42 @@
                   <div id="java-detected-list" class="java-detected-list"></div>
                   <p id="java-detected-status" class="java-detected-status"></p>
                 </div>
+              </div>
+            </section>
+
+            <section id="tab-performance" class="tab-content">
+              <h3>Desempenho</h3>
+              <p class="mods-description">
+                Escolha um perfil para o launcher ajustar as opções gráficas, os configs dos mods de performance e as flags
+                do Java. O perfil é reaplicado antes de cada inicialização, porque o Minecraft regrava esses arquivos ao
+                fechar.
+              </p>
+
+              <div id="perf-hardware" class="perf-hardware">
+                <div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Lendo o hardware...</span></div>
+              </div>
+
+              <div id="perf-profiles" class="perf-profiles"></div>
+
+              <div class="perf-actions">
+                <button id="btn-apply-performance" class="btn btn-primary" disabled>
+                  <i class="fa-fw fa-solid fa-gauge-high"></i>
+                  <span>Aplicar perfil</span>
+                </button>
+                <button id="btn-restore-performance" class="btn btn-ghost" disabled>
+                  <i class="fa-fw fa-solid fa-rotate-left"></i>
+                  <span>Desfazer alterações</span>
+                </button>
+              </div>
+
+              <p id="perf-status" class="perf-status"></p>
+
+              <div class="perf-note">
+                <i class="fa-fw fa-solid fa-circle-info"></i>
+                <span>
+                  O perfil sobrescreve as opções gráficas a cada inicialização. Ajustes feitos dentro do jogo serão
+                  substituídos; use <strong>Desfazer alterações</strong> para voltar ao estado anterior.
+                </span>
               </div>
             </section>
 

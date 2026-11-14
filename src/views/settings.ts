@@ -11,6 +11,7 @@ import type { ICpmState } from '../../electron/handlers/cpm'
 import logger from 'electron-log/renderer'
 import { formatRemaining, formatSpeed, formatBytes } from '../format'
 import { CpmViewer } from '../cpmViewer'
+import { initPerformanceTab, refreshPerformanceTab } from './performance'
 import type { UpdateProgress } from '../../electron/handlers/update'
 
 const resolutionList = [
@@ -41,6 +42,7 @@ export async function initSettings() {
   initModsTab()
   initPacksTab()
   initCpmTab()
+  initPerformanceTab()
   initUpdateCheck()
   initLogsTab()
 
@@ -86,6 +88,7 @@ function initUIListeners() {
       const targetTab = btn.getAttribute('data-tab')
       tabContents.forEach((c) => (c.id === `tab-${targetTab}` ? c.classList.add('active') : c.classList.remove('active')))
       if (targetTab === 'models') loadCpmModels(true)
+      if (targetTab === 'performance') void refreshPerformanceTab()
     })
   })
 }
