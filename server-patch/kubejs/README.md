@@ -5,7 +5,7 @@ Dois scripts de servidor **independentes** (um não interfere no outro):
 | Arquivo | Para quem avisa | Quando |
 |---|---|---|
 | `aurora_mortis_biomes.js` | operadores (OP) | jogador entra em bioma do mod |
-| `aurora_mortis_fronteira.js` | o próprio jogador | jogador cruza a borda de um bioma do mod |
+| `aurora_mortis_fronteira.js` | o próprio jogador | jogador passa de um domínio do mod para outro |
 
 Não alteram o mod nem o modpack: usam o KubeJS que já está no pack.
 
@@ -94,9 +94,10 @@ rode `/kubejs reload server_scripts`.
 
 ## Aviso pessoal de fronteira (`aurora_mortis_fronteira.js`)
 
-Arquivo **separado e independente** do aviso de OP. Quando o jogador cruza a
-borda de um bioma do `aurora_mortis` (entrando, saindo ou passando de um
-domínio para outro), **ele mesmo** recebe:
+Arquivo **separado e independente** do aviso de OP. Quando o jogador passa
+**diretamente de um domínio do `aurora_mortis` para outro domínio do mod**
+(ex.: do domínio da nostalgia para o domínio da repetição), **ele mesmo**
+recebe:
 
 ```
 Atenção: Você está ultrapassando uma fronteira!!
@@ -104,14 +105,23 @@ Atenção: Você está ultrapassando uma fronteira!!
 
 A mensagem sai em **vermelho escuro (`dark_red`) e negrito**.
 
+- Entrar ou sair de um domínio vindo de bioma vanilla/outro mod **não** gera
+  aviso (ex.: taiga -> repetição, repetição -> plains).
+- Biomas que são variações do mesmo domínio contam como o mesmo domínio (ver
+  `AURORA_FRONTEIRA_DOMAIN_ALIASES`): `dominio_do_pesadelo` ×
+  `dominio_de_olhos_do_pesadelo`, `dominio_da_ilusao` × `ilusao_sem_radicao` e
+  `dominio_da_repeticao` × `rubro` não disparam aviso entre si.
 - Só o jogador que cruzou recebe; os OPs continuam recebendo o aviso do outro
   script normalmente.
-- Usa NBT próprio (`aurora_fronteira_last_biome`), sem tocar no estado do
+- Usa NBT próprio (`aurora_fronteira_last_domain`), sem tocar no estado do
   script de OPs.
 - Cooldown de 3 s (`AURORA_FRONTEIRA_COOLDOWN_TICKS`) para não floodar quando
-  se anda na borda.
-- Só avisa se pelo menos um dos lados da travessia é bioma do mod; trocar de
-  bioma vanilla para outro vanilla não gera nada.
+  se anda na borda. Se um cruzamento cair no cooldown, ele **não é perdido**:
+  o domínio novo não é gravado e a checagem seguinte avisa assim que o
+  cooldown terminar.
+- Checagem a cada 5 ticks (0,25 s) para não pular biomas ao andar rápido.
+- Ao logar, o script assume o domínio atual sem avisar (evita aviso falso de
+  login).
 
 Para desligar só esse aviso, apague (ou renomeie para `.js.disabled`)
 `aurora_mortis_fronteira.js` e rode `/kubejs reload server_scripts` — o aviso

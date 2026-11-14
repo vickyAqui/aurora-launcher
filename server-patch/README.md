@@ -119,8 +119,9 @@ mudar. Nesse caso, revise o `tools/Patch.java` e recompile. O fonte está inclu�
 ## Outros recursos de servidor
 
 - `kubejs/` — scripts KubeJS: aviso **somente para operadores** ao entrar em um
-  bioma do mod `aurora_mortis` e aviso de fronteira para o jogador que cruza a
-  borda. Instruções em `kubejs/README.md`. É independente deste patch.
+  bioma do mod `aurora_mortis` e aviso de fronteira para o jogador que passa de
+  um domínio do mod para outro. Instruções em `kubejs/README.md`. É
+  independente deste patch.
 - `mod/` + `resourcepack/assets/` — mod de recursos que troca o modelo e a
   textura da **brewing stand** pelo caldeirão "Caldeirão Futuro". Instruções
   abaixo.
