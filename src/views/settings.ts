@@ -12,6 +12,7 @@ import logger from 'electron-log/renderer'
 import { formatRemaining, formatSpeed, formatBytes } from '../format'
 import { CpmViewer } from '../cpmViewer'
 import { initPerformanceTab, refreshPerformanceTab } from './performance'
+import { initModDiagnosis } from './modDiagnosis'
 import type { UpdateProgress } from '../../electron/handlers/update'
 
 const resolutionList = [
@@ -295,6 +296,10 @@ function initModsTab() {
   })
   refreshBtn?.addEventListener('click', () => {
     loadMods()
+  })
+
+  initModDiagnosis(() => {
+    void loadMods()
   })
 
   loadMods()

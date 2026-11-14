@@ -351,11 +351,17 @@
                   <i class="fa-fw fa-solid fa-magnifying-glass"></i>
                   <input type="text" id="mods-search-input" placeholder="Buscar mod..." autocomplete="off" />
                 </div>
+                <button id="btn-diagnose-mods" class="btn btn-ghost" title="Ler o mods.toml de cada jar e apontar problemas">
+                  <i class="fa-fw fa-solid fa-stethoscope"></i>
+                  <span>Diagnosticar</span>
+                </button>
                 <button id="btn-open-mods" class="btn btn-ghost">
                   <i class="fa-fw fa-solid fa-folder-open"></i>
                   <span>Pasta de mods</span>
                 </button>
               </div>
+
+              <div id="mods-diagnosis" class="mods-diagnosis hidden"></div>
 
               <div class="mods-summary">
                 <span id="mods-count"></span>

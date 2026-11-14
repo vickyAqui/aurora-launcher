@@ -2,8 +2,9 @@ import { ipcMain, shell } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
 import logger from 'electron-log/main'
-import { MODPACK_URL, DEFAULT_PROFILE } from '../const'
+import { MODPACK_URL, DEFAULT_PROFILE, MINECRAFT } from '../const'
 import { getGameDir, getModsDir } from '../gamedir'
+import { scanModsDir, type IModScanResult } from '../modscan'
 import {
   buildLaunchManifest,
   buildModEntries,
@@ -23,7 +24,7 @@ import {
   type IModpackManifest
 } from '../mods'
 
-export type { IModEntry }
+export type { IModEntry, IModScanResult }
 
 const DISABLED_STORE = 'disabled-mods.json'
 
@@ -270,6 +271,18 @@ export function registerModsHandlers() {
     } catch (err) {
       logger.error('Error listing mods:', err)
       return { mods: [], modsDir: getModsDir(slug) }
+    }
+  })
+
+  ipcMain.handle('mods:diagnose', async (_event, slug?: string): Promise<IModScanResult> => {
+    try {
+      return await scanModsDir(getModsDir(slug), {
+        minecraftVersion: MINECRAFT.version,
+        loaderVersion: MINECRAFT.loader.version
+      })
+    } catch (err) {
+      logger.error('Error diagnosing mods:', err)
+      return { mods: [], issues: [], scanned: 0 }
     }
   })
 

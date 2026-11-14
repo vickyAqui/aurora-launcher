@@ -4,7 +4,7 @@ import type { IDetectedJava } from '../electron/handlers/java'
 import type { IScreenshot } from '../electron/handlers/screenshots'
 import type { IPlayStats } from '../electron/handlers/stats'
 import type { IPackEntry } from '../electron/handlers/packs'
-import type { IModEntry } from '../electron/handlers/mods'
+import type { IModEntry, IModScanResult } from '../electron/handlers/mods'
 import type { ICpmState } from '../electron/handlers/cpm'
 import type {
   IPerformanceApplyResult,
@@ -149,6 +149,7 @@ declare global {
       }
       mods: {
         list: () => Promise<{ mods: IModEntry[]; modsDir: string }>
+        diagnose: () => Promise<IModScanResult>
         setEnabled: (name: string, enabled: boolean) => Promise<boolean>
         openFolder: () => Promise<boolean>
       }
@@ -294,6 +295,7 @@ export const packs = {
 
 export const mods = {
   list: async (): Promise<{ mods: IModEntry[]; modsDir: string }> => await window.api.mods.list(),
+  diagnose: async (): Promise<IModScanResult> => await window.api.mods.diagnose(),
   setEnabled: async (name: string, enabled: boolean): Promise<boolean> => await window.api.mods.setEnabled(name, enabled),
   openFolder: async (): Promise<boolean> => await window.api.mods.openFolder()
 }

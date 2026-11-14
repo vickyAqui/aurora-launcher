@@ -805,6 +805,120 @@ p#version {
   padding: 20px 0;
 }
 
+/* --- MOD DIAGNOSIS --- */
+.mods-diagnosis {
+  margin-bottom: 14px;
+}
+
+.diag-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.diag-summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: var(--btn-radius);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-soft);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+
+  &.is-clean {
+    border-color: rgba(93, 202, 165, 0.4);
+    color: var(--accent-green);
+  }
+
+  &.has-warnings {
+    border-color: rgba(244, 196, 48, 0.4);
+    color: var(--accent-yellow);
+  }
+
+  &.has-errors {
+    border-color: rgba(255, 122, 158, 0.45);
+    color: var(--accent-pink);
+  }
+}
+
+.diag-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  list-style: none;
+}
+
+.diag-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+
+  &.error {
+    border-left: 3px solid var(--accent-pink);
+  }
+
+  &.warning {
+    border-left: 3px solid var(--accent-yellow);
+  }
+
+  &.info {
+    border-left: 3px solid var(--accent-cyan);
+  }
+
+  .btn {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+}
+
+.diag-icon {
+  margin-top: 2px;
+  flex-shrink: 0;
+  font-size: 13px;
+
+  .diag-item.error & {
+    color: var(--accent-pink);
+  }
+
+  .diag-item.warning & {
+    color: var(--accent-yellow);
+  }
+
+  .diag-item.info & {
+    color: var(--accent-cyan);
+  }
+}
+
+.diag-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.diag-message {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-main);
+}
+
+.diag-file {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .mod-toggle {
   position: relative;
   display: inline-block;

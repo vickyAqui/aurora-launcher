@@ -3,7 +3,7 @@ import type { IGameSettings, ISystemInfo } from './handlers/settings'
 import type { IAuthResponse, IAccountSummary } from './handlers/auth'
 import type { IDetectedJava } from './handlers/java'
 import type { IPackEntry } from './handlers/packs'
-import type { IModEntry } from './handlers/mods'
+import type { IModEntry, IModScanResult } from './handlers/mods'
 import type { ICpmState } from './handlers/cpm'
 import type {
   IPerformanceApplyResult,
@@ -278,6 +278,7 @@ contextBridge.exposeInMainWorld('api', {
   },
   mods: {
     list: (): Promise<{ mods: IModEntry[]; modsDir: string }> => ipcRenderer.invoke('mods:list'),
+    diagnose: (): Promise<IModScanResult> => ipcRenderer.invoke('mods:diagnose'),
     setEnabled: (name: string, enabled: boolean): Promise<boolean> => ipcRenderer.invoke('mods:set_enabled', name, enabled),
     openFolder: (): Promise<boolean> => ipcRenderer.invoke('mods:open_folder')
   },
