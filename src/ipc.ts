@@ -6,6 +6,7 @@ import type { IPlayStats } from '../electron/handlers/stats'
 import type { IPackEntry } from '../electron/handlers/packs'
 import type { IModEntry } from '../electron/handlers/mods'
 import type { ICpmState } from '../electron/handlers/cpm'
+import type { ICpmPreviewResult } from '../electron/cpmmodel'
 import type { UpdateStatus, UpdateProgress } from '../electron/handlers/update'
 import type { ILogFile } from '../electron/handlers/logs'
 import type {
@@ -148,6 +149,7 @@ declare global {
       cpm: {
         list: () => Promise<ICpmState>
         setModel: (name: string | null) => Promise<boolean>
+        preview: (name: string) => Promise<ICpmPreviewResult>
         openFolder: () => Promise<boolean>
       }
       update: {
@@ -288,6 +290,7 @@ export const mods = {
 export const cpm = {
   list: async (): Promise<ICpmState> => await window.api.cpm.list(),
   setModel: async (name: string | null): Promise<boolean> => await window.api.cpm.setModel(name),
+  preview: async (name: string): Promise<ICpmPreviewResult> => await window.api.cpm.preview(name),
   openFolder: async (): Promise<boolean> => await window.api.cpm.openFolder()
 }
 

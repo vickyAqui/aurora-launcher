@@ -16,8 +16,9 @@ import {
   withSelection,
   type ICpmModelFile
 } from '../cpm'
+import { parseCpmModel, type ICpmPreviewResult } from '../cpmmodel'
 
-export type { ICpmModelFile }
+export type { ICpmModelFile, ICpmPreviewResult }
 
 export interface ICpmState {
   models: ICpmModelFile[]
@@ -160,6 +161,19 @@ export function registerCpmHandlers() {
     } catch (err) {
       logger.error('Error setting CPM model:', err)
       return false
+    }
+  })
+
+  ipcMain.handle('cpm:preview', async (_event, name: string, slug?: string): Promise<ICpmPreviewResult> => {
+    try {
+      if (!isModelFileName(name)) return { ok: false, error: 'Nome de modelo inválido' }
+
+      const filePath = path.join(getCpmModelsDir(slug), name)
+      const model = parseCpmModel(fs.readFileSync(filePath))
+      return { ok: true, model }
+    } catch (err) {
+      logger.error('Error reading CPM model preview:', err)
+      return { ok: false, error: err instanceof Error ? err.message : 'Não foi possível ler o modelo' }
     }
   })
 

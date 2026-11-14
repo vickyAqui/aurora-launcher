@@ -10,6 +10,7 @@ import type { IModEntry } from '../../electron/handlers/mods'
 import type { ICpmState } from '../../electron/handlers/cpm'
 import logger from 'electron-log/renderer'
 import { formatRemaining, formatSpeed, formatBytes } from '../format'
+import { CpmViewer } from '../cpmViewer'
 import type { UpdateProgress } from '../../electron/handlers/update'
 
 const resolutionList = [
@@ -84,7 +85,7 @@ function initUIListeners() {
       btn.classList.add('active')
       const targetTab = btn.getAttribute('data-tab')
       tabContents.forEach((c) => (c.id === `tab-${targetTab}` ? c.classList.add('active') : c.classList.remove('active')))
-      if (targetTab === 'models') loadCpmModels()
+      if (targetTab === 'models') loadCpmModels(true)
     })
   })
 }
@@ -490,23 +491,53 @@ function renderPackList(container: HTMLElement, packEntries: IPackEntry[], kind:
 }
 
 let cpmState: ICpmState | null = null
+let cpmViewer: CpmViewer | null = null
+let cpmPreviewName: string | null | undefined
+let cpmPreviewToken = 0
 
 function initCpmTab() {
   const openBtn = document.getElementById('btn-open-models')
   const refreshBtn = document.getElementById('btn-refresh-models')
+  const applyBtn = document.getElementById('btn-apply-model')
 
   openBtn?.addEventListener('click', async () => {
     await cpm.openFolder()
   })
 
   refreshBtn?.addEventListener('click', () => {
-    loadCpmModels()
+    loadCpmModels(false)
   })
 
-  loadCpmModels()
+  applyBtn?.addEventListener('click', () => {
+    if (cpmPreviewName !== undefined) applyCpmModel(cpmPreviewName)
+  })
+
+  loadCpmModels(false)
 }
 
-async function loadCpmModels() {
+/** Creates the 3D viewer the first time it is needed, once the canvas is on screen. */
+function ensureCpmViewer(): CpmViewer | null {
+  if (cpmViewer) return cpmViewer
+
+  const canvas = document.getElementById('cpm-preview-canvas') as HTMLCanvasElement | null
+  if (!canvas) return null
+
+  try {
+    cpmViewer = new CpmViewer(canvas, () => {
+      const view = document.getElementById('view-settings')
+      const tab = document.getElementById('tab-models')
+      return view?.classList.contains('active') === true && tab?.classList.contains('active') === true
+    })
+  } catch (err) {
+    logger.error('Error starting the CPM preview:', err)
+    setCpmPreviewStatus('Não foi possível iniciar a prévia 3D neste computador.', false, true)
+    return null
+  }
+
+  return cpmViewer
+}
+
+async function loadCpmModels(resetPreview = false) {
   const container = document.getElementById('models-list')
   if (!container) return
 
@@ -515,6 +546,14 @@ async function loadCpmModels() {
   try {
     cpmState = await cpm.list()
     renderCpmModels()
+
+    const previewGone =
+      cpmPreviewName !== undefined &&
+      cpmPreviewName !== null &&
+      !cpmState.models.some((model) => model.name === cpmPreviewName)
+
+    if (resetPreview || previewGone) await showCpmPreview(cpmState.selected, true)
+    else updateCpmPreviewHighlight()
   } catch (err) {
     logger.error('Error loading CPM models:', err)
     container.innerHTML = '<p class="mods-error">Erro ao carregar os modelos.</p>'
@@ -549,11 +588,14 @@ function renderCpmModels() {
     warning.innerText = `O modelo "${selected}" está selecionado no CPM, mas o arquivo não está mais na pasta player_models.`
     container.appendChild(warning)
   }
+
+  updateCpmPreviewHighlight()
 }
 
 function buildCpmModelItem(name: string | null, title: string, subtitle: string, active: boolean): HTMLElement {
   const item = document.createElement('div')
   item.className = `mod-item cpm-model${active ? ' active' : ''}`
+  item.dataset.model = name ?? ''
 
   item.innerHTML = `
     <div class="mod-info">
@@ -575,6 +617,8 @@ function buildCpmModelItem(name: string | null, title: string, subtitle: string,
 
   const actions = item.querySelector('.pack-item-actions') as HTMLElement
 
+  item.addEventListener('click', () => showCpmPreview(name))
+
   if (active) {
     const badge = document.createElement('span')
     badge.className = 'java-detected-badge'
@@ -592,9 +636,121 @@ function buildCpmModelItem(name: string | null, title: string, subtitle: string,
   })
   actions.appendChild(applyBtn)
 
-  item.addEventListener('click', () => applyCpmModel(name))
-
   return item
+}
+
+/** Shows `name` in the preview, or the vanilla skin placeholder when it is `null`. */
+async function showCpmPreview(name: string | null, force = false) {
+  if (!force && cpmPreviewName === name) return
+
+  cpmPreviewName = name
+  const token = ++cpmPreviewToken
+
+  updateCpmPreviewHighlight()
+  updateCpmPreviewActions()
+
+  const nameEl = document.getElementById('cpm-preview-name')
+  const descEl = document.getElementById('cpm-preview-desc')
+  const iconEl = document.getElementById('cpm-preview-icon') as HTMLImageElement | null
+  const hintEl = document.getElementById('cpm-preview-hint')
+
+  if (name === null) {
+    cpmViewer?.clear()
+    if (nameEl) nameEl.textContent = 'Skin padrão'
+    if (descEl) descEl.textContent = 'Nenhum modelo CPM aplicado'
+    if (iconEl) {
+      iconEl.removeAttribute('src')
+      iconEl.style.visibility = 'hidden'
+    }
+    hintEl?.classList.add('hidden')
+    setCpmPreviewStatus('Selecione um modelo para ver a prévia 3D.')
+    return
+  }
+
+  if (nameEl) nameEl.textContent = name.replace(/\.cpmmodel$/i, '')
+  if (descEl) descEl.textContent = 'Lendo o modelo...'
+  if (iconEl) {
+    iconEl.removeAttribute('src')
+    iconEl.style.visibility = 'hidden'
+  }
+  hintEl?.classList.add('hidden')
+  setCpmPreviewStatus('Carregando modelo...', true)
+
+  try {
+    const res = await cpm.preview(name)
+    if (token !== cpmPreviewToken) return
+
+    if (!res.ok) {
+      cpmViewer?.clear()
+      if (descEl) descEl.textContent = res.error
+      setCpmPreviewStatus('Não foi possível abrir este modelo.', false, true)
+      return
+    }
+
+    const model = res.model
+    if (nameEl) nameEl.textContent = model.name || name.replace(/\.cpmmodel$/i, '')
+    if (descEl) descEl.textContent = model.description || `${model.cubes.length} ${model.cubes.length === 1 ? 'cubo' : 'cubos'}`
+    if (iconEl && model.icon) {
+      iconEl.src = model.icon
+      iconEl.style.visibility = 'visible'
+    }
+
+    const viewer = ensureCpmViewer()
+    if (!viewer) return
+
+    await viewer.setModel(model)
+    if (token !== cpmPreviewToken) return
+
+    hintEl?.classList.remove('hidden')
+    setCpmPreviewStatus(null)
+  } catch (err) {
+    if (token !== cpmPreviewToken) return
+    logger.error('Error loading the CPM preview:', err)
+    cpmViewer?.clear()
+    if (descEl) descEl.textContent = 'Falha ao ler o arquivo do modelo.'
+    setCpmPreviewStatus('Não foi possível abrir este modelo.', false, true)
+  }
+}
+
+function setCpmPreviewStatus(text: string | null, spinning = false, error = false) {
+  const el = document.getElementById('cpm-preview-status')
+  if (!el) return
+
+  if (!text) {
+    el.classList.remove('visible', 'error')
+    return
+  }
+
+  el.classList.add('visible')
+  el.classList.toggle('error', error)
+
+  const icon = spinning
+    ? '<i class="fa-solid fa-spinner fa-spin"></i>'
+    : error
+      ? '<i class="fa-solid fa-triangle-exclamation"></i>'
+      : ''
+  el.innerHTML = `${icon}<span></span>`
+  el.querySelector('span')!.textContent = text
+}
+
+function updateCpmPreviewHighlight() {
+  const container = document.getElementById('models-list')
+  if (!container) return
+
+  container.querySelectorAll<HTMLElement>('.cpm-model').forEach((item) => {
+    const name = item.dataset.model || null
+    item.classList.toggle('previewing', cpmPreviewName !== undefined && name === cpmPreviewName)
+  })
+}
+
+function updateCpmPreviewActions() {
+  const applyBtn = document.getElementById('btn-apply-model') as HTMLButtonElement | null
+  if (!applyBtn) return
+
+  const selected = cpmState?.selected ?? null
+  const previewing = cpmPreviewName !== undefined
+  applyBtn.disabled = !previewing || cpmPreviewName === selected
+  applyBtn.innerText = previewing && cpmPreviewName === selected ? 'Em uso' : 'Aplicar'
 }
 
 async function applyCpmModel(name: string | null) {
@@ -605,7 +761,9 @@ async function applyCpmModel(name: string | null) {
     return
   }
 
-  await loadCpmModels()
+  await loadCpmModels(false)
+  if (cpmPreviewName !== name) await showCpmPreview(name, true)
+  updateCpmPreviewActions()
 }
 
 function initUpdateCheck() {

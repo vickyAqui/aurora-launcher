@@ -5,6 +5,7 @@ import type { IDetectedJava } from './handlers/java'
 import type { IPackEntry } from './handlers/packs'
 import type { IModEntry } from './handlers/mods'
 import type { ICpmState } from './handlers/cpm'
+import type { ICpmPreviewResult } from './cpmmodel'
 import type { ILogFile } from './handlers/logs'
 import type { IPlayStats } from './handlers/stats'
 import type { IScreenshot } from './handlers/screenshots'
@@ -277,6 +278,7 @@ contextBridge.exposeInMainWorld('api', {
   cpm: {
     list: (): Promise<ICpmState> => ipcRenderer.invoke('cpm:list'),
     setModel: (name: string | null): Promise<boolean> => ipcRenderer.invoke('cpm:set_model', name),
+    preview: (name: string): Promise<ICpmPreviewResult> => ipcRenderer.invoke('cpm:preview', name),
     openFolder: (): Promise<boolean> => ipcRenderer.invoke('cpm:open_folder')
   },
   update: {

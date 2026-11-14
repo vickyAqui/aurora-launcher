@@ -366,23 +366,47 @@
                 reaplicada antes de cada inicialização, mesmo que o CPM regrave a configuração ao sair.
               </p>
 
-              <div class="packs-toolbar">
-                <button id="btn-open-models" class="btn btn-ghost">
-                  <i class="fa-fw fa-solid fa-folder-open"></i>
-                  <span>Pasta de modelos</span>
-                </button>
-                <button id="btn-refresh-models" class="btn btn-ghost">
-                  <i class="fa-fw fa-solid fa-rotate"></i>
-                  <span>Atualizar</span>
-                </button>
-              </div>
+              <div class="cpm-layout">
+                <div class="cpm-list-panel">
+                  <div class="packs-toolbar">
+                    <button id="btn-open-models" class="btn btn-ghost">
+                      <i class="fa-fw fa-solid fa-folder-open"></i>
+                      <span>Pasta</span>
+                    </button>
+                    <button id="btn-refresh-models" class="btn btn-ghost">
+                      <i class="fa-fw fa-solid fa-rotate"></i>
+                      <span>Atualizar</span>
+                    </button>
+                  </div>
 
-              <div class="mods-summary">
-                <span id="models-count"></span>
-              </div>
+                  <div class="mods-summary">
+                    <span id="models-count"></span>
+                  </div>
 
-              <div id="models-list" class="mods-list">
-                <div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando...</span></div>
+                  <div id="models-list" class="mods-list">
+                    <div class="mods-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando...</span></div>
+                  </div>
+                </div>
+
+                <div class="cpm-preview">
+                  <div class="cpm-preview-stage">
+                    <canvas id="cpm-preview-canvas"></canvas>
+                    <div id="cpm-preview-status" class="cpm-preview-status">
+                      <i class="fa-solid fa-spinner fa-spin"></i>
+                      <span>Carregando modelo...</span>
+                    </div>
+                    <span id="cpm-preview-hint" class="cpm-preview-hint">Arraste para girar · role para aproximar</span>
+                  </div>
+
+                  <div class="cpm-preview-info">
+                    <img id="cpm-preview-icon" class="cpm-preview-icon" alt="" />
+                    <div class="cpm-preview-text">
+                      <span id="cpm-preview-name" class="cpm-preview-name"></span>
+                      <span id="cpm-preview-desc" class="cpm-preview-desc"></span>
+                    </div>
+                    <button id="btn-apply-model" class="btn btn-primary btn-sm">Aplicar</button>
+                  </div>
+                </div>
               </div>
             </section>
 
