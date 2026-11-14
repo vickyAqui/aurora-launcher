@@ -2135,14 +2135,6 @@
       "type": "MOD"
     },
     {
-      "name": "soundtrackplayer-forge-1.0.1+1.20.1.jar",
-      "path": "mods/",
-      "size": 445563,
-      "sha1": "8661020148e32dd1f95768de12fa2991a8c05560",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/soundtrackplayer-forge-1.0.1%2B1.20.1.jar",
-      "type": "MOD"
-    },
-    {
       "name": "starcatcher-2.2.1-FORGE-1.20.1.jar",
       "path": "mods/",
       "size": 3744519,
