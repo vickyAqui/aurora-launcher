@@ -479,6 +479,17 @@ describe('diagnoseMods', () => {
     expect(issueFor([old], 'filename-version')).toMatchObject({ severity: 'warning', action: 'disable' })
   })
 
+  it('trusts the declared Minecraft range over a file name that cites another build', () => {
+    const fast = mod({
+      modId: 'immediatelyfast',
+      dependencies: [{ modId: 'minecraft', mandatory: true, versionRange: '[1.20,1.20.4]', side: 'BOTH' }]
+    })
+    fast.file = 'ImmediatelyFast-Forge-1.5.4+1.20.4.jar'
+    fast.metadata!.file = fast.file
+
+    expect(diagnoseMods([fast], { minecraftVersion: '1.20.1', loaderVersion: '47.4.10' })).toEqual([])
+  })
+
   it('reports jars it could not read', () => {
     const broken: IScannedMod = {
       file: 'broken.jar',

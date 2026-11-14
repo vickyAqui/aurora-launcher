@@ -739,7 +739,11 @@ export function diagnoseMods(mods: IScannedMod[], options: IDiagnoseOptions): IM
       })
     }
 
-    const filenameVersion = filenameMinecraftVersion(metadata.file, options.minecraftVersion)
+    // The file name is only a hint for jars that do not say which Minecraft they target. When the
+    // metadata already declares support (a build labelled `1.20.4` may still support `1.20.1`),
+    // that declaration wins and the name is not reported.
+    const declaresMinecraft = metadata.dependencies.some((dep) => dep.modId === 'minecraft')
+    const filenameVersion = declaresMinecraft ? null : filenameMinecraftVersion(metadata.file, options.minecraftVersion)
     if (filenameVersion) {
       issues.push({
         kind: 'filename-version',
