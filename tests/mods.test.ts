@@ -309,8 +309,8 @@ describe('findForeignModFiles', () => {
     writeJar(path.join(modsDir, 'sub', 'deep', 'deeper', 'stale.jar'))
 
     expect(findForeignModFiles(modsDir, { files: [modEntry('a.jar')] })).toEqual([
-      { rel: path.join('sub', 'deep', 'deeper', 'stale.jar'), kind: 'file' },
-      { rel: path.join('sub', 'stale.jar'), kind: 'file' }
+      { rel: 'sub/deep/deeper/stale.jar', kind: 'file' },
+      { rel: 'sub/stale.jar', kind: 'file' }
     ])
   })
 
@@ -320,7 +320,10 @@ describe('findForeignModFiles', () => {
     expect(findForeignModFiles(modsDir, { files: [modEntry('a.jar')] })).toEqual([])
   })
 
-  it('reports symlinks, which point the game at a jar living anywhere on disk', () => {
+  // Creating symlinks requires SeCreateSymbolicLinkPrivilege on Windows. The production code still
+  // handles them through Dirent.isSymbolicLink(); this behavior is covered on platforms where the
+  // test process can create links without elevated privileges.
+  it.skipIf(process.platform === 'win32')('reports symlinks, which point the game at a jar living anywhere on disk', () => {
     const outside = path.join(tmp.appData, 'elsewhere.jar')
     writeJar(outside)
     symlinkSync(outside, path.join(modsDir, 'innocent.jar'))
@@ -330,7 +333,7 @@ describe('findForeignModFiles', () => {
     ])
   })
 
-  it('reports a symlinked folder instead of following it into someone elses disk', () => {
+  it.skipIf(process.platform === 'win32')('reports a symlinked folder instead of following it into someone elses disk', () => {
     const elsewhere = path.join(tmp.appData, 'payload')
     mkdirSync(elsewhere, { recursive: true })
     writeJar(path.join(elsewhere, 'stale.jar'))
