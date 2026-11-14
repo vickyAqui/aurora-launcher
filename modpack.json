@@ -2063,14 +2063,6 @@
       "type": "MOD"
     },
     {
-      "name": "SignPlates-Forge-1.20.1-1.0.2.jar",
-      "path": "mods/",
-      "size": 609385,
-      "sha1": "a30ebe5f62f2fe2a217b0e5f4f5e488359f554b5",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/SignPlates-Forge-1.20.1-1.0.2.jar",
-      "type": "MOD"
-    },
-    {
       "name": "SignPlates-Forge-1.20.1-1.1.2.jar",
       "path": "mods/",
       "size": 904950,
