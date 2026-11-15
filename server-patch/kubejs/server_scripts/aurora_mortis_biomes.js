@@ -48,6 +48,24 @@ function auroraDimensionOf(auroraPlayerArg) {
 }
 
 /**
+ * Cooldown baseado em tick do servidor.
+ *
+ * O tickCount reinicia quando o servidor é reiniciado, mas o valor salvo no NBT
+ * do jogador não. Um valor salvo maior que o tick atual é resto de uma sessão
+ * anterior: nesse caso o cooldown é considerado expirado e o valor é zerado.
+ * Sem isso a conta fica negativa e o aviso é descartado para sempre.
+ */
+function auroraCooldownAtivo(auroraDataArg, auroraKeyArg, auroraTickArg, auroraCooldownArg) {
+    const auroraLast = auroraDataArg.getLong(auroraKeyArg)
+    if (auroraLast <= 0) return false
+    if (auroraLast > auroraTickArg) {
+        auroraDataArg.putLong(auroraKeyArg, 0)
+        return false
+    }
+    return auroraTickArg - auroraLast < auroraCooldownArg
+}
+
+/**
  * Envia um JSON de tellraw para todos os operadores.
  * Retorna quantos jogadores receberam.
  */
@@ -127,8 +145,7 @@ PlayerEvents.tick(event => {
 
     // Saída de um bioma do mod para um bioma que não é do mod
     if (auroraLastIsMod && !auroraNowIsMod) {
-        const auroraLastExit = auroraData.getLong(AURORA_NBT_EXIT_MSG)
-        if (auroraLastExit > 0 && auroraTick - auroraLastExit < AURORA_EXIT_COOLDOWN_TICKS) return
+        if (auroraCooldownAtivo(auroraData, AURORA_NBT_EXIT_MSG, auroraTick, AURORA_EXIT_COOLDOWN_TICKS)) return
         auroraData.putLong(AURORA_NBT_EXIT_MSG, auroraTick)
 
         const auroraExitJson = auroraBiomeJson(auroraName, 'saiu do', auroraLastBiome, auroraX, auroraY, auroraZ, auroraDim)
@@ -145,8 +162,7 @@ PlayerEvents.tick(event => {
     if (!auroraNowIsMod) return
 
     // Cooldown para não floodar quando o jogador cruza a borda do bioma
-    const auroraLastEnter = auroraData.getLong(AURORA_NBT_ENTER_MSG)
-    if (auroraLastEnter > 0 && auroraTick - auroraLastEnter < AURORA_ENTER_COOLDOWN_TICKS) return
+    if (auroraCooldownAtivo(auroraData, AURORA_NBT_ENTER_MSG, auroraTick, AURORA_ENTER_COOLDOWN_TICKS)) return
     auroraData.putLong(AURORA_NBT_ENTER_MSG, auroraTick)
 
     const auroraEnterJson = auroraBiomeJson(auroraName, 'entrou no', auroraBiomeId, auroraX, auroraY, auroraZ, auroraDim)

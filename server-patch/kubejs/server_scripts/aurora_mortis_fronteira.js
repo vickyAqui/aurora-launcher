@@ -38,6 +38,7 @@ const AURORA_FRONTEIRA_GRACE_TICKS = 100       // 5 s para atravessar bioma comu
 const AURORA_FRONTEIRA_ANNOUNCE_TO_ALL = true  // false = só quem cruzou recebe
 const AURORA_FRONTEIRA_ANNOUNCE_ENTER = true   // avisa ao entrar em um domínio
 const AURORA_FRONTEIRA_ANNOUNCE_EXIT = true    // avisa ao sair de um domínio
+const AURORA_FRONTEIRA_DEBUG = true            // loga detalhes de cada mudança no console
 
 const AURORA_FRONTEIRA_NBT_LAST_DOMAIN = 'aurora_fronteira_last_domain'
 const AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK = 'aurora_fronteira_last_domain_tick'
@@ -90,6 +91,29 @@ function auroraFronteiraDomainOf(auroraFronteiraBiomeId) {
 function auroraFronteiraDomainLabel(auroraFronteiraDomain) {
     const auroraFronteiraLabel = AURORA_FRONTEIRA_DOMAIN_LABELS[auroraFronteiraDomain]
     return auroraFronteiraLabel ? auroraFronteiraLabel : auroraFronteiraDomain
+}
+
+/**
+ * Cooldown baseado em tick do servidor.
+ *
+ * O tickCount reinicia quando o servidor é reiniciado, mas o valor salvo no NBT
+ * do jogador não. Um valor salvo maior que o tick atual é resto de uma sessão
+ * anterior: nesse caso o cooldown é considerado expirado e o valor é zerado.
+ * Sem isso a conta fica negativa e o aviso é descartado para sempre.
+ */
+function auroraFronteiraCooldownAtivo(auroraFronteiraData, auroraFronteiraKey, auroraFronteiraTick, auroraFronteiraCooldownTicks) {
+    const auroraFronteiraLast = auroraFronteiraData.getLong(auroraFronteiraKey)
+    if (auroraFronteiraLast <= 0) return false
+    if (auroraFronteiraLast > auroraFronteiraTick) {
+        auroraFronteiraData.putLong(auroraFronteiraKey, 0)
+        return false
+    }
+    return auroraFronteiraTick - auroraFronteiraLast < auroraFronteiraCooldownTicks
+}
+
+/** Tick salvo que ainda vale nesta sessão do servidor (não é resto de reinício). */
+function auroraFronteiraTickValido(auroraFronteiraTickSalvo, auroraFronteiraTickAtual) {
+    return auroraFronteiraTickSalvo > 0 && auroraFronteiraTickSalvo <= auroraFronteiraTickAtual
 }
 
 /**
@@ -195,10 +219,28 @@ PlayerEvents.tick(event => {
 
     if (auroraFronteiraTick % AURORA_FRONTEIRA_CHECK_EVERY_TICKS !== 0) return
 
+    try {
+        auroraFronteiraCheck(auroraFronteiraPlayer, auroraFronteiraTick)
+    } catch (auroraFronteiraErr) {
+        console.error('[aurora-fronteira] ERRO em ' + auroraFronteiraPlayer.profile.name + ': ' + auroraFronteiraErr)
+    }
+})
+
+function auroraFronteiraCheck(auroraFronteiraPlayer, auroraFronteiraTick) {
     const auroraFronteiraBiome = auroraFronteiraBiomeIdAt(auroraFronteiraPlayer)
     const auroraFronteiraDomain = auroraFronteiraDomainOf(auroraFronteiraBiome)
     const auroraFronteiraData = auroraFronteiraPlayer.persistentData
     const auroraFronteiraLastDomain = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN)
+
+    if (AURORA_FRONTEIRA_DEBUG && auroraFronteiraDomain !== auroraFronteiraLastDomain) {
+        console.info('[aurora-fronteira/debug] ' + auroraFronteiraPlayer.profile.name +
+            ' dom=' + auroraFronteiraDomain + ' last=' + auroraFronteiraLastDomain +
+            ' tick=' + auroraFronteiraTick +
+            ' lastTick=' + auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK) +
+            ' lastMsg=' + auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_MSG) +
+            ' lastEnter=' + auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG) +
+            ' lastExit=' + auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_EXIT_MSG))
+    }
 
     // Mesmo domínio: só mantém o marcador de tempo atualizado.
     if (auroraFronteiraDomain === auroraFronteiraLastDomain) {
@@ -214,7 +256,8 @@ PlayerEvents.tick(event => {
         if (auroraFronteiraLastDomain === '') return
 
         const auroraFronteiraLastTick = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK)
-        if (auroraFronteiraLastTick > 0 && auroraFronteiraTick - auroraFronteiraLastTick <= AURORA_FRONTEIRA_GRACE_TICKS) return
+        if (auroraFronteiraTickValido(auroraFronteiraLastTick, auroraFronteiraTick) &&
+            auroraFronteiraTick - auroraFronteiraLastTick <= AURORA_FRONTEIRA_GRACE_TICKS) return
 
         auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, '')
         auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, 0)
@@ -225,8 +268,7 @@ PlayerEvents.tick(event => {
         }
 
         // Cooldown próprio da saída (não é afetado pelo aviso de entrada).
-        const auroraFronteiraLastExit = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_EXIT_MSG)
-        if (auroraFronteiraLastExit > 0 && auroraFronteiraTick - auroraFronteiraLastExit < AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS) {
+        if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_EXIT_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS)) {
             console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' saiu de ' + auroraFronteiraLastDomain)
             return
         }
@@ -247,8 +289,7 @@ PlayerEvents.tick(event => {
         }
 
         // Cooldown próprio da entrada.
-        const auroraFronteiraLastEnter = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG)
-        if (auroraFronteiraLastEnter > 0 && auroraFronteiraTick - auroraFronteiraLastEnter < AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS) {
+        if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS)) {
             console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ')')
             return
         }
@@ -260,7 +301,8 @@ PlayerEvents.tick(event => {
 
     // Trocou de domínio.
     const auroraFronteiraLastTick = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK)
-    const auroraFronteiraWithinGrace = auroraFronteiraLastTick > 0 && auroraFronteiraTick - auroraFronteiraLastTick <= AURORA_FRONTEIRA_GRACE_TICKS
+    const auroraFronteiraWithinGrace = auroraFronteiraTickValido(auroraFronteiraLastTick, auroraFronteiraTick) &&
+        auroraFronteiraTick - auroraFronteiraLastTick <= AURORA_FRONTEIRA_GRACE_TICKS
 
     auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, auroraFronteiraDomain)
     auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, auroraFronteiraTick)
@@ -271,8 +313,7 @@ PlayerEvents.tick(event => {
             console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ')')
             return
         }
-        const auroraFronteiraLastEnter2 = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG)
-        if (auroraFronteiraLastEnter2 > 0 && auroraFronteiraTick - auroraFronteiraLastEnter2 < AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS) {
+        if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS)) {
             console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ')')
             return
         }
@@ -282,9 +323,8 @@ PlayerEvents.tick(event => {
     }
 
     // Cooldown: evita repetir o aviso quando o bioma oscila na borda.
-    const auroraFronteiraLastMsg = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_MSG)
-    if (auroraFronteiraLastMsg > 0 && auroraFronteiraTick - auroraFronteiraLastMsg < AURORA_FRONTEIRA_COOLDOWN_TICKS) return
+    if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_COOLDOWN_TICKS)) return
     auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_MSG, auroraFronteiraTick)
 
     auroraFronteiraNotifyCross(auroraFronteiraPlayer, auroraFronteiraLastDomain, auroraFronteiraDomain)
-})
+}
