@@ -130,6 +130,9 @@ PlayerEvents.tick(event => {
 
     console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' + auroraFronteiraLastDomain + ' -> ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ', ' + auroraFronteiraDimension + ')')
 
-    // Só o jogador que cruzou recebe
-    auroraFronteiraPlayer.tell('Atenção: Você está ultrapassando uma fronteira!!')
+    // Todos os jogadores online recebem o aviso da fronteira atravessada.
+    const auroraFronteiraPlayers = auroraFronteiraPlayer.server.players
+    for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < auroraFronteiraPlayers.size(); auroraFronteiraIdx++) {
+        auroraFronteiraPlayers.get(auroraFronteiraIdx).tell('Atenção: ' + auroraFronteiraPlayer.profile.name + ' está ultrapassando uma fronteira!!')
+    }
 })
