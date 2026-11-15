@@ -19,7 +19,11 @@
 //     domínio. Sair e voltar rápido (andar na borda, /tp curto) não gera nada.
 //   - A mesma janela faz um teleporte que passa por um bioma comum no meio
 //     continuar sendo UMA travessia A -> B, e não "saiu de A" + "entrou em B".
-//   - COOLDOWN: no máximo um aviso a cada AURORA_FRONTEIRA_COOLDOWN_TICKS.
+//   - Como entrada/travessia exigem DEBOUNCE estável e a saída exige
+//     EXIT_GRACE, dois avisos do mesmo jogador nunca ficam a menos de 2 s um do
+//     outro. O COOLDOWN existe só como rede de segurança e está em 1 tick (ou
+//     seja, não engole travessia de verdade: sair e voltar logo depois de uma
+//     saída avisada continua avisando).
 //
 // Este script é o ÚNICO que anuncia fronteira no chat. O
 // aurora_mortis_biomes.js só anuncia variação de bioma DENTRO do mesmo domínio
@@ -36,7 +40,7 @@ const AURORA_FRONTEIRA_NAMESPACE = 'aurora_mortis'
 const AURORA_FRONTEIRA_CHECK_EVERY_TICKS = 5     // checa a cada 0,25 s
 const AURORA_FRONTEIRA_DEBOUNCE_TICKS = 40       // 2 s no novo domínio antes de avisar
 const AURORA_FRONTEIRA_EXIT_GRACE_TICKS = 200    // 10 s fora antes de avisar a saída
-const AURORA_FRONTEIRA_COOLDOWN_TICKS = 60       // no máximo 1 aviso a cada 3 s
+const AURORA_FRONTEIRA_COOLDOWN_TICKS = 1        // 1 tick: rede de segurança, não engole travessia
 const AURORA_FRONTEIRA_ANNOUNCE_TO_ALL = true    // false = só quem cruzou recebe
 const AURORA_FRONTEIRA_ANNOUNCE_ENTER = true     // avisa ao entrar em um domínio
 const AURORA_FRONTEIRA_ANNOUNCE_EXIT = true      // avisa ao sair de um domínio
@@ -299,7 +303,7 @@ function auroraFronteiraCheck(auroraFronteiraPlayer, auroraFronteiraTick) {
 
     if (auroraFronteiraStable === '' && auroraFronteiraDomain === '') return
 
-    // Cooldown: evita rajada quando o jogador atravessa várias bordas seguidas.
+    // Cooldown: rede de segurança em 1 tick (não engole travessia de verdade).
     if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_COOLDOWN_TICKS)) {
         console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' +
             (auroraFronteiraStable === '' ? 'fora' : auroraFronteiraStable) + ' -> ' +

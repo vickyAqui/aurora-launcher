@@ -114,7 +114,7 @@ Tudo fica no topo de cada arquivo:
 |---|---:|---|
 | `AURORA_FRONTEIRA_DEBOUNCE_TICKS` | `40` | Tempo que o jogador precisa ficar no novo domínio antes do aviso (2 s) |
 | `AURORA_FRONTEIRA_EXIT_GRACE_TICKS` | `200` | Tempo fora do domínio antes de avisar a saída (10 s) |
-| `AURORA_FRONTEIRA_COOLDOWN_TICKS` | `60` | Intervalo mínimo entre dois avisos do mesmo jogador (3 s) |
+| `AURORA_FRONTEIRA_COOLDOWN_TICKS` | `1` | Rede de segurança entre dois avisos do mesmo jogador. Em 1 tick não engole travessia real |
 | `AURORA_FRONTEIRA_ANNOUNCE_TO_ALL` | `true` | `false` avisa só quem cruzou |
 | `AURORA_FRONTEIRA_ANNOUNCE_ENTER` | `true` | Avisar ao entrar em um domínio |
 | `AURORA_FRONTEIRA_ANNOUNCE_EXIT` | `true` | Avisar ao sair de um domínio |
@@ -166,8 +166,11 @@ então quem atravessou sempre recebe.
   "entrou" quase juntos.
 - A mesma janela faz um `/tp` que mostra um bioma comum no meio continuar sendo
   **uma** travessia `A -> B`, e não "saiu de A" + "entrou em B".
-- **Cooldown de 3 s** (`AURORA_FRONTEIRA_COOLDOWN_TICKS`) entre dois avisos do
-  mesmo jogador, para rajadas de `/tp`.
+- **Cooldown em 1 tick** (`AURORA_FRONTEIRA_COOLDOWN_TICKS = 1`): fica só como
+  rede de segurança contra disparo duplicado no mesmo tick. Antes era 3 s e
+  engolia travessia de verdade — quem saía (aviso de saída) e voltava logo em
+  seguida tinha a entrada descartada, que era a queixa "o Atenção não aparece
+  para quem atravessou".
 
 ### Outros detalhes
 
