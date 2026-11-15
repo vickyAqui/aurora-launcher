@@ -27,6 +27,9 @@ const AURORA_FRONTEIRA_COOLDOWN_TICKS = 60    // no máximo 1 aviso a cada 3 s
 
 const AURORA_FRONTEIRA_NBT_LAST_DOMAIN = 'aurora_fronteira_last_domain'
 const AURORA_FRONTEIRA_NBT_LAST_MSG = 'aurora_fronteira_last_msg'
+const AURORA_FRONTEIRA_NBT_LAST_DIMENSION = 'aurora_fronteira_last_dimension'
+const AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL = 'aurora_fronteira_dimension_pending_until'
+const AURORA_FRONTEIRA_DIMENSION_GRACE_TICKS = 40 // 2 s para o bioma da dimensão destino aparecer
 
 // Variações de bioma que pertencem ao mesmo domínio.
 // As chaves são o "path" do bioma (sem o namespace "aurora_mortis:").
@@ -62,12 +65,18 @@ function auroraFronteiraSetDomain(auroraFronteiraPlayer, auroraFronteiraDomain) 
     auroraFronteiraPlayer.persistentData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, auroraFronteiraDomain)
 }
 
+function auroraFronteiraDimensionAt(auroraFronteiraPlayer) {
+    return String(auroraFronteiraPlayer.level.dimension.location())
+}
+
 // Ao entrar no servidor, começa do domínio em que o jogador está, sem avisar
 // (evita aviso falso quando ele loga já dentro de um domínio).
 PlayerEvents.loggedIn(event => {
     const auroraFronteiraPlayer = event.player
     try {
         auroraFronteiraSetDomain(auroraFronteiraPlayer, auroraFronteiraDomainOf(auroraFronteiraBiomeIdAt(auroraFronteiraPlayer)))
+        auroraFronteiraPlayer.persistentData.putString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION, auroraFronteiraDimensionAt(auroraFronteiraPlayer))
+        auroraFronteiraPlayer.persistentData.putLong(AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL, 0)
     } catch (auroraFronteiraErr) {
         auroraFronteiraSetDomain(auroraFronteiraPlayer, '')
     }
@@ -83,12 +92,25 @@ PlayerEvents.tick(event => {
     const auroraFronteiraDomain = auroraFronteiraDomainOf(auroraFronteiraBiome)
     const auroraFronteiraData = auroraFronteiraPlayer.persistentData
     const auroraFronteiraLastDomain = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN)
+    const auroraFronteiraDimension = auroraFronteiraDimensionAt(auroraFronteiraPlayer)
+    const auroraFronteiraLastDimension = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION)
+
+    // In a cross-dimension teleport, Minecraft can expose a temporary vanilla/empty biome
+    // before the destination chunk is ready. Keep the source domain briefly so A -> B still
+    // counts as a direct frontier crossing instead of being erased during that gap.
+    if (auroraFronteiraLastDimension && auroraFronteiraDimension !== auroraFronteiraLastDimension) {
+        auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION, auroraFronteiraDimension)
+        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL, auroraFronteiraTick + AURORA_FRONTEIRA_DIMENSION_GRACE_TICKS)
+    }
+
+    const auroraFronteiraDimensionPendingUntil = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL)
 
     if (auroraFronteiraDomain === auroraFronteiraLastDomain) return
 
     // Entrou/saiu de domínio passando por um bioma que não é domínio: só
     // registra o novo estado, sem aviso.
     if (auroraFronteiraDomain === '' || auroraFronteiraLastDomain === '') {
+        if (auroraFronteiraDomain === '' && auroraFronteiraDimensionPendingUntil > auroraFronteiraTick) return
         auroraFronteiraSetDomain(auroraFronteiraPlayer, auroraFronteiraDomain)
         return
     }
