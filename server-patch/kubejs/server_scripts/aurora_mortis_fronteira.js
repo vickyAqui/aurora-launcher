@@ -98,7 +98,11 @@ PlayerEvents.tick(event => {
     // In a cross-dimension teleport, Minecraft can expose a temporary vanilla/empty biome
     // before the destination chunk is ready. Keep the source domain briefly so A -> B still
     // counts as a direct frontier crossing instead of being erased during that gap.
-    if (auroraFronteiraLastDimension && auroraFronteiraDimension !== auroraFronteiraLastDimension) {
+    // Players that were already online when this script was reloaded may not have the new
+    // dimension marker yet. Initialize it before the equality early-return below.
+    if (!auroraFronteiraLastDimension) {
+        auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION, auroraFronteiraDimension)
+    } else if (auroraFronteiraDimension !== auroraFronteiraLastDimension) {
         auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION, auroraFronteiraDimension)
         auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL, auroraFronteiraTick + AURORA_FRONTEIRA_DIMENSION_GRACE_TICKS)
     }
@@ -106,6 +110,8 @@ PlayerEvents.tick(event => {
     const auroraFronteiraDimensionPendingUntil = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL)
 
     if (auroraFronteiraDomain === auroraFronteiraLastDomain) return
+
+    console.info('[aurora-fronteira-check] ' + auroraFronteiraPlayer.profile.name + ': ' + (auroraFronteiraLastDomain || '<vazio>') + ' -> ' + (auroraFronteiraDomain || '<comum>') + ' (' + auroraFronteiraBiome + ', ' + auroraFronteiraDimension + ')')
 
     // Entrou/saiu de domínio passando por um bioma que não é domínio: só
     // registra o novo estado, sem aviso.
