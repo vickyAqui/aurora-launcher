@@ -1,27 +1,29 @@
 // Aviso de fronteira — entradas, saídas e travessias entre domínios do
 // Aurora Mortis.
 //
-// Eventos avisados:
+// Toda passagem de fronteira gera UM aviso, sempre com o texto "Atenção":
 //   - ENTROU: o jogador entrou em um domínio do mod vindo de fora (bioma
 //     vanilla, outro mod ou teleporte).
 //   - SAIU: o jogador saiu de um domínio do mod para fora dele.
 //   - CRUZOU: o jogador passou de um domínio do mod direto para outro
 //     (ex.: nostalgia -> repetição).
 //
-// Não avisa quando o bioma só varia dentro do mesmo domínio (ver
-// AURORA_FRONTEIRA_DOMAIN_ALIASES), então andar dentro do pesadelo não gera
-// mensagem.
+// Quem atravessou recebe "Atenção: Você está ultrapassando uma fronteira!!";
+// os demais recebem "Atenção: <nome> está ultrapassando uma fronteira!!".
 //
-// Em /tp e /mvtp o servidor pode mostrar um bioma comum por alguns ticks no
-// meio do teleporte, e nas bordas o bioma pode oscilar. Por isso o último
-// domínio é mantido por AURORA_FRONTEIRA_GRACE_TICKS antes de ser esquecido:
-// assim um cruzamento A -> (comum) -> B ainda é reconhecido como A -> B.
+// Anti-spam — cada travessia de verdade avisa UMA vez:
+//   - DEBOUNCE: o jogador precisa ficar AURORA_FRONTEIRA_DEBOUNCE_TICKS no novo
+//     domínio antes do aviso. Quem fica oscilando em cima da linha (o bioma
+//     troca a cada poucos ticks) nunca completa o tempo e não avisa.
+//   - SAÍDA: só é avisada depois de AURORA_FRONTEIRA_EXIT_GRACE_TICKS fora do
+//     domínio. Sair e voltar rápido (andar na borda, /tp curto) não gera nada.
+//   - A mesma janela faz um teleporte que passa por um bioma comum no meio
+//     continuar sendo UMA travessia A -> B, e não "saiu de A" + "entrou em B".
+//   - COOLDOWN: no máximo um aviso a cada AURORA_FRONTEIRA_COOLDOWN_TICKS.
 //
-// Destinatários: AURORA_FRONTEIRA_ANNOUNCE_TO_ALL = true envia para todos os
-// jogadores online; false envia só para quem cruzou.
-//
-// Este script é independente de aurora_mortis_biomes.js (que avisa os OPs com
-// detalhes de bioma/coordenadas).
+// Este script é o ÚNICO que anuncia fronteira no chat. O
+// aurora_mortis_biomes.js só anuncia variação de bioma DENTRO do mesmo domínio
+// (para os OPs); assim o OP não recebe dois avisos do mesmo cruzamento.
 //
 // Instalação: <servidor>/kubejs/server_scripts/
 // Aplicar sem reiniciar: /kubejs reload server_scripts
@@ -31,23 +33,22 @@
 // levam o prefixo `auroraFronteira`/`AURORA_FRONTEIRA_`.
 
 const AURORA_FRONTEIRA_NAMESPACE = 'aurora_mortis'
-const AURORA_FRONTEIRA_CHECK_EVERY_TICKS = 5   // checa a cada 0,25 s
-const AURORA_FRONTEIRA_COOLDOWN_TICKS = 100    // travessia: no máximo 1 aviso a cada 5 s
-const AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS = 400 // entrada/saída: 20 s
-const AURORA_FRONTEIRA_GRACE_TICKS = 100       // 5 s para atravessar bioma comum
-const AURORA_FRONTEIRA_FLIPFLOP_TICKS = 600    // 30 s: ignora A->B->A na mesma borda
-const AURORA_FRONTEIRA_ANNOUNCE_TO_ALL = true  // false = só quem cruzou recebe
-const AURORA_FRONTEIRA_ANNOUNCE_ENTER = true   // avisa ao entrar em um domínio
-const AURORA_FRONTEIRA_ANNOUNCE_EXIT = true    // avisa ao sair de um domínio
+const AURORA_FRONTEIRA_CHECK_EVERY_TICKS = 5     // checa a cada 0,25 s
+const AURORA_FRONTEIRA_DEBOUNCE_TICKS = 40       // 2 s no novo domínio antes de avisar
+const AURORA_FRONTEIRA_EXIT_GRACE_TICKS = 200    // 10 s fora antes de avisar a saída
+const AURORA_FRONTEIRA_COOLDOWN_TICKS = 60       // no máximo 1 aviso a cada 3 s
+const AURORA_FRONTEIRA_ANNOUNCE_TO_ALL = true    // false = só quem cruzou recebe
+const AURORA_FRONTEIRA_ANNOUNCE_ENTER = true     // avisa ao entrar em um domínio
+const AURORA_FRONTEIRA_ANNOUNCE_EXIT = true      // avisa ao sair de um domínio
 
 const AURORA_FRONTEIRA_NBT_LAST_DOMAIN = 'aurora_fronteira_last_domain'
-const AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK = 'aurora_fronteira_last_domain_tick'
+const AURORA_FRONTEIRA_NBT_PENDING_DOMAIN = 'aurora_fronteira_pending_domain'
+const AURORA_FRONTEIRA_NBT_PENDING_TICK = 'aurora_fronteira_pending_tick'
+const AURORA_FRONTEIRA_NBT_PENDING_ACTIVE = 'aurora_fronteira_pending_active'
 const AURORA_FRONTEIRA_NBT_LAST_MSG = 'aurora_fronteira_last_msg'
-const AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG = 'aurora_fronteira_last_enter_msg'
-const AURORA_FRONTEIRA_NBT_LAST_EXIT_MSG = 'aurora_fronteira_last_exit_msg'
-const AURORA_FRONTEIRA_NBT_LAST_CROSS_FROM = 'aurora_fronteira_last_cross_from'
-const AURORA_FRONTEIRA_NBT_LAST_CROSS_TO = 'aurora_fronteira_last_cross_to'
-const AURORA_FRONTEIRA_NBT_LAST_CROSS_TICK = 'aurora_fronteira_last_cross_tick'
+
+const AURORA_FRONTEIRA_PERSONAL = 'Atenção: Você está ultrapassando uma fronteira!!'
+const AURORA_FRONTEIRA_OTHERS = 'Atenção: {nome} está ultrapassando uma fronteira!!'
 
 // Variações de bioma que pertencem ao mesmo domínio.
 // As chaves são o "path" do bioma (sem o namespace "aurora_mortis:").
@@ -114,53 +115,76 @@ function auroraFronteiraCooldownAtivo(auroraFronteiraData, auroraFronteiraKey, a
     return auroraFronteiraTick - auroraFronteiraLast < auroraFronteiraCooldownTicks
 }
 
-/** Tick salvo que ainda vale nesta sessão do servidor (não é resto de reinício). */
-function auroraFronteiraTickValido(auroraFronteiraTickSalvo, auroraFronteiraTickAtual) {
-    return auroraFronteiraTickSalvo > 0 && auroraFronteiraTickSalvo <= auroraFronteiraTickAtual
+/** JSON do tellraw (vermelho escuro e negrito, igual ao player.tell). */
+function auroraFronteiraJson(auroraFronteiraMessage) {
+    return JSON.stringify({ text: auroraFronteiraMessage, color: 'dark_red', bold: true })
 }
 
 /**
- * Envia a mensagem para um jogador.
- * Usa tellraw (comando) porque é o caminho de chat mais confiável; se o
- * comando falhar, cai para player.tell().
+ * Entrega a mensagem pessoal direto no jogador que cruzou.
+ *
+ * Vai por player.tell (sem passar por nome/seletor), então não depende de
+ * comparar nomes: quem cruzou sempre recebe o "Você". tellraw fica de reserva.
  */
-function auroraFronteiraSend(auroraFronteiraPlayer, auroraFronteiraMessage, auroraFronteiraColor) {
-    const auroraFronteiraJson = JSON.stringify({ text: auroraFronteiraMessage, color: auroraFronteiraColor, bold: true })
+function auroraFronteiraTellPersonal(auroraFronteiraPlayer, auroraFronteiraMessage) {
     try {
-        const auroraFronteiraResult = auroraFronteiraPlayer.server.runCommandSilent(
-            'tellraw ' + auroraFronteiraPlayer.profile.name + ' ' + auroraFronteiraJson
-        )
-        if (auroraFronteiraResult > 0) return
+        auroraFronteiraPlayer.tell(Text.darkRed(auroraFronteiraMessage).bold())
+        return true
     } catch (auroraFronteiraErr) {
-        // cai para o envio direto abaixo
+        // cai para tellraw abaixo
     }
-    auroraFronteiraPlayer.tell(auroraFronteiraMessage)
+    try {
+        return auroraFronteiraPlayer.server.runCommandSilent(
+            'tellraw ' + String(auroraFronteiraPlayer.profile.name) + ' ' + auroraFronteiraJson(auroraFronteiraMessage)
+        ) > 0
+    } catch (auroraFronteiraErr2) {
+        return false
+    }
+}
+
+/** Entrega a mensagem para os demais jogadores (tellraw, com player.tell de reserva). */
+function auroraFronteiraTellOther(auroraFronteiraTarget, auroraFronteiraMessage) {
+    var auroraFronteiraOk = false
+    try {
+        auroraFronteiraOk = auroraFronteiraTarget.server.runCommandSilent(
+            'tellraw ' + String(auroraFronteiraTarget.profile.name) + ' ' + auroraFronteiraJson(auroraFronteiraMessage)
+        ) > 0
+    } catch (auroraFronteiraErr) {
+        auroraFronteiraOk = false
+    }
+    if (auroraFronteiraOk) return true
+    try {
+        auroraFronteiraTarget.tell(Text.darkRed(auroraFronteiraMessage).bold())
+        return true
+    } catch (auroraFronteiraErr2) {
+        return false
+    }
 }
 
 /**
- * Avisa um evento para todos (ou só para quem cruzou).
- * auroraFronteiraPersonal = mensagem de quem cruzou
- * auroraFronteiraOthers   = mensagem para os demais ('{nome}' é substituído)
+ * Avisa a travessia para quem cruzou ("Você") e, se
+ * AURORA_FRONTEIRA_ANNOUNCE_TO_ALL, para os demais ("<nome>").
+ * Retorna quantos jogadores receberam.
  */
-function auroraFronteiraBroadcast(auroraFronteiraPlayer, auroraFronteiraPersonal, auroraFronteiraOthers, auroraFronteiraColor) {
-    const auroraFronteiraName = auroraFronteiraPlayer.profile.name
-    var auroraFronteiraSent = 0
+function auroraFronteiraBroadcast(auroraFronteiraPlayer) {
+    const auroraFronteiraName = String(auroraFronteiraPlayer.profile.name)
 
-    if (AURORA_FRONTEIRA_ANNOUNCE_TO_ALL) {
-        const auroraFronteiraPlayers = auroraFronteiraPlayer.server.players
-        const auroraFronteiraOthersMsg = auroraFronteiraOthers.replace('{nome}', auroraFronteiraName)
-        for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < auroraFronteiraPlayers.size(); auroraFronteiraIdx++) {
-            const auroraFronteiraTarget = auroraFronteiraPlayers.get(auroraFronteiraIdx)
-            if (auroraFronteiraTarget.profile.name === auroraFronteiraName) {
-                auroraFronteiraSend(auroraFronteiraTarget, auroraFronteiraPersonal, auroraFronteiraColor)
-            } else {
-                auroraFronteiraSend(auroraFronteiraTarget, auroraFronteiraOthersMsg, auroraFronteiraColor)
-            }
-            auroraFronteiraSent++
-        }
-    } else {
-        auroraFronteiraSend(auroraFronteiraPlayer, auroraFronteiraPersonal, auroraFronteiraColor)
-        auroraFronteiraSent = 1
+    auroraFronteiraTellPersonal(auroraFronteiraPlayer, AURORA_FRONTEIRA_PERSONAL)
+
+    if (!AURORA_FRONTEIRA_ANNOUNCE_TO_ALL) return 1
+
+    const auroraFronteiraPlayers = auroraFronteiraPlayer.server.players
+    const auroraFronteiraOthersMsg = AURORA_FRONTEIRA_OTHERS.replace('{nome}', auroraFronteiraName)
+    var auroraFronteiraSent = 1
+
+    for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < auroraFronteiraPlayers.size(); auroraFronteiraIdx++) {
+        const auroraFronteiraTarget = auroraFronteiraPlayers.get(auroraFronteiraIdx)
+        // pula quem cruzou (identidade do objeto e nome, por segurança)
+        if (auroraFronteiraTarget === auroraFronteiraPlayer) continue
+        if (String(auroraFronteiraTarget.profile.name) === auroraFronteiraName) continue
+
+        auroraFronteiraTellOther(auroraFronteiraTarget, auroraFronteiraOthersMsg)
+        auroraFronteiraSent++
     }
 
     return auroraFronteiraSent
@@ -168,38 +192,25 @@ function auroraFronteiraBroadcast(auroraFronteiraPlayer, auroraFronteiraPersonal
 
 /** Travessia entre dois domínios */
 function auroraFronteiraNotifyCross(auroraFronteiraPlayer, auroraFronteiraFrom, auroraFronteiraTo) {
-    auroraFronteiraBroadcast(
-        auroraFronteiraPlayer,
-        'Atenção: Você está ultrapassando uma fronteira!!',
-        'Atenção: {nome} está ultrapassando uma fronteira!!',
-        'dark_red'
-    )
+    const auroraFronteiraSent = auroraFronteiraBroadcast(auroraFronteiraPlayer)
     console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' +
-        auroraFronteiraFrom + ' -> ' + auroraFronteiraTo)
+        auroraFronteiraFrom + ' -> ' + auroraFronteiraTo + ' (' + auroraFronteiraSent + ' jogadores)')
 }
 
 /** Entrada em um domínio vindo de fora */
 function auroraFronteiraNotifyEnter(auroraFronteiraPlayer, auroraFronteiraDomain) {
-    const auroraFronteiraLabel = auroraFronteiraDomainLabel(auroraFronteiraDomain)
-    auroraFronteiraBroadcast(
-        auroraFronteiraPlayer,
-        'Você entrou no domínio ' + auroraFronteiraLabel + '.',
-        '{nome} entrou no domínio ' + auroraFronteiraLabel + '.',
-        'gold'
-    )
-    console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain)
+    const auroraFronteiraSent = auroraFronteiraBroadcast(auroraFronteiraPlayer)
+    console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' +
+        auroraFronteiraDomain + ' (' + auroraFronteiraDomainLabel(auroraFronteiraDomain) + ', ' +
+        auroraFronteiraSent + ' jogadores)')
 }
 
 /** Saída de um domínio para fora */
 function auroraFronteiraNotifyExit(auroraFronteiraPlayer, auroraFronteiraDomain) {
-    const auroraFronteiraLabel = auroraFronteiraDomainLabel(auroraFronteiraDomain)
-    auroraFronteiraBroadcast(
-        auroraFronteiraPlayer,
-        'Você saiu do domínio ' + auroraFronteiraLabel + '.',
-        '{nome} saiu do domínio ' + auroraFronteiraLabel + '.',
-        'yellow'
-    )
-    console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' saiu de ' + auroraFronteiraDomain)
+    const auroraFronteiraSent = auroraFronteiraBroadcast(auroraFronteiraPlayer)
+    console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' saiu de ' +
+        auroraFronteiraDomain + ' (' + auroraFronteiraDomainLabel(auroraFronteiraDomain) + ', ' +
+        auroraFronteiraSent + ' jogadores)')
 }
 
 // Ao entrar no servidor, começa do domínio em que o jogador está, sem avisar
@@ -209,10 +220,14 @@ PlayerEvents.loggedIn(event => {
     try {
         const auroraFronteiraDomain = auroraFronteiraDomainOf(auroraFronteiraBiomeIdAt(auroraFronteiraPlayer))
         auroraFronteiraPlayer.persistentData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, auroraFronteiraDomain)
-        auroraFronteiraPlayer.persistentData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, auroraFronteiraPlayer.server.tickCount)
+        auroraFronteiraPlayer.persistentData.putString(AURORA_FRONTEIRA_NBT_PENDING_DOMAIN, '')
+        auroraFronteiraPlayer.persistentData.putLong(AURORA_FRONTEIRA_NBT_PENDING_TICK, 0)
+        auroraFronteiraPlayer.persistentData.putLong(AURORA_FRONTEIRA_NBT_PENDING_ACTIVE, 0)
     } catch (auroraFronteiraErr) {
         auroraFronteiraPlayer.persistentData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, '')
-        auroraFronteiraPlayer.persistentData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, 0)
+        auroraFronteiraPlayer.persistentData.putString(AURORA_FRONTEIRA_NBT_PENDING_DOMAIN, '')
+        auroraFronteiraPlayer.persistentData.putLong(AURORA_FRONTEIRA_NBT_PENDING_TICK, 0)
+        auroraFronteiraPlayer.persistentData.putLong(AURORA_FRONTEIRA_NBT_PENDING_ACTIVE, 0)
     }
 })
 
@@ -229,120 +244,87 @@ PlayerEvents.tick(event => {
     }
 })
 
+/**
+ * Máquina de estados com debounce.
+ *
+ * `last_domain` é o domínio "estável" (já anunciado). Quando o bioma muda, o
+ * novo domínio fica em `pending_domain` até completar o tempo mínimo:
+ *   - entrada/travessia: AURORA_FRONTEIRA_DEBOUNCE_TICKS (2 s)
+ *   - saída:             AURORA_FRONTEIRA_EXIT_GRACE_TICKS (10 s)
+ * Se o bioma voltar antes disso, o pendente é descartado e nada é anunciado.
+ */
 function auroraFronteiraCheck(auroraFronteiraPlayer, auroraFronteiraTick) {
     const auroraFronteiraBiome = auroraFronteiraBiomeIdAt(auroraFronteiraPlayer)
     const auroraFronteiraDomain = auroraFronteiraDomainOf(auroraFronteiraBiome)
     const auroraFronteiraData = auroraFronteiraPlayer.persistentData
-    const auroraFronteiraLastDomain = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN)
+    const auroraFronteiraStable = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN)
 
-    // Mesmo domínio: só mantém o marcador de tempo atualizado.
-    if (auroraFronteiraDomain === auroraFronteiraLastDomain) {
-        if (auroraFronteiraDomain !== '') {
-            auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, auroraFronteiraTick)
+    // Mesmo domínio do estado estável: não há transição pendente.
+    if (auroraFronteiraDomain === auroraFronteiraStable) {
+        if (auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_PENDING_ACTIVE) !== 0) {
+            auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_PENDING_DOMAIN, '')
+            auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_PENDING_TICK, 0)
+            auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_PENDING_ACTIVE, 0)
         }
         return
     }
 
-    // Bioma comum (ou vazio durante um teleporte): mantém o último domínio
-    // por AURORA_FRONTEIRA_GRACE_TICKS antes de esquecê-lo.
-    if (auroraFronteiraDomain === '') {
-        if (auroraFronteiraLastDomain === '') return
-
-        const auroraFronteiraLastTick = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK)
-        if (auroraFronteiraTickValido(auroraFronteiraLastTick, auroraFronteiraTick) &&
-            auroraFronteiraTick - auroraFronteiraLastTick <= AURORA_FRONTEIRA_GRACE_TICKS) return
-
-        auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, '')
-        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, 0)
-
-        if (!AURORA_FRONTEIRA_ANNOUNCE_EXIT) {
-            console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' saiu de ' + auroraFronteiraLastDomain)
-            return
-        }
-
-        // Cooldown próprio da saída (não é afetado pelo aviso de entrada).
-        if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_EXIT_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS)) {
-            console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' saiu de ' + auroraFronteiraLastDomain + ' (cooldown)')
-            return
-        }
-        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_EXIT_MSG, auroraFronteiraTick)
-
-        auroraFronteiraNotifyExit(auroraFronteiraPlayer, auroraFronteiraLastDomain)
+    // Novo candidato (ou bioma oscilando): (re)inicia a contagem.
+    // A flag "active" é necessária porque o domínio "fora" também é ''.
+    if (auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_PENDING_ACTIVE) === 0 ||
+        auroraFronteiraDomain !== auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_PENDING_DOMAIN)) {
+        auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_PENDING_DOMAIN, auroraFronteiraDomain)
+        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_PENDING_TICK, auroraFronteiraTick)
+        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_PENDING_ACTIVE, 1)
         return
     }
 
-    // Entrou em um domínio vindo de bioma comum.
-    if (auroraFronteiraLastDomain === '') {
-        auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, auroraFronteiraDomain)
-        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, auroraFronteiraTick)
-
-        if (!AURORA_FRONTEIRA_ANNOUNCE_ENTER) {
-            console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ')')
-            return
-        }
-
-        // Cooldown próprio da entrada.
-        if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS)) {
-            console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ') (cooldown)')
-            return
-        }
-        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG, auroraFronteiraTick)
-
-        auroraFronteiraNotifyEnter(auroraFronteiraPlayer, auroraFronteiraDomain)
+    const auroraFronteiraSince = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_PENDING_TICK)
+    if (auroraFronteiraSince > auroraFronteiraTick) {
+        // resto de uma sessão anterior do servidor: recomeça a contagem
+        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_PENDING_TICK, auroraFronteiraTick)
         return
     }
 
-    // Trocou de domínio.
-    const auroraFronteiraLastTick = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK)
-    const auroraFronteiraWithinGrace = auroraFronteiraTickValido(auroraFronteiraLastTick, auroraFronteiraTick) &&
-        auroraFronteiraTick - auroraFronteiraLastTick <= AURORA_FRONTEIRA_GRACE_TICKS
+    const auroraFronteiraNeed = (auroraFronteiraDomain === '')
+        ? AURORA_FRONTEIRA_EXIT_GRACE_TICKS
+        : AURORA_FRONTEIRA_DEBOUNCE_TICKS
+    if (auroraFronteiraTick - auroraFronteiraSince < auroraFronteiraNeed) return
 
-    // Oscilação de borda: parado em cima da linha entre dois domínios, o bioma
-    // alterna a cada poucos ticks (A -> B -> A -> B...). A volta imediata na
-    // mesma borda não é travessia de verdade e gerava um aviso a cada 5 s.
-    // O cruzamento é registrado, mas não anunciado enquanto for o inverso do
-    // anterior dentro de AURORA_FRONTEIRA_FLIPFLOP_TICKS.
-    const auroraFronteiraCrossFrom = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_CROSS_FROM)
-    const auroraFronteiraCrossTo = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_CROSS_TO)
-    const auroraFronteiraCrossTick = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_CROSS_TICK)
-    const auroraFronteiraFlipFlop = auroraFronteiraCrossFrom === auroraFronteiraDomain &&
-        auroraFronteiraCrossTo === auroraFronteiraLastDomain &&
-        auroraFronteiraTickValido(auroraFronteiraCrossTick, auroraFronteiraTick) &&
-        auroraFronteiraTick - auroraFronteiraCrossTick <= AURORA_FRONTEIRA_FLIPFLOP_TICKS
-
+    // Candidato firme: confirma a transição.
+    auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_PENDING_DOMAIN, '')
+    auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_PENDING_TICK, 0)
+    auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_PENDING_ACTIVE, 0)
     auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, auroraFronteiraDomain)
-    auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, auroraFronteiraTick)
-    auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_CROSS_FROM, auroraFronteiraLastDomain)
-    auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_CROSS_TO, auroraFronteiraDomain)
-    auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_CROSS_TICK, auroraFronteiraTick)
 
-    if (auroraFronteiraFlipFlop) {
-        console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' +
-            auroraFronteiraLastDomain + ' -> ' + auroraFronteiraDomain + ' (oscilacao)')
-        return
-    }
+    if (auroraFronteiraStable === '' && auroraFronteiraDomain === '') return
 
-    // Ficou tempo demais no bioma comum: conta como entrada, não como travessia.
-    if (!auroraFronteiraWithinGrace) {
-        if (!AURORA_FRONTEIRA_ANNOUNCE_ENTER) {
-            console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ')')
-            return
-        }
-        if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS)) {
-            console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ') (cooldown)')
-            return
-        }
-        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG, auroraFronteiraTick)
-        auroraFronteiraNotifyEnter(auroraFronteiraPlayer, auroraFronteiraDomain)
-        return
-    }
-
-    // Cooldown: evita repetir o aviso quando o bioma oscila na borda.
+    // Cooldown: evita rajada quando o jogador atravessa várias bordas seguidas.
     if (auroraFronteiraCooldownAtivo(auroraFronteiraData, AURORA_FRONTEIRA_NBT_LAST_MSG, auroraFronteiraTick, AURORA_FRONTEIRA_COOLDOWN_TICKS)) {
-        console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' + auroraFronteiraLastDomain + ' -> ' + auroraFronteiraDomain + ' (cooldown)')
+        console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' +
+            (auroraFronteiraStable === '' ? 'fora' : auroraFronteiraStable) + ' -> ' +
+            (auroraFronteiraDomain === '' ? 'fora' : auroraFronteiraDomain) + ' (cooldown)')
         return
     }
     auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_MSG, auroraFronteiraTick)
 
-    auroraFronteiraNotifyCross(auroraFronteiraPlayer, auroraFronteiraLastDomain, auroraFronteiraDomain)
+    if (auroraFronteiraStable === '') {
+        if (!AURORA_FRONTEIRA_ANNOUNCE_ENTER) {
+            console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' + auroraFronteiraDomain)
+            return
+        }
+        auroraFronteiraNotifyEnter(auroraFronteiraPlayer, auroraFronteiraDomain)
+        return
+    }
+
+    if (auroraFronteiraDomain === '') {
+        if (!AURORA_FRONTEIRA_ANNOUNCE_EXIT) {
+            console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' saiu de ' + auroraFronteiraStable)
+            return
+        }
+        auroraFronteiraNotifyExit(auroraFronteiraPlayer, auroraFronteiraStable)
+        return
+    }
+
+    auroraFronteiraNotifyCross(auroraFronteiraPlayer, auroraFronteiraStable, auroraFronteiraDomain)
 }

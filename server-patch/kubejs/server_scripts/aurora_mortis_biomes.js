@@ -1,14 +1,15 @@
 // Aviso de bioma do Aurora Mortis — visível SOMENTE para operadores.
 //
-// Quando um jogador entra OU sai de um bioma do mod Aurora Mortis (namespace
-// "aurora_mortis"), os operadores online recebem uma mensagem com o nome do
-// jogador, o bioma, as coordenadas e a dimensão. Biomas de outros mods e
-// biomas vanilla não geram aviso.
+// Quando um jogador troca de SUB-BIOMA dentro do mesmo domínio do mod Aurora
+// Mortis (namespace "aurora_mortis"), os operadores online recebem uma mensagem
+// com o nome do jogador, o bioma, as coordenadas e a dimensão.
 //
-// Entrada: avisa sempre que o jogador passa a um bioma do mod.
-// Saída:   avisa quando o jogador deixa um bioma do mod para um bioma que não
-//          é do mod. Troca de um bioma do mod para outro bioma do mod conta só
-//          como entrada (o aviso de travessia de domínio já cobre esse caso).
+// Entrada e saída de domínio NÃO são anunciadas aqui: quem faz isso (para todos
+// os jogadores) é aurora_mortis_fronteira.js. Antes os dois scripts anunciavam
+// o mesmo cruzamento e o OP recebia quatro mensagens por evento — era o spam
+// reclamado. Agora cada evento tem um único aviso.
+//
+// Biomas de outros mods e biomas vanilla não geram aviso.
 //
 // Destinatários: operadores. A lista vem do próprio servidor
 // (`getPlayerList().getOps().getUserList()`), a mesma carregada do ops.json no
@@ -26,8 +27,7 @@
 
 const AURORA_BIOME_NAMESPACE = 'aurora_mortis' // só biomas deste mod
 const AURORA_CHECK_EVERY_TICKS = 10            // checa a cada 0,5 s
-const AURORA_ENTER_COOLDOWN_TICKS = 600        // evita spam ao andar na borda do bioma (30 s)
-const AURORA_EXIT_COOLDOWN_TICKS = 600         // idem, com contador separado
+const AURORA_ENTER_COOLDOWN_TICKS = 600        // evita spam ao andar na borda do sub-bioma (30 s)
 const AURORA_ANNOUNCE_ON_JOIN = false          // true = avisa também quando o jogador loga já dentro do bioma
 
 // Operadores sem OP vanilla (por exemplo, staff só com LuckPerms) podem ser
@@ -36,7 +36,15 @@ const AURORA_EXTRA_OPS = []
 
 const AURORA_NBT_LAST_BIOME = 'aurora_last_biome'
 const AURORA_NBT_ENTER_MSG = 'aurora_last_biome_enter_msg'
-const AURORA_NBT_EXIT_MSG = 'aurora_last_biome_exit_msg'
+
+// Variações de bioma que pertencem ao mesmo domínio (mesma tabela do
+// aurora_mortis_fronteira.js). Serve para saber quando a troca de bioma é
+// apenas um sub-bioma dentro do domínio e quando é uma fronteira de verdade.
+const AURORA_DOMAIN_ALIASES = {
+    'ilusao_sem_radicao': 'ilusao',
+    'rubro': 'repeticao',
+    'dominio_de_olhos_do_pesadelo': 'pesadelo'
+}
 
 /** Id do bioma onde o jogador está, ex.: "aurora_mortis:dominio_do_caos" */
 function auroraBiomeIdAt(auroraPlayerArg) {
@@ -47,6 +55,20 @@ function auroraBiomeIdAt(auroraPlayerArg) {
 /** Dimensão do jogador, ex.: "minecraft:overworld" */
 function auroraDimensionOf(auroraPlayerArg) {
     return String(auroraPlayerArg.level.dimension.location())
+}
+
+/**
+ * Domínio do bioma, ou '' se o bioma não for do mod.
+ * Ex.: "aurora_mortis:dominio_da_nostalgia" -> "nostalgia"
+ */
+function auroraDomainOf(auroraBiomeIdArg) {
+    if (!auroraBiomeIdArg.startsWith(AURORA_BIOME_NAMESPACE + ':')) return ''
+
+    const auroraPath = auroraBiomeIdArg.substring(AURORA_BIOME_NAMESPACE.length + 1)
+    const auroraAlias = AURORA_DOMAIN_ALIASES[auroraPath]
+    if (auroraAlias) return auroraAlias
+
+    return auroraPath.replace(/^dominio_(da|do|de)_/, '')
 }
 
 /**
@@ -198,41 +220,34 @@ function auroraBiomeCheck(auroraPlayer, auroraTick) {
     auroraData.putString(AURORA_NBT_LAST_BIOME, auroraBiomeId)
 
     const auroraNowIsMod = auroraBiomeId.startsWith(AURORA_BIOME_NAMESPACE + ':')
-    const auroraLastIsMod = auroraLastBiome.startsWith(AURORA_BIOME_NAMESPACE + ':')
 
     // Primeira leitura (login): só registra a referência, sem anunciar
     if (!auroraLastBiome) {
         if (!AURORA_ANNOUNCE_ON_JOIN || !auroraNowIsMod) return
     }
 
+    const auroraName = auroraPlayer.profile.name
+
+    // Troca de domínio é fronteira: quem anuncia no chat é
+    // aurora_mortis_fronteira.js (para todos, inclusive OPs). Aqui só registra
+    // no console, senão o OP recebe dois avisos para o mesmo cruzamento.
+    if (auroraDomainOf(auroraBiomeId) !== auroraDomainOf(auroraLastBiome)) {
+        console.info('[aurora] ' + auroraName + ' mudou de dominio: ' + auroraLastBiome + ' -> ' +
+            auroraBiomeId + ' (aviso pelo aurora_mortis_fronteira.js)')
+        return
+    }
+
+    // Só interessa bioma do mod (variação de sub-bioma dentro do domínio)
+    if (!auroraNowIsMod) return
+
+    // Cooldown para não floodar quando o jogador cruza a borda do sub-bioma
+    if (auroraCooldownAtivo(auroraData, AURORA_NBT_ENTER_MSG, auroraTick, AURORA_ENTER_COOLDOWN_TICKS)) return
+    auroraData.putLong(AURORA_NBT_ENTER_MSG, auroraTick)
+
     const auroraX = Math.floor(auroraPlayer.x)
     const auroraY = Math.floor(auroraPlayer.y)
     const auroraZ = Math.floor(auroraPlayer.z)
     const auroraDim = auroraDimensionOf(auroraPlayer)
-    const auroraName = auroraPlayer.profile.name
-
-    // Saída de um bioma do mod para um bioma que não é do mod
-    if (auroraLastIsMod && !auroraNowIsMod) {
-        if (auroraCooldownAtivo(auroraData, AURORA_NBT_EXIT_MSG, auroraTick, AURORA_EXIT_COOLDOWN_TICKS)) return
-        auroraData.putLong(AURORA_NBT_EXIT_MSG, auroraTick)
-
-        const auroraExitJson = auroraBiomeJson(auroraName, 'saiu do', auroraLastBiome, auroraX, auroraY, auroraZ, auroraDim)
-        const auroraExitPlain = '[Aurora] ' + auroraName + ' saiu do bioma ' + auroraLastBiome +
-            ' @ ' + auroraX + ' ' + auroraY + ' ' + auroraZ + ' (' + auroraDim + ')'
-        const auroraExitSent = auroraTellOps(auroraPlayer.server, auroraExitJson, auroraExitPlain)
-
-        console.info('[aurora] ' + auroraName + ' saiu de ' + auroraLastBiome + ' -> ' + auroraBiomeId +
-            ' @ ' + auroraX + ' ' + auroraY + ' ' + auroraZ + ' (' + auroraDim + ') ops=' + auroraExitSent.count +
-            ' [' + auroraExitSent.names.join(',') + ']')
-        return
-    }
-
-    // Só interessa bioma do mod
-    if (!auroraNowIsMod) return
-
-    // Cooldown para não floodar quando o jogador cruza a borda do bioma
-    if (auroraCooldownAtivo(auroraData, AURORA_NBT_ENTER_MSG, auroraTick, AURORA_ENTER_COOLDOWN_TICKS)) return
-    auroraData.putLong(AURORA_NBT_ENTER_MSG, auroraTick)
 
     const auroraEnterJson = auroraBiomeJson(auroraName, 'entrou no', auroraBiomeId, auroraX, auroraY, auroraZ, auroraDim)
     const auroraEnterPlain = '[Aurora] ' + auroraName + ' entrou no bioma ' + auroraBiomeId +
