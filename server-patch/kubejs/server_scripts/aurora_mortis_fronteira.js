@@ -1,20 +1,20 @@
-// Aviso pessoal de fronteira — só entre domínios do Aurora Mortis.
+﻿// Aviso pessoal de fronteira ÔÇö s├│ entre dom├¡nios do Aurora Mortis.
 //
 // Regra: o jogador recebe o aviso SOMENTE quando passa diretamente de um
-// domínio do mod Aurora Mortis para outro domínio do mod (ex.: do domínio da
-// nostalgia para o domínio da repetição). Entrar ou sair de um domínio vindo
-// de um bioma vanilla/outro mod NÃO gera aviso (ex.: taiga -> repetição).
+// dom├¡nio do mod Aurora Mortis para outro dom├¡nio do mod (ex.: do dom├¡nio da
+// nostalgia para o dom├¡nio da repeti├º├úo). Entrar ou sair de um dom├¡nio vindo
+// de um bioma vanilla/outro mod N├âO gera aviso (ex.: taiga -> repeti├º├úo).
 //
-// Biomas que são variações do mesmo domínio contam como o mesmo domínio (ver
-// AURORA_FRONTEIRA_DOMAIN_ALIASES), então andar entre eles não dispara aviso.
+// Biomas que s├úo varia├º├Áes do mesmo dom├¡nio contam como o mesmo dom├¡nio (ver
+// AURORA_FRONTEIRA_DOMAIN_ALIASES), ent├úo andar entre eles n├úo dispara aviso.
 // Ex.: "Dominio do Pesadelo" e "Dominio de Olhos do Pesadelo" se intercalam no
 // mundo; sem isso o jogador levaria aviso o tempo todo dentro do pesadelo.
 //
-// O aviso é pessoal: só quem cruzou recebe.
+// O aviso ├® pessoal: s├│ quem cruzou recebe.
 //
-// Este script é independente de aurora_mortis_biomes.js (que avisa os OPs).
+// Este script ├® independente de aurora_mortis_biomes.js (que avisa os OPs).
 //
-// Instalação: <servidor>/kubejs/server_scripts/
+// Instala├º├úo: <servidor>/kubejs/server_scripts/
 // Aplicar sem reiniciar: /kubejs reload server_scripts
 //
 // NOTA: no Rhino do KubeJS, `const`/`let` de um script vazam para o escopo
@@ -23,30 +23,27 @@
 
 const AURORA_FRONTEIRA_NAMESPACE = 'aurora_mortis'
 const AURORA_FRONTEIRA_CHECK_EVERY_TICKS = 5  // checa a cada 0,25 s
-const AURORA_FRONTEIRA_COOLDOWN_TICKS = 60    // no máximo 1 aviso a cada 3 s
+const AURORA_FRONTEIRA_COOLDOWN_TICKS = 60    // no m├íximo 1 aviso a cada 3 s
 
 const AURORA_FRONTEIRA_NBT_LAST_DOMAIN = 'aurora_fronteira_last_domain'
 const AURORA_FRONTEIRA_NBT_LAST_MSG = 'aurora_fronteira_last_msg'
-const AURORA_FRONTEIRA_NBT_LAST_DIMENSION = 'aurora_fronteira_last_dimension'
-const AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL = 'aurora_fronteira_dimension_pending_until'
-const AURORA_FRONTEIRA_DIMENSION_GRACE_TICKS = 40 // 2 s para o bioma da dimensão destino aparecer
 
-// Variações de bioma que pertencem ao mesmo domínio.
-// As chaves são o "path" do bioma (sem o namespace "aurora_mortis:").
+// Varia├º├Áes de bioma que pertencem ao mesmo dom├¡nio.
+// As chaves s├úo o "path" do bioma (sem o namespace "aurora_mortis:").
 const AURORA_FRONTEIRA_DOMAIN_ALIASES = {
     'ilusao_sem_radicao': 'ilusao',
     'rubro': 'repeticao',
     'dominio_de_olhos_do_pesadelo': 'pesadelo'
 }
 
-/** Id do bioma onde o jogador está, ex.: "aurora_mortis:dominio_do_caos" */
+/** Id do bioma onde o jogador est├í, ex.: "aurora_mortis:dominio_do_caos" */
 function auroraFronteiraBiomeIdAt(auroraFronteiraPlayer) {
     const auroraFronteiraKey = auroraFronteiraPlayer.level.getBiome(auroraFronteiraPlayer.blockPosition()).unwrapKey()
     return auroraFronteiraKey.isPresent() ? String(auroraFronteiraKey.get().location()) : 'minecraft:the_void'
 }
 
 /**
- * Domínio do bioma, ou '' se o bioma não for do mod.
+ * Dom├¡nio do bioma, ou '' se o bioma n├úo for do mod.
  * Ex.: "aurora_mortis:dominio_da_nostalgia" -> "nostalgia"
  */
 function auroraFronteiraDomainOf(auroraFronteiraBiomeId) {
@@ -60,23 +57,17 @@ function auroraFronteiraDomainOf(auroraFronteiraBiomeId) {
     return auroraFronteiraPath.replace(/^dominio_(da|do|de)_/, '')
 }
 
-/** Grava o domínio atual sem avisar (login, saída para bioma comum, etc.) */
+/** Grava o dom├¡nio atual sem avisar (login, sa├¡da para bioma comum, etc.) */
 function auroraFronteiraSetDomain(auroraFronteiraPlayer, auroraFronteiraDomain) {
     auroraFronteiraPlayer.persistentData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, auroraFronteiraDomain)
 }
 
-function auroraFronteiraDimensionAt(auroraFronteiraPlayer) {
-    return String(auroraFronteiraPlayer.level.dimension.location())
-}
-
-// Ao entrar no servidor, começa do domínio em que o jogador está, sem avisar
-// (evita aviso falso quando ele loga já dentro de um domínio).
+// Ao entrar no servidor, come├ºa do dom├¡nio em que o jogador est├í, sem avisar
+// (evita aviso falso quando ele loga j├í dentro de um dom├¡nio).
 PlayerEvents.loggedIn(event => {
     const auroraFronteiraPlayer = event.player
     try {
         auroraFronteiraSetDomain(auroraFronteiraPlayer, auroraFronteiraDomainOf(auroraFronteiraBiomeIdAt(auroraFronteiraPlayer)))
-        auroraFronteiraPlayer.persistentData.putString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION, auroraFronteiraDimensionAt(auroraFronteiraPlayer))
-        auroraFronteiraPlayer.persistentData.putLong(AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL, 0)
     } catch (auroraFronteiraErr) {
         auroraFronteiraSetDomain(auroraFronteiraPlayer, '')
     }
@@ -92,47 +83,26 @@ PlayerEvents.tick(event => {
     const auroraFronteiraDomain = auroraFronteiraDomainOf(auroraFronteiraBiome)
     const auroraFronteiraData = auroraFronteiraPlayer.persistentData
     const auroraFronteiraLastDomain = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN)
-    const auroraFronteiraDimension = auroraFronteiraDimensionAt(auroraFronteiraPlayer)
-    const auroraFronteiraLastDimension = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION)
-
-    // In a cross-dimension teleport, Minecraft can expose a temporary vanilla/empty biome
-    // before the destination chunk is ready. Keep the source domain briefly so A -> B still
-    // counts as a direct frontier crossing instead of being erased during that gap.
-    // Players that were already online when this script was reloaded may not have the new
-    // dimension marker yet. Initialize it before the equality early-return below.
-    if (!auroraFronteiraLastDimension) {
-        auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION, auroraFronteiraDimension)
-    } else if (auroraFronteiraDimension !== auroraFronteiraLastDimension) {
-        auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DIMENSION, auroraFronteiraDimension)
-        auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL, auroraFronteiraTick + AURORA_FRONTEIRA_DIMENSION_GRACE_TICKS)
-    }
-
-    const auroraFronteiraDimensionPendingUntil = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_DIMENSION_PENDING_UNTIL)
 
     if (auroraFronteiraDomain === auroraFronteiraLastDomain) return
 
-    // Entrou/saiu de domínio passando por um bioma que não é domínio: só
+    // Entrou/saiu de dom├¡nio passando por um bioma que n├úo ├® dom├¡nio: s├│
     // registra o novo estado, sem aviso.
     if (auroraFronteiraDomain === '' || auroraFronteiraLastDomain === '') {
-        if (auroraFronteiraDomain === '' && auroraFronteiraDimensionPendingUntil > auroraFronteiraTick) return
         auroraFronteiraSetDomain(auroraFronteiraPlayer, auroraFronteiraDomain)
         return
     }
 
-    // Cruzamento entre dois domínios diferentes.
-    // Se o cooldown ainda estiver ativo, NÃO grava o domínio novo: a próxima
-    // checagem tenta de novo, então nenhum cruzamento é perdido.
+    // Cruzamento entre dois dom├¡nios diferentes.
+    // Se o cooldown ainda estiver ativo, N├âO grava o dom├¡nio novo: a pr├│xima
+    // checagem tenta de novo, ent├úo nenhum cruzamento ├® perdido.
     const auroraFronteiraLastMsg = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_MSG)
     if (auroraFronteiraLastMsg > 0 && auroraFronteiraTick - auroraFronteiraLastMsg < AURORA_FRONTEIRA_COOLDOWN_TICKS) return
 
     auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_MSG, auroraFronteiraTick)
     auroraFronteiraSetDomain(auroraFronteiraPlayer, auroraFronteiraDomain)
 
-    console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' + auroraFronteiraLastDomain + ' -> ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ', ' + auroraFronteiraDimension + ')')
-
-    // Todos os jogadores online recebem o aviso da fronteira atravessada.
-    const auroraFronteiraPlayers = auroraFronteiraPlayer.server.players
-    for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < auroraFronteiraPlayers.size(); auroraFronteiraIdx++) {
-        auroraFronteiraPlayers.get(auroraFronteiraIdx).tell('Atenção: ' + auroraFronteiraPlayer.profile.name + ' está ultrapassando uma fronteira!!')
-    }
+    // S├│ o jogador que cruzou recebe
+    auroraFronteiraPlayer.tell(Text.darkRed('Aten├º├úo: Voc├¬ est├í ultrapassando uma fronteira!!').bold())
+    console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' + auroraFronteiraLastDomain + ' -> ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ')')
 })
