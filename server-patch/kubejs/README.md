@@ -24,14 +24,18 @@ do mod `aurora_mortis`.
 - Detecta também a **saída** para um bioma que não é do mod.
 - Manda a mensagem **só para operadores**, incluindo: nome do jogador, id do
   bioma, coordenadas e dimensão.
-- O envio principal é `tellraw @a[level=2..]`: o próprio servidor seleciona os
-  operadores, sem depender do script enxergar o status de cada jogador. Se o
-  comando não alcançar ninguém, cai para a lista de jogadores online com
-  `isOp()` e para `AURORA_EXTRA_OPS` (nomes extras, para staff sem OP vanilla).
+- A lista de operadores vem do **próprio servidor**
+  (`getPlayerList().getOps().getUserList()`): é a mesma lista carregada do
+  `ops.json` no start e atualizada por `/op` e `/deop` em memória, então muda na
+  hora, sem recarregar o script. O envio é feito **um a um, por nome**
+  (`tellraw <nome>`), porque neste servidor (Arclight + LuckPerms) o seletor
+  `@a[level=2..]` não enxerga todos os OPs — era por isso que parte da staff
+  ficava sem aviso. Se a lista não puder ser lida, o script cai para `isOp()`,
+  para `AURORA_EXTRA_OPS` e, por último, para `tellraw @a[level=2..]`.
 - Ignora biomas vanilla e de outros mods (Biomes O' Plenty, BYG, Regions
   Unexplored, etc.).
-- Escreve no console quantos operadores receberam (`ops=N`), o que serve de
-  diagnóstico.
+- Escreve no console quantos operadores receberam e quem eram (`ops=N [nomes]`),
+  o que serve de diagnóstico.
 - Cooldown separado de 30 s para entrada e para saída, por jogador.
 
 Exemplo do que o operador vê:
@@ -138,6 +142,12 @@ demais veem o nome.
   cima da fronteira.
 - Cooldowns separados: travessia 5 s (`AURORA_FRONTEIRA_COOLDOWN_TICKS`),
   entrada/saída 20 s (`AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS`).
+- **Oscilação de borda**: parado em cima da linha entre dois domínios, o bioma
+  alterna a cada poucos ticks (`A -> B -> A -> B...`). A volta imediata na mesma
+  borda não é travessia de verdade e gerava um aviso a cada 5 s. Agora o
+  cruzamento é registrado mas não anunciado quando é o inverso do anterior
+  dentro de 30 s (`AURORA_FRONTEIRA_FLIPFLOP_TICKS`); no console aparece
+  `(oscilacao)`.
 - Checagem a cada 5 ticks (0,25 s) para não pular biomas ao andar rápido.
 - Ao logar, o script assume o domínio atual sem avisar (evita aviso falso de
   login).

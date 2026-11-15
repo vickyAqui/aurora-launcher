@@ -10,10 +10,12 @@
 //          é do mod. Troca de um bioma do mod para outro bioma do mod conta só
 //          como entrada (o aviso de travessia de domínio já cobre esse caso).
 //
-// Destinatários: operadores. O envio principal usa o seletor do próprio
-// servidor (`tellraw @a[level=2..]`), que não depende do script enxergar o
-// status de cada jogador. Se o comando não alcançar ninguém, o script cai
-// para a lista de jogadores online com isOp() e para AURORA_EXTRA_OPS.
+// Destinatários: operadores. A lista vem do próprio servidor
+// (`getPlayerList().getOps().getUserList()`), a mesma carregada do ops.json no
+// start e atualizada por /op e /deop, e o envio é feito um a um, por nome.
+// Neste servidor (Arclight + LuckPerms) o seletor `@a[level=2..]` não enxerga
+// todos os OPs, então ele fica só como último recurso. Também valem isOp() e
+// AURORA_EXTRA_OPS.
 //
 // Instalação: copie este arquivo para <servidor>/kubejs/server_scripts/
 // Aplicar sem reiniciar: /kubejs reload server_scripts
@@ -66,41 +68,86 @@ function auroraCooldownAtivo(auroraDataArg, auroraKeyArg, auroraTickArg, auroraC
 }
 
 /**
- * Envia um JSON de tellraw para todos os operadores.
- * Retorna quantos jogadores receberam.
+ * Nomes dos operadores segundo o próprio servidor, em minúsculas.
+ *
+ * `getPlayerList().getOps().getUserList()` devolve a lista carregada do
+ * ops.json no start e atualizada por /op e /deop em memória — é a mesma lista
+ * que o comando /op usa, então não precisa ler arquivo (o filtro de classes do
+ * KubeJS bloqueia java.nio.file.Files) nem recarregar o script.
+ */
+function auroraServerOpNames(auroraServerArg) {
+    var auroraNames = []
+    try {
+        var auroraKeys = auroraServerArg.getPlayerList().getOps().getUserList()
+        for (var auroraIdx = 0; auroraIdx < auroraKeys.length; auroraIdx++) {
+            auroraNames.push(String(auroraKeys[auroraIdx]).toLowerCase())
+        }
+    } catch (auroraErr) {
+        console.warn('[aurora] nao consegui ler a lista de OPs do servidor: ' + auroraErr)
+    }
+    return auroraNames
+}
+
+/** true se o jogador é operador pela lista do servidor, pela lista extra ou por isOp(). */
+function auroraIsStaff(auroraTargetArg, auroraOpNamesArg) {
+    var auroraName = ''
+    try {
+        auroraName = String(auroraTargetArg.profile.name)
+    } catch (auroraErr) {
+        return false
+    }
+    if (AURORA_EXTRA_OPS.indexOf(auroraName) >= 0) return true
+    if (auroraOpNamesArg.indexOf(auroraName.toLowerCase()) >= 0) return true
+    try {
+        return auroraTargetArg.isOp() === true
+    } catch (auroraErr2) {
+        return false
+    }
+}
+
+/**
+ * Envia um JSON de tellraw para todos os operadores online, um a um.
+ * Retorna { count, names } para o log de diagnóstico.
  */
 function auroraTellOps(auroraServerArg, auroraJsonArg, auroraPlainArg) {
     var auroraSent = 0
-
-    // Caminho principal: o próprio servidor seleciona os operadores.
-    try {
-        auroraSent = auroraServerArg.runCommandSilent('tellraw @a[level=2..] ' + auroraJsonArg)
-    } catch (auroraErr) {
-        auroraSent = 0
-    }
-    if (auroraSent > 0) return auroraSent
-
-    // Reserva: varre os jogadores online.
-    // `var` (e não `const`/`let`) porque o Rhino do KubeJS acusa
-    // "redeclaration of var" quando um const é recriado a cada iteração.
+    var auroraSentNames = []
+    const auroraOpNames = auroraServerOpNames(auroraServerArg)
     const auroraPlayers = auroraServerArg.players
+
     for (var auroraIdx = 0; auroraIdx < auroraPlayers.size(); auroraIdx++) {
         var auroraTarget = auroraPlayers.get(auroraIdx)
-        var auroraIsStaff = AURORA_EXTRA_OPS.indexOf(auroraTarget.profile.name) >= 0
-        if (!auroraIsStaff) {
+        if (!auroraIsStaff(auroraTarget, auroraOpNames)) continue
+
+        var auroraOk = false
+        try {
+            auroraOk = auroraServerArg.runCommandSilent(
+                'tellraw ' + auroraTarget.profile.name + ' ' + auroraJsonArg
+            ) > 0
+        } catch (auroraErr) {
+            auroraOk = false
+        }
+        if (!auroraOk) {
             try {
-                auroraIsStaff = auroraTarget.isOp()
+                auroraTarget.tell(auroraPlainArg)
             } catch (auroraErr2) {
-                auroraIsStaff = false
+                // sem outro caminho de envio
             }
         }
-        if (auroraIsStaff) {
-            auroraTarget.tell(auroraPlainArg)
-            auroraSent++
+        auroraSent++
+        auroraSentNames.push(auroraTarget.profile.name)
+    }
+
+    // Nenhum OP reconhecido (ops.json ilegível?): última tentativa pelo seletor.
+    if (auroraSent === 0) {
+        try {
+            auroraSent = auroraServerArg.runCommandSilent('tellraw @a[level=2..] ' + auroraJsonArg)
+        } catch (auroraErr3) {
+            auroraSent = 0
         }
     }
 
-    return auroraSent
+    return { count: auroraSent, names: auroraSentNames }
 }
 
 /** JSON do aviso: [Aurora] Nome <verbo> bioma <id> @ x y z (dim) */
@@ -154,7 +201,8 @@ PlayerEvents.tick(event => {
         const auroraExitSent = auroraTellOps(auroraPlayer.server, auroraExitJson, auroraExitPlain)
 
         console.info('[aurora] ' + auroraName + ' saiu de ' + auroraLastBiome + ' -> ' + auroraBiomeId +
-            ' @ ' + auroraX + ' ' + auroraY + ' ' + auroraZ + ' (' + auroraDim + ') ops=' + auroraExitSent)
+            ' @ ' + auroraX + ' ' + auroraY + ' ' + auroraZ + ' (' + auroraDim + ') ops=' + auroraExitSent.count +
+            ' [' + auroraExitSent.names.join(',') + ']')
         return
     }
 
@@ -171,5 +219,6 @@ PlayerEvents.tick(event => {
     const auroraEnterSent = auroraTellOps(auroraPlayer.server, auroraEnterJson, auroraEnterPlain)
 
     console.info('[aurora] ' + auroraName + ' entrou em ' + auroraBiomeId +
-        ' @ ' + auroraX + ' ' + auroraY + ' ' + auroraZ + ' (' + auroraDim + ') ops=' + auroraEnterSent)
+        ' @ ' + auroraX + ' ' + auroraY + ' ' + auroraZ + ' (' + auroraDim + ') ops=' + auroraEnterSent.count +
+        ' [' + auroraEnterSent.names.join(',') + ']')
 })

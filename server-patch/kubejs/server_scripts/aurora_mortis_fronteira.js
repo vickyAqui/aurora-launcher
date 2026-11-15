@@ -35,6 +35,7 @@ const AURORA_FRONTEIRA_CHECK_EVERY_TICKS = 5   // checa a cada 0,25 s
 const AURORA_FRONTEIRA_COOLDOWN_TICKS = 100    // travessia: no máximo 1 aviso a cada 5 s
 const AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS = 400 // entrada/saída: 20 s
 const AURORA_FRONTEIRA_GRACE_TICKS = 100       // 5 s para atravessar bioma comum
+const AURORA_FRONTEIRA_FLIPFLOP_TICKS = 600    // 30 s: ignora A->B->A na mesma borda
 const AURORA_FRONTEIRA_ANNOUNCE_TO_ALL = true  // false = só quem cruzou recebe
 const AURORA_FRONTEIRA_ANNOUNCE_ENTER = true   // avisa ao entrar em um domínio
 const AURORA_FRONTEIRA_ANNOUNCE_EXIT = true    // avisa ao sair de um domínio
@@ -44,6 +45,9 @@ const AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK = 'aurora_fronteira_last_domain_tick
 const AURORA_FRONTEIRA_NBT_LAST_MSG = 'aurora_fronteira_last_msg'
 const AURORA_FRONTEIRA_NBT_LAST_ENTER_MSG = 'aurora_fronteira_last_enter_msg'
 const AURORA_FRONTEIRA_NBT_LAST_EXIT_MSG = 'aurora_fronteira_last_exit_msg'
+const AURORA_FRONTEIRA_NBT_LAST_CROSS_FROM = 'aurora_fronteira_last_cross_from'
+const AURORA_FRONTEIRA_NBT_LAST_CROSS_TO = 'aurora_fronteira_last_cross_to'
+const AURORA_FRONTEIRA_NBT_LAST_CROSS_TICK = 'aurora_fronteira_last_cross_tick'
 
 // Variações de bioma que pertencem ao mesmo domínio.
 // As chaves são o "path" do bioma (sem o namespace "aurora_mortis:").
@@ -293,8 +297,30 @@ function auroraFronteiraCheck(auroraFronteiraPlayer, auroraFronteiraTick) {
     const auroraFronteiraWithinGrace = auroraFronteiraTickValido(auroraFronteiraLastTick, auroraFronteiraTick) &&
         auroraFronteiraTick - auroraFronteiraLastTick <= AURORA_FRONTEIRA_GRACE_TICKS
 
+    // Oscilação de borda: parado em cima da linha entre dois domínios, o bioma
+    // alterna a cada poucos ticks (A -> B -> A -> B...). A volta imediata na
+    // mesma borda não é travessia de verdade e gerava um aviso a cada 5 s.
+    // O cruzamento é registrado, mas não anunciado enquanto for o inverso do
+    // anterior dentro de AURORA_FRONTEIRA_FLIPFLOP_TICKS.
+    const auroraFronteiraCrossFrom = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_CROSS_FROM)
+    const auroraFronteiraCrossTo = auroraFronteiraData.getString(AURORA_FRONTEIRA_NBT_LAST_CROSS_TO)
+    const auroraFronteiraCrossTick = auroraFronteiraData.getLong(AURORA_FRONTEIRA_NBT_LAST_CROSS_TICK)
+    const auroraFronteiraFlipFlop = auroraFronteiraCrossFrom === auroraFronteiraDomain &&
+        auroraFronteiraCrossTo === auroraFronteiraLastDomain &&
+        auroraFronteiraTickValido(auroraFronteiraCrossTick, auroraFronteiraTick) &&
+        auroraFronteiraTick - auroraFronteiraCrossTick <= AURORA_FRONTEIRA_FLIPFLOP_TICKS
+
     auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_DOMAIN, auroraFronteiraDomain)
     auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_DOMAIN_TICK, auroraFronteiraTick)
+    auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_CROSS_FROM, auroraFronteiraLastDomain)
+    auroraFronteiraData.putString(AURORA_FRONTEIRA_NBT_LAST_CROSS_TO, auroraFronteiraDomain)
+    auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_CROSS_TICK, auroraFronteiraTick)
+
+    if (auroraFronteiraFlipFlop) {
+        console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' +
+            auroraFronteiraLastDomain + ' -> ' + auroraFronteiraDomain + ' (oscilacao)')
+        return
+    }
 
     // Ficou tempo demais no bioma comum: conta como entrada, não como travessia.
     if (!auroraFronteiraWithinGrace) {
