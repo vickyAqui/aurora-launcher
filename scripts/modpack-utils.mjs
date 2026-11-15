@@ -92,13 +92,17 @@ export async function buildManifestEntries({ folders, files, baseUrl, urlFor }) 
   }
 
   for (const file of files) {
+    // Non-mod files such as CraftPresence settings belong in their game-directory folder. EML Lib
+    // supports CONFIG entries and uses the same path/name resolution as MOD entries, while keeping
+    // the manifest validator from treating a config file as a jar that must live under mods/.
+    const type = file.rel.startsWith('config/') ? 'CONFIG' : 'MOD'
     entries.push({
       name: file.name,
       path: toManifestPath(file.rel),
       size: (await fs.stat(file.full)).size,
       sha1: await sha1(file.full),
       url: urlOf(file),
-      type: 'MOD'
+      type
     })
   }
 

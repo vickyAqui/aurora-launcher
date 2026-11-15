@@ -1,10 +1,24 @@
 {
   "files": [
     {
+      "name": "config",
+      "path": "",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
       "name": "mods",
       "path": "",
       "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
       "type": "FOLDER"
+    },
+    {
+      "name": "craftpresence.json",
+      "path": "config/",
+      "size": 4429,
+      "sha1": "613ed0084ce7dd479dac435fac4c888f155980fc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/craftpresence.json",
+      "type": "CONFIG"
     },
     {
       "name": "abyssal_decor_1.20.1_0.10.0_Forge.jar",
