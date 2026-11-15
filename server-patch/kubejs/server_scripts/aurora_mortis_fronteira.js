@@ -111,8 +111,6 @@ PlayerEvents.tick(event => {
 
     if (auroraFronteiraDomain === auroraFronteiraLastDomain) return
 
-    console.info('[aurora-fronteira-check] ' + auroraFronteiraPlayer.profile.name + ': ' + (auroraFronteiraLastDomain || '<vazio>') + ' -> ' + (auroraFronteiraDomain || '<comum>') + ' (' + auroraFronteiraBiome + ', ' + auroraFronteiraDimension + ')')
-
     // Entrou/saiu de domínio passando por um bioma que não é domínio: só
     // registra o novo estado, sem aviso.
     if (auroraFronteiraDomain === '' || auroraFronteiraLastDomain === '') {
@@ -130,7 +128,8 @@ PlayerEvents.tick(event => {
     auroraFronteiraData.putLong(AURORA_FRONTEIRA_NBT_LAST_MSG, auroraFronteiraTick)
     auroraFronteiraSetDomain(auroraFronteiraPlayer, auroraFronteiraDomain)
 
+    console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' + auroraFronteiraLastDomain + ' -> ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ', ' + auroraFronteiraDimension + ')')
+
     // Só o jogador que cruzou recebe
-    auroraFronteiraPlayer.tell(Text.darkRed('Atenção: Você está ultrapassando uma fronteira!!').bold())
-    console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' + auroraFronteiraLastDomain + ' -> ' + auroraFronteiraDomain + ' (' + auroraFronteiraBiome + ')')
+    auroraFronteiraPlayer.tell('Atenção: Você está ultrapassando uma fronteira!!')
 })
