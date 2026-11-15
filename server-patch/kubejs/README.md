@@ -4,15 +4,15 @@ Dois scripts de servidor **independentes** (um não interfere no outro):
 
 | Arquivo | Para quem avisa | Quando |
 |---|---|---|
-| `aurora_mortis_biomes.js` | operadores (OP) | jogador entra em bioma do mod |
-| `aurora_mortis_fronteira.js` | o próprio jogador | jogador passa de um domínio do mod para outro |
+| `aurora_mortis_biomes.js` | operadores (OP) | jogador entra ou sai de um bioma do mod |
+| `aurora_mortis_fronteira.js` | todos os jogadores online | jogador entra, sai ou passa de um domínio do mod para outro |
 
 Não alteram o mod nem o modpack: usam o KubeJS que já está no pack.
 
 ## Aviso para operadores (`aurora_mortis_biomes.js`)
 
-Avisa **somente os operadores** quando um jogador entra em um bioma do mod
-`aurora_mortis`.
+Avisa **somente os operadores** quando um jogador entra **ou sai** de um bioma
+do mod `aurora_mortis`.
 
 ## O que faz
 
@@ -21,17 +21,24 @@ Avisa **somente os operadores** quando um jogador entra em um bioma do mod
   `dominio_da_realidade`, `dominio_da_repeticao`, `dominio_de_olhos_do_pesadelo`,
   `dominio_do_caos`, `dominio_do_futuro`, `dominio_do_pesadelo`,
   `ilusao_sem_radicao`, `rubro` — e qualquer bioma novo do mod, automaticamente).
-- Manda a mensagem **só para quem tem OP** (nível 2 ou mais), incluindo:
-  nome do jogador, nome do bioma, id do bioma, coordenadas e dimensão.
+- Detecta também a **saída** para um bioma que não é do mod.
+- Manda a mensagem **só para operadores**, incluindo: nome do jogador, id do
+  bioma, coordenadas e dimensão.
+- O envio principal é `tellraw @a[level=2..]`: o próprio servidor seleciona os
+  operadores, sem depender do script enxergar o status de cada jogador. Se o
+  comando não alcançar ninguém, cai para a lista de jogadores online com
+  `isOp()` e para `AURORA_EXTRA_OPS` (nomes extras, para staff sem OP vanilla).
 - Ignora biomas vanilla e de outros mods (Biomes O' Plenty, BYG, Regions
   Unexplored, etc.).
-- Também escreve a mesma informação no console do servidor.
-- Tem cooldown de 30 s por jogador para não floodar quando se anda na borda.
+- Escreve no console quantos operadores receberam (`ops=N`), o que serve de
+  diagnóstico.
+- Cooldown separado de 30 s para entrada e para saída, por jogador.
 
 Exemplo do que o operador vê:
 
 ```
-[Aurora] Fulano entrou no bioma Domínio do Caos (aurora_mortis:dominio_do_caos) @ 123 64 -45 em minecraft:overworld
+[Aurora] Fulano entrou no bioma aurora_mortis:dominio_do_caos @ 123 64 -45 (minecraft:overworld)
+[Aurora] Fulano saiu do bioma aurora_mortis:dominio_do_caos @ 140 66 -52 (minecraft:overworld)
 ```
 
 ## Instalação
@@ -63,7 +70,17 @@ No jogo, como operador:
 Ao chegar no bioma, **outro** operador (ou você mesmo) deve receber a mensagem.
 Se você for o único OP online, a mensagem aparece para você mesmo — é o esperado.
 
-Para testar sem se locomover, use um jogador não-OP e teleporte-o para o bioma.
+Para testar o aviso de fronteira, atravesse **andando** a linha entre dois
+domínios do mod (o caminho real do jogador). `/tp` entre domínios também dispara,
+mas o teste que importa é o pé no chão. Confira no console:
+
+```
+logs/kubejs/server.log
+[aurora-fronteira] Fulano: realidade -> futuro
+[aurora] Fulano entrou em aurora_mortis:dominio_do_futuro @ 100 64 -200 (minecraft:overworld) ops=5
+```
+
+`ops=N` mostra quantos operadores receberam o aviso de bioma.
 
 ## Ajustes rápidos
 
@@ -73,8 +90,10 @@ Tudo fica no topo do arquivo:
 |---|---:|---|
 | `AURORA_BIOME_NAMESPACE` | `aurora_mortis` | Namespace dos biomas que geram aviso |
 | `AURORA_CHECK_EVERY_TICKS` | `10` | Frequência da checagem (10 ticks = 0,5 s) |
-| `AURORA_COOLDOWN_TICKS` | `600` | Tempo mínimo entre avisos do mesmo jogador (30 s) |
+| `AURORA_ENTER_COOLDOWN_TICKS` | `600` | Tempo mínimo entre avisos de entrada do mesmo jogador (30 s) |
+| `AURORA_EXIT_COOLDOWN_TICKS` | `600` | Idem para saída (contador separado) |
 | `AURORA_ANNOUNCE_ON_JOIN` | `false` | `true` avisa também quando o jogador loga já dentro do bioma |
+| `AURORA_EXTRA_OPS` | `[]` | Nomes de staff sem OP vanilla que também recebem o aviso |
 
 Para desligar o recurso: apague (ou renomeie para `.js.disabled`) o arquivo e
 rode `/kubejs reload server_scripts`.
@@ -92,38 +111,42 @@ rode `/kubejs reload server_scripts`.
   mensagem.
 - Não depende do patch do `meds_and_herbs`; os dois recursos são independentes.
 
-## Aviso pessoal de fronteira (`aurora_mortis_fronteira.js`)
+## Aviso de fronteira (`aurora_mortis_fronteira.js`)
 
-Arquivo **separado e independente** do aviso de OP. Quando o jogador passa
-**diretamente de um domínio do `aurora_mortis` para outro domínio do mod**
-(ex.: do domínio da nostalgia para o domínio da repetição), **ele mesmo**
-recebe:
+Arquivo **separado e independente** do aviso de OP. Avisa três eventos:
 
-```
-Atenção: Você está ultrapassando uma fronteira!!
-```
+| Evento | Mensagem (quem cruzou / demais) | Cor |
+|---|---|---|
+| Entrou no domínio vindo de fora | `Você entrou no domínio X.` / `Fulano entrou no domínio X.` | dourado |
+| Saiu do domínio para fora | `Você saiu do domínio X.` / `Fulano saiu do domínio X.` | amarelo |
+| Passou de um domínio para outro | `Atenção: Você está ultrapassando uma fronteira!!` / `Atenção: Fulano está ultrapassando uma fronteira!!` | vermelho escuro |
 
-A mensagem sai em **vermelho escuro (`dark_red`) e negrito**.
+Todas as mensagens saem em negrito. Por padrão (`AURORA_FRONTEIRA_ANNOUNCE_TO_ALL
+= true`) **todos os jogadores online** recebem; quem cruzou vê "Você" e os
+demais veem o nome.
 
-- Entrar ou sair de um domínio vindo de bioma vanilla/outro mod **não** gera
-  aviso (ex.: taiga -> repetição, repetição -> plains).
 - Biomas que são variações do mesmo domínio contam como o mesmo domínio (ver
   `AURORA_FRONTEIRA_DOMAIN_ALIASES`): `dominio_do_pesadelo` ×
   `dominio_de_olhos_do_pesadelo`, `dominio_da_ilusao` × `ilusao_sem_radicao` e
   `dominio_da_repeticao` × `rubro` não disparam aviso entre si.
-- Só o jogador que cruzou recebe; os OPs continuam recebendo o aviso do outro
-  script normalmente.
 - Usa NBT próprio (`aurora_fronteira_last_domain`), sem tocar no estado do
   script de OPs.
-- Cooldown de 3 s (`AURORA_FRONTEIRA_COOLDOWN_TICKS`) para não floodar quando
-  se anda na borda. Se um cruzamento cair no cooldown, ele **não é perdido**:
-  o domínio novo não é gravado e a checagem seguinte avisa assim que o
-  cooldown terminar.
+- **Janela de tolerância de 5 s** (`AURORA_FRONTEIRA_GRACE_TICKS`): em `/tp`,
+  `/mvtp` e nas bordas o servidor pode mostrar um bioma comum por alguns ticks;
+  o último domínio fica guardado nesse intervalo, então `A -> (comum) -> B`
+  ainda conta como travessia `A -> B`. Sem isso o aviso não saía justamente em
+  cima da fronteira.
+- Cooldowns separados: travessia 5 s (`AURORA_FRONTEIRA_COOLDOWN_TICKS`),
+  entrada/saída 20 s (`AURORA_FRONTEIRA_OUTSIDE_COOLDOWN_TICKS`).
 - Checagem a cada 5 ticks (0,25 s) para não pular biomas ao andar rápido.
 - Ao logar, o script assume o domínio atual sem avisar (evita aviso falso de
   login).
+- Envio por `tellraw` (fallback `player.tell`), que é o caminho de chat mais
+  confiável neste servidor.
 
-Para desligar só esse aviso, apague (ou renomeie para `.js.disabled`)
+Para desligar entrada e/ou saída sem perder a travessia, use
+`AURORA_FRONTEIRA_ANNOUNCE_ENTER` e `AURORA_FRONTEIRA_ANNOUNCE_EXIT`. Para
+desligar só esse aviso, apague (ou renomeie para `.js.disabled`)
 `aurora_mortis_fronteira.js` e rode `/kubejs reload server_scripts` — o aviso
 de OP continua funcionando.
 
