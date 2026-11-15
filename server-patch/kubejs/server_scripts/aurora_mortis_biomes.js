@@ -161,12 +161,33 @@ function auroraBiomeJson(auroraNameArg, auroraVerbArg, auroraBiomeIdArg, auroraX
     ])
 }
 
+// Ao entrar no servidor, esquece o último bioma da sessão anterior. Sem isso o
+// valor salvo no NBT (ex.: dominio_da_realidade) mascara o evento quando o
+// jogador reloga em outro lugar e volta: o script acha que ele nunca saiu e
+// deixa de avisar. O primeiro tick depois do login só registra o bioma atual,
+// sem anunciar.
+PlayerEvents.loggedIn(event => {
+    try {
+        event.player.persistentData.putString(AURORA_NBT_LAST_BIOME, '')
+    } catch (auroraErr) {
+        console.error('[aurora] ERRO ao resetar bioma no login: ' + auroraErr)
+    }
+})
+
 PlayerEvents.tick(event => {
     const auroraPlayer = event.player
     const auroraTick = auroraPlayer.server.tickCount
 
     if (auroraTick % AURORA_CHECK_EVERY_TICKS !== 0) return
 
+    try {
+        auroraBiomeCheck(auroraPlayer, auroraTick)
+    } catch (auroraErr) {
+        console.error('[aurora] ERRO em ' + auroraPlayer.profile.name + ': ' + auroraErr)
+    }
+})
+
+function auroraBiomeCheck(auroraPlayer, auroraTick) {
     const auroraBiomeId = auroraBiomeIdAt(auroraPlayer)
     const auroraData = auroraPlayer.persistentData
     const auroraLastBiome = auroraData.getString(AURORA_NBT_LAST_BIOME)
@@ -221,4 +242,4 @@ PlayerEvents.tick(event => {
     console.info('[aurora] ' + auroraName + ' entrou em ' + auroraBiomeId +
         ' @ ' + auroraX + ' ' + auroraY + ' ' + auroraZ + ' (' + auroraDim + ') ops=' + auroraEnterSent.count +
         ' [' + auroraEnterSent.names.join(',') + ']')
-})
+}

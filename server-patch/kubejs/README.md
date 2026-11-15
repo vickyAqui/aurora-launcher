@@ -109,8 +109,10 @@ rode `/kubejs reload server_scripts`.
   servidor (todos os comandos passaram a responder "Unknown command"). Para
   recarregar scripts use `/kubejs reload server_scripts`; para o resto,
   reinicie.
-- O estado do último bioma fica salvo no NBT do jogador
-  (`aurora_last_biome`), então sobrevive a relog e a reload de scripts.
+- O estado do último bioma fica no NBT do jogador (`aurora_last_biome`), mas é
+  **zerado no login**: assim o valor de uma sessão anterior não mascara o evento
+  quando o jogador reloga em outro lugar e volta. O primeiro tick depois do
+  login só registra o bioma atual, sem avisar.
 - Como o aviso é por entrada no bioma, ficar parado dentro dele não repete a
   mensagem.
 - Não depende do patch do `meds_and_herbs`; os dois recursos são independentes.
