@@ -4,8 +4,8 @@
 // Mortis (namespace "aurora_mortis"), os operadores online recebem uma mensagem
 // com o nome do jogador, o bioma, as coordenadas e a dimensão.
 //
-// Entrada e saída de domínio NÃO são anunciadas aqui: quem faz isso (para todos
-// os jogadores) é aurora_mortis_fronteira.js. Antes os dois scripts anunciavam
+// Entrada e saída de domínio NÃO são anunciadas aqui: quem faz isso (para os
+// operadores) é aurora_mortis_fronteira.js. Antes os dois scripts anunciavam
 // o mesmo cruzamento e o OP recebia quatro mensagens por evento — era o spam
 // reclamado. Agora cada evento tem um único aviso.
 //

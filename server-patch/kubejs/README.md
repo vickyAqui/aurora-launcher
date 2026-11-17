@@ -5,12 +5,13 @@ Dois scripts de servidor **independentes** (um não interfere no outro):
 | Arquivo | Para quem avisa | Quando |
 |---|---|---|
 | `aurora_mortis_biomes.js` | operadores (OP) | jogador troca de **sub-bioma** dentro do mesmo domínio do mod |
-| `aurora_mortis_fronteira.js` | todos os jogadores online | jogador entra, sai ou passa de um domínio do mod para outro |
+| `aurora_mortis_fronteira.js` | operadores (OP) e, na travessia entre domínios, quem cruzou | jogador entra, sai ou passa de um domínio do mod para outro |
 
 Não alteram o mod nem o modpack: usam o KubeJS que já está no pack.
 
 > **Divisão de trabalho (importante):** só o `aurora_mortis_fronteira.js`
-> anuncia cruzamento de fronteira no chat. O `aurora_mortis_biomes.js` anuncia
+> anuncia cruzamento de fronteira no chat (para os OPs e, na travessia entre
+> domínios, também para quem cruzou). O `aurora_mortis_biomes.js` anuncia
 > apenas variação de bioma **dentro do mesmo domínio** (detalhe técnico para os
 > OPs). Antes os dois anunciavam o mesmo cruzamento e o OP recebia quatro
 > mensagens por evento — era o spam reclamado.
@@ -29,7 +30,7 @@ mesmo domínio** do mod `aurora_mortis` (ex.: `dominio_da_ilusao` →
   `dominio_do_caos`, `dominio_do_futuro`, `dominio_do_pesadelo`,
   `ilusao_sem_radicao`, `rubro` — e qualquer bioma novo do mod, automaticamente).
 - **Entrada e saída de domínio não passam por aqui**: elas são anunciadas pelo
-  `aurora_mortis_fronteira.js`, para todos os jogadores. Aqui só fica o registro
+  `aurora_mortis_fronteira.js`, para os operadores. Aqui só fica o registro
   no console (`mudou de dominio: ...`), para diagnóstico.
 - Manda a mensagem **só para operadores**, incluindo: nome do jogador, id do
   bioma, coordenadas e dimensão.
@@ -84,15 +85,18 @@ Se você for o único OP online, a mensagem aparece para você mesmo — é o es
 
 Para testar o aviso de fronteira, atravesse **andando** a linha entre dois
 domínios do mod (o caminho real do jogador). `/tp` entre domínios também dispara,
-mas o teste que importa é o pé no chão. Confira no console:
+mas o teste que importa é o pé no chão. Quem cruzou deve ver
+`Atenção: Você está ultrapassando uma fronteira!!` e os OPs recebem o aviso com
+os dois domínios. Entrar no mod vindo de um bioma vanilla (ou sair dele) avisa
+só os OPs, sem o `Atenção` pessoal. Confira no console:
 
 ```
 logs/kubejs/server.log
-[aurora-fronteira] Fulano: realidade -> futuro (5 jogadores)
+[aurora-fronteira] Fulano: realidade -> futuro (5 ops)
 [aurora] Fulano mudou de dominio: ... (aviso pelo aurora_mortis_fronteira.js)
 ```
 
-`(5 jogadores)` mostra quantos receberam o aviso de fronteira.
+`(5 ops)` mostra quantos operadores receberam o aviso de fronteira.
 
 ## Ajustes rápidos
 
@@ -115,9 +119,11 @@ Tudo fica no topo de cada arquivo:
 | `AURORA_FRONTEIRA_DEBOUNCE_TICKS` | `40` | Tempo que o jogador precisa ficar no novo domínio antes do aviso (2 s) |
 | `AURORA_FRONTEIRA_EXIT_GRACE_TICKS` | `200` | Tempo fora do domínio antes de avisar a saída (10 s) |
 | `AURORA_FRONTEIRA_COOLDOWN_TICKS` | `1` | Rede de segurança entre dois avisos do mesmo jogador. Em 1 tick não engole travessia real |
-| `AURORA_FRONTEIRA_ANNOUNCE_TO_ALL` | `true` | `false` avisa só quem cruzou |
-| `AURORA_FRONTEIRA_ANNOUNCE_ENTER` | `true` | Avisar ao entrar em um domínio |
-| `AURORA_FRONTEIRA_ANNOUNCE_EXIT` | `true` | Avisar ao sair de um domínio |
+| `AURORA_FRONTEIRA_ANNOUNCE_TO_OPS` | `true` | Avisa os operadores online sobre cada passagem |
+| `AURORA_FRONTEIRA_ANNOUNCE_PERSONAL` | `true` | `Atenção: Você...` só na travessia entre dois domínios do Mortis |
+| `AURORA_FRONTEIRA_ANNOUNCE_ENTER` | `true` | Avisar aos OPs ao entrar em um domínio |
+| `AURORA_FRONTEIRA_ANNOUNCE_EXIT` | `true` | Avisar aos OPs ao sair de um domínio |
+| `AURORA_FRONTEIRA_EXTRA_OPS` | `[]` | Nomes de staff sem OP vanilla que também recebem o aviso |
 
 Para desligar um recurso: apague (ou renomeie para `.js.disabled`) o arquivo e
 rode `/kubejs reload server_scripts`.
@@ -140,20 +146,21 @@ rode `/kubejs reload server_scripts`.
 ## Aviso de fronteira (`aurora_mortis_fronteira.js`)
 
 Arquivo **separado e independente** do aviso de OP. É o **único** script que
-anuncia fronteira no chat. Toda passagem gera **um** aviso, sempre com o texto
-"Atenção":
+anuncia fronteira no chat. Toda passagem gera **um** aviso detalhado para os
+**operadores online**, dizendo quem passou, de qual para qual domínio e em qual
+bioma/coordenada. O aviso pessoal `Atenção` só existe quando a travessia é de um
+domínio do Mortis para outro:
 
-| Evento | Mensagem (quem cruzou / demais) |
-|---|---|
-| Entrou no domínio vindo de fora | `Atenção: Você está ultrapassando uma fronteira!!` / `Atenção: Fulano está ultrapassando uma fronteira!!` |
-| Saiu do domínio para fora | idem |
-| Passou de um domínio para outro | idem |
+| Evento | Aviso aos OPs | Aviso pessoal (quem cruzou) |
+|---|---|---|
+| Entrou no domínio vindo de fora | `[Aurora] Fulano entrou no domínio Nostalgia (aurora_mortis:dominio_da_nostalgia) @ x y z (dim)` | não |
+| Saiu do domínio para fora | `[Aurora] Fulano saiu do domínio Nostalgia (agora em minecraft:plains) @ x y z (dim)` | não |
+| Passou de um domínio para outro | `[Aurora] Fulano ultrapassou a fronteira: Nostalgia -> Repetição (aurora_mortis:dominio_da_repeticao) @ x y z (dim)` | `Atenção: Você está ultrapassando uma fronteira!!` |
 
-Todas as mensagens saem em **vermelho escuro e negrito**. Por padrão
-(`AURORA_FRONTEIRA_ANNOUNCE_TO_ALL = true`) **todos os jogadores online**
-recebem; quem cruzou vê "Você" e os demais veem o nome. A mensagem pessoal vai
-por `player.tell` direto no jogador que cruzou (sem depender de comparar nomes),
-então quem atravessou sempre recebe.
+O `Atenção` pessoal sai em **vermelho escuro e negrito** e vai por `player.tell`
+direto no jogador que cruzou (sem depender de comparar nomes), como fallback para
+`tellraw`. Avisos de entrada e saída do mod **não** geram esse aviso pessoal: não
+são travessias entre biomas do Mortis.
 
 ### Por que não repete (anti-spam)
 
@@ -182,8 +189,9 @@ então quem atravessou sempre recebe.
 - Checagem a cada 5 ticks (0,25 s) para não pular biomas ao andar rápido.
 - Ao logar, o script assume o domínio atual sem avisar (evita aviso falso de
   login).
-- Envio para os demais por `tellraw` (fallback `player.tell`), que é o caminho
-  de chat mais confiável neste servidor.
+- Envio aos OPs por `tellraw` um a um (fallback `player.tell`), que é o caminho
+  de chat mais confiável neste servidor; a lista de OPs vem do próprio servidor,
+  como no `aurora_mortis_biomes.js`.
 
 ## Cuidados ao editar (Rhino do KubeJS)
 

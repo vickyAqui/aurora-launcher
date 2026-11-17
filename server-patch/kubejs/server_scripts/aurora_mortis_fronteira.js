@@ -1,15 +1,18 @@
 // Aviso de fronteira — entradas, saídas e travessias entre domínios do
 // Aurora Mortis.
 //
-// Toda passagem de fronteira gera UM aviso, sempre com o texto "Atenção":
+// Toda passagem de fronteira gera UM aviso para os operadores online, dizendo
+// QUEM passou e QUAL domínio/bioma do mod está envolvido:
 //   - ENTROU: o jogador entrou em um domínio do mod vindo de fora (bioma
 //     vanilla, outro mod ou teleporte).
 //   - SAIU: o jogador saiu de um domínio do mod para fora dele.
 //   - CRUZOU: o jogador passou de um domínio do mod direto para outro
 //     (ex.: nostalgia -> repetição).
 //
-// Quem atravessou recebe "Atenção: Você está ultrapassando uma fronteira!!";
-// os demais recebem "Atenção: <nome> está ultrapassando uma fronteira!!".
+// O aviso pessoal "Atenção: Você está ultrapassando uma fronteira!!" vai SÓ
+// para quem cruzou e SÓ no caso CRUZOU (domínio do Mortis -> outro domínio do
+// Mortis). Entrar no mod vindo de fora, ou sair dele para fora, não gera esse
+// aviso pessoal: não é uma travessia entre biomas do Mortis.
 //
 // Anti-spam — cada travessia de verdade avisa UMA vez:
 //   - DEBOUNCE: o jogador precisa ficar AURORA_FRONTEIRA_DEBOUNCE_TICKS no novo
@@ -27,7 +30,7 @@
 //
 // Este script é o ÚNICO que anuncia fronteira no chat. O
 // aurora_mortis_biomes.js só anuncia variação de bioma DENTRO do mesmo domínio
-// (para os OPs); assim o OP não recebe dois avisos do mesmo cruzamento.
+// (também para os OPs); assim o OP não recebe dois avisos do mesmo cruzamento.
 //
 // Instalação: <servidor>/kubejs/server_scripts/
 // Aplicar sem reiniciar: /kubejs reload server_scripts
@@ -41,9 +44,14 @@ const AURORA_FRONTEIRA_CHECK_EVERY_TICKS = 5     // checa a cada 0,25 s
 const AURORA_FRONTEIRA_DEBOUNCE_TICKS = 40       // 2 s no novo domínio antes de avisar
 const AURORA_FRONTEIRA_EXIT_GRACE_TICKS = 200    // 10 s fora antes de avisar a saída
 const AURORA_FRONTEIRA_COOLDOWN_TICKS = 1        // 1 tick: rede de segurança, não engole travessia
-const AURORA_FRONTEIRA_ANNOUNCE_TO_ALL = true    // false = só quem cruzou recebe
-const AURORA_FRONTEIRA_ANNOUNCE_ENTER = true     // avisa ao entrar em um domínio
-const AURORA_FRONTEIRA_ANNOUNCE_EXIT = true      // avisa ao sair de um domínio
+const AURORA_FRONTEIRA_ANNOUNCE_TO_OPS = true    // avisa os operadores online
+const AURORA_FRONTEIRA_ANNOUNCE_PERSONAL = true  // "Você está ultrapassando" só em domínio -> domínio
+const AURORA_FRONTEIRA_ANNOUNCE_ENTER = true     // avisa aos OPs ao entrar em um domínio
+const AURORA_FRONTEIRA_ANNOUNCE_EXIT = true      // avisa aos OPs ao sair de um domínio
+
+// Operadores sem OP vanilla (por exemplo, staff só com LuckPerms) podem ser
+// listados aqui pelo nome exato da conta.
+const AURORA_FRONTEIRA_EXTRA_OPS = []
 
 const AURORA_FRONTEIRA_NBT_LAST_DOMAIN = 'aurora_fronteira_last_domain'
 const AURORA_FRONTEIRA_NBT_PENDING_DOMAIN = 'aurora_fronteira_pending_domain'
@@ -52,7 +60,6 @@ const AURORA_FRONTEIRA_NBT_PENDING_ACTIVE = 'aurora_fronteira_pending_active'
 const AURORA_FRONTEIRA_NBT_LAST_MSG = 'aurora_fronteira_last_msg'
 
 const AURORA_FRONTEIRA_PERSONAL = 'Atenção: Você está ultrapassando uma fronteira!!'
-const AURORA_FRONTEIRA_OTHERS = 'Atenção: {nome} está ultrapassando uma fronteira!!'
 
 // Variações de bioma que pertencem ao mesmo domínio.
 // As chaves são o "path" do bioma (sem o namespace "aurora_mortis:").
@@ -146,75 +153,197 @@ function auroraFronteiraTellPersonal(auroraFronteiraPlayer, auroraFronteiraMessa
     }
 }
 
-/** Entrega a mensagem para os demais jogadores (tellraw, com player.tell de reserva). */
-function auroraFronteiraTellOther(auroraFronteiraTarget, auroraFronteiraMessage) {
-    var auroraFronteiraOk = false
+/**
+ * Nomes dos operadores segundo o próprio servidor, em minúsculas.
+ *
+ * Mesma fonte usada por aurora_mortis_biomes.js:
+ * `getPlayerList().getOps().getUserList()` é a lista carregada do ops.json no
+ * start e atualizada por /op e /deop em memória.
+ */
+function auroraFronteiraServerOpNames(auroraFronteiraServer) {
+    var auroraFronteiraNames = []
     try {
-        auroraFronteiraOk = auroraFronteiraTarget.server.runCommandSilent(
-            'tellraw ' + String(auroraFronteiraTarget.profile.name) + ' ' + auroraFronteiraJson(auroraFronteiraMessage)
-        ) > 0
+        var auroraFronteiraKeys = auroraFronteiraServer.getPlayerList().getOps().getUserList()
+        for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < auroraFronteiraKeys.length; auroraFronteiraIdx++) {
+            auroraFronteiraNames.push(String(auroraFronteiraKeys[auroraFronteiraIdx]).toLowerCase())
+        }
     } catch (auroraFronteiraErr) {
-        auroraFronteiraOk = false
+        console.warn('[aurora-fronteira] nao consegui ler a lista de OPs do servidor: ' + auroraFronteiraErr)
     }
-    if (auroraFronteiraOk) return true
+    return auroraFronteiraNames
+}
+
+/** true se o jogador é operador pela lista do servidor, pela lista extra ou por isOp(). */
+function auroraFronteiraIsStaff(auroraFronteiraTarget, auroraFronteiraOpNames) {
+    var auroraFronteiraName = ''
     try {
-        auroraFronteiraTarget.tell(Text.darkRed(auroraFronteiraMessage).bold())
-        return true
+        auroraFronteiraName = String(auroraFronteiraTarget.profile.name)
+    } catch (auroraFronteiraErr) {
+        return false
+    }
+    if (AURORA_FRONTEIRA_EXTRA_OPS.indexOf(auroraFronteiraName) >= 0) return true
+    if (auroraFronteiraOpNames.indexOf(auroraFronteiraName.toLowerCase()) >= 0) return true
+    try {
+        return auroraFronteiraTarget.isOp() === true
     } catch (auroraFronteiraErr2) {
         return false
     }
 }
 
 /**
- * Avisa a travessia para quem cruzou ("Você") e, se
- * AURORA_FRONTEIRA_ANNOUNCE_TO_ALL, para os demais ("<nome>").
- * Retorna quantos jogadores receberam.
+ * Envia um JSON de tellraw para todos os operadores online, um a um.
+ * `skipName` (quem cruzou) fica de fora: ele já recebeu o aviso pessoal.
+ * Retorna { count, names } para o log de diagnóstico.
  */
-function auroraFronteiraBroadcast(auroraFronteiraPlayer) {
-    const auroraFronteiraName = String(auroraFronteiraPlayer.profile.name)
+function auroraFronteiraTellOps(auroraFronteiraServer, auroraFronteiraJsonArg, auroraFronteiraPlainArg, auroraFronteiraSkipName) {
+    var auroraFronteiraSent = 0
+    var auroraFronteiraSentNames = []
+    const auroraFronteiraOpNames = auroraFronteiraServerOpNames(auroraFronteiraServer)
+    const auroraFronteiraPlayers = auroraFronteiraServer.players
 
-    auroraFronteiraTellPersonal(auroraFronteiraPlayer, AURORA_FRONTEIRA_PERSONAL)
+    for (var auroraFronteiraIdx2 = 0; auroraFronteiraIdx2 < auroraFronteiraPlayers.size(); auroraFronteiraIdx2++) {
+        var auroraFronteiraTarget = auroraFronteiraPlayers.get(auroraFronteiraIdx2)
+        if (!auroraFronteiraIsStaff(auroraFronteiraTarget, auroraFronteiraOpNames)) continue
+        if (auroraFronteiraSkipName && String(auroraFronteiraTarget.profile.name) === auroraFronteiraSkipName) continue
 
-    if (!AURORA_FRONTEIRA_ANNOUNCE_TO_ALL) return 1
-
-    const auroraFronteiraPlayers = auroraFronteiraPlayer.server.players
-    const auroraFronteiraOthersMsg = AURORA_FRONTEIRA_OTHERS.replace('{nome}', auroraFronteiraName)
-    var auroraFronteiraSent = 1
-
-    for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < auroraFronteiraPlayers.size(); auroraFronteiraIdx++) {
-        const auroraFronteiraTarget = auroraFronteiraPlayers.get(auroraFronteiraIdx)
-        // pula quem cruzou (identidade do objeto e nome, por segurança)
-        if (auroraFronteiraTarget === auroraFronteiraPlayer) continue
-        if (String(auroraFronteiraTarget.profile.name) === auroraFronteiraName) continue
-
-        auroraFronteiraTellOther(auroraFronteiraTarget, auroraFronteiraOthersMsg)
+        var auroraFronteiraOk = false
+        try {
+            auroraFronteiraOk = auroraFronteiraServer.runCommandSilent(
+                'tellraw ' + auroraFronteiraTarget.profile.name + ' ' + auroraFronteiraJsonArg
+            ) > 0
+        } catch (auroraFronteiraErr) {
+            auroraFronteiraOk = false
+        }
+        if (!auroraFronteiraOk) {
+            try {
+                auroraFronteiraTarget.tell(auroraFronteiraPlainArg)
+            } catch (auroraFronteiraErr2) {
+                // sem outro caminho de envio
+            }
+        }
         auroraFronteiraSent++
+        auroraFronteiraSentNames.push(auroraFronteiraTarget.profile.name)
     }
 
-    return auroraFronteiraSent
+    // Nenhum OP reconhecido (ops.json ilegível?): última tentativa pelo seletor.
+    if (auroraFronteiraSent === 0) {
+        try {
+            auroraFronteiraSent = auroraFronteiraServer.runCommandSilent('tellraw @a[level=2..] ' + auroraFronteiraJsonArg)
+        } catch (auroraFronteiraErr3) {
+            auroraFronteiraSent = 0
+        }
+    }
+
+    return { count: auroraFronteiraSent, names: auroraFronteiraSentNames }
 }
 
-/** Travessia entre dois domínios */
+/** Coordenadas e dimensão do jogador, no formato usado nas mensagens. */
+function auroraFronteiraWhere(auroraFronteiraPlayer) {
+    return {
+        x: Math.floor(auroraFronteiraPlayer.x),
+        y: Math.floor(auroraFronteiraPlayer.y),
+        z: Math.floor(auroraFronteiraPlayer.z),
+        dim: String(auroraFronteiraPlayer.level.dimension.location())
+    }
+}
+
+/** JSON do aviso de fronteira (linha única, como no aurora_mortis_biomes.js). */
+function auroraFronteiraOpJson(auroraFronteiraName, auroraFronteiraVerb, auroraFronteiraFrom, auroraFronteiraTo, auroraFronteiraBiomeId, auroraFronteiraWhereArg, auroraFronteiraCross) {
+    const auroraFronteiraParts = [
+        { text: '[Aurora] ', color: 'gold' },
+        { text: auroraFronteiraName, color: 'white' }
+    ]
+
+    // Travessia entre domínios: " ultrapassou a fronteira: A -> B"
+    auroraFronteiraParts.push({ text: ' ' + auroraFronteiraVerb, color: 'gray' })
+    if (auroraFronteiraCross) {
+        auroraFronteiraParts.push({ text: auroraFronteiraDomainLabel(auroraFronteiraFrom), color: 'dark_red' })
+        auroraFronteiraParts.push({ text: ' -> ', color: 'gray' })
+        auroraFronteiraParts.push({ text: auroraFronteiraDomainLabel(auroraFronteiraTo), color: 'dark_red' })
+    } else if (auroraFronteiraFrom) {
+        auroraFronteiraParts.push({ text: auroraFronteiraDomainLabel(auroraFronteiraFrom), color: 'dark_red' })
+    }
+
+    if (auroraFronteiraBiomeId) {
+        auroraFronteiraParts.push({ text: ' (' + auroraFronteiraBiomeId + ')', color: 'aqua' })
+    }
+    auroraFronteiraParts.push({
+        text: ' @ ' + auroraFronteiraWhereArg.x + ' ' + auroraFronteiraWhereArg.y + ' ' + auroraFronteiraWhereArg.z + ' (' + auroraFronteiraWhereArg.dim + ')',
+        color: 'dark_gray'
+    })
+
+    return JSON.stringify(auroraFronteiraParts)
+}
+
+/** Texto simples do aviso, para o fallback por player.tell. */
+function auroraFronteiraOpPlain(auroraFronteiraName, auroraFronteiraVerb, auroraFronteiraFrom, auroraFronteiraTo, auroraFronteiraBiomeId, auroraFronteiraWhereArg, auroraFronteiraCross) {
+    var auroraFronteiraText = '[Aurora] ' + auroraFronteiraName + ' ' + auroraFronteiraVerb
+    if (auroraFronteiraCross) {
+        auroraFronteiraText += ' ' + auroraFronteiraDomainLabel(auroraFronteiraFrom) +
+            ' -> ' + auroraFronteiraDomainLabel(auroraFronteiraTo)
+    } else if (auroraFronteiraFrom) {
+        auroraFronteiraText += ' ' + auroraFronteiraDomainLabel(auroraFronteiraFrom)
+    }
+    if (auroraFronteiraBiomeId) auroraFronteiraText += ' (' + auroraFronteiraBiomeId + ')'
+    auroraFronteiraText += ' @ ' + auroraFronteiraWhereArg.x + ' ' + auroraFronteiraWhereArg.y + ' ' +
+        auroraFronteiraWhereArg.z + ' (' + auroraFronteiraWhereArg.dim + ')'
+    return auroraFronteiraText
+}
+
+/**
+ * Anuncia a transição para os OPs e, se for travessia entre dois domínios do
+ * Mortis, também avisa quem cruzou ("Você está ultrapassando uma fronteira").
+ * Retorna quantos OPs receberam o aviso.
+ */
+function auroraFronteiraNotify(auroraFronteiraPlayer, auroraFronteiraVerb, auroraFronteiraFrom, auroraFronteiraTo, auroraFronteiraBiomeId, auroraFronteiraCross) {
+    const auroraFronteiraName = String(auroraFronteiraPlayer.profile.name)
+    const auroraFronteiraWhereArg = auroraFronteiraWhere(auroraFronteiraPlayer)
+
+    // Aviso pessoal só na travessia domínio do Mortis -> outro domínio do Mortis.
+    if (auroraFronteiraCross && AURORA_FRONTEIRA_ANNOUNCE_PERSONAL) {
+        auroraFronteiraTellPersonal(auroraFronteiraPlayer, AURORA_FRONTEIRA_PERSONAL)
+    }
+
+    if (!AURORA_FRONTEIRA_ANNOUNCE_TO_OPS) return 0
+
+    const auroraFronteiraJsonArg = auroraFronteiraOpJson(auroraFronteiraName, auroraFronteiraVerb,
+        auroraFronteiraFrom, auroraFronteiraTo, auroraFronteiraBiomeId, auroraFronteiraWhereArg, auroraFronteiraCross)
+    const auroraFronteiraPlainArg = auroraFronteiraOpPlain(auroraFronteiraName, auroraFronteiraVerb,
+        auroraFronteiraFrom, auroraFronteiraTo, auroraFronteiraBiomeId, auroraFronteiraWhereArg, auroraFronteiraCross)
+
+    // Quem cruzou e recebeu o aviso pessoal não recebe o detalhado de novo; nas
+    // entradas/saídas (sem aviso pessoal) o OP que passou também é avisado.
+    const auroraFronteiraSkip = (auroraFronteiraCross && AURORA_FRONTEIRA_ANNOUNCE_PERSONAL)
+        ? auroraFronteiraName : ''
+
+    return auroraFronteiraTellOps(auroraFronteiraPlayer.server, auroraFronteiraJsonArg,
+        auroraFronteiraPlainArg, auroraFronteiraSkip).count
+}
+
+/** Travessia entre dois domínios do mod (o único caso com aviso pessoal) */
 function auroraFronteiraNotifyCross(auroraFronteiraPlayer, auroraFronteiraFrom, auroraFronteiraTo) {
-    const auroraFronteiraSent = auroraFronteiraBroadcast(auroraFronteiraPlayer)
+    const auroraFronteiraSent = auroraFronteiraNotify(auroraFronteiraPlayer, 'ultrapassou a fronteira:',
+        auroraFronteiraFrom, auroraFronteiraTo, auroraFronteiraBiomeIdAt(auroraFronteiraPlayer), true)
     console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ': ' +
-        auroraFronteiraFrom + ' -> ' + auroraFronteiraTo + ' (' + auroraFronteiraSent + ' jogadores)')
+        auroraFronteiraFrom + ' -> ' + auroraFronteiraTo + ' (' + auroraFronteiraSent + ' ops)')
 }
 
-/** Entrada em um domínio vindo de fora */
+/** Entrada em um domínio vindo de fora (aviso só para os OPs, sem aviso pessoal) */
 function auroraFronteiraNotifyEnter(auroraFronteiraPlayer, auroraFronteiraDomain) {
-    const auroraFronteiraSent = auroraFronteiraBroadcast(auroraFronteiraPlayer)
+    const auroraFronteiraSent = auroraFronteiraNotify(auroraFronteiraPlayer, 'entrou no domínio',
+        auroraFronteiraDomain, '', auroraFronteiraBiomeIdAt(auroraFronteiraPlayer), false)
     console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' entrou em ' +
         auroraFronteiraDomain + ' (' + auroraFronteiraDomainLabel(auroraFronteiraDomain) + ', ' +
-        auroraFronteiraSent + ' jogadores)')
+        auroraFronteiraSent + ' ops)')
 }
 
-/** Saída de um domínio para fora */
+/** Saída de um domínio para fora (aviso só para os OPs, sem aviso pessoal) */
 function auroraFronteiraNotifyExit(auroraFronteiraPlayer, auroraFronteiraDomain) {
-    const auroraFronteiraSent = auroraFronteiraBroadcast(auroraFronteiraPlayer)
+    const auroraFronteiraSent = auroraFronteiraNotify(auroraFronteiraPlayer, 'saiu do domínio',
+        auroraFronteiraDomain, '', 'agora em ' + auroraFronteiraBiomeIdAt(auroraFronteiraPlayer), false)
     console.info('[aurora-fronteira] ' + auroraFronteiraPlayer.profile.name + ' saiu de ' +
         auroraFronteiraDomain + ' (' + auroraFronteiraDomainLabel(auroraFronteiraDomain) + ', ' +
-        auroraFronteiraSent + ' jogadores)')
+        auroraFronteiraSent + ' ops)')
 }
 
 // Ao entrar no servidor, começa do domínio em que o jogador está, sem avisar
