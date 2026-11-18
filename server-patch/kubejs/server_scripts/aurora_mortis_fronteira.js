@@ -32,6 +32,10 @@
 // aurora_mortis_biomes.js só anuncia variação de bioma DENTRO do mesmo domínio
 // (também para os OPs); assim o OP não recebe dois avisos do mesmo cruzamento.
 //
+// Destinatários: kubejs/config/aurora_ops.json é a fonte principal; ops.json,
+// isOp() e AURORA_FRONTEIRA_EXTRA_OPS complementam. O JSON é relido a cada
+// aviso, então alterá-lo no painel não exige recarregar o script.
+//
 // Instalação: <servidor>/kubejs/server_scripts/
 // Aplicar sem reiniciar: /kubejs reload server_scripts
 //
@@ -49,9 +53,19 @@ const AURORA_FRONTEIRA_ANNOUNCE_PERSONAL = true  // "Você está ultrapassando" 
 const AURORA_FRONTEIRA_ANNOUNCE_ENTER = true     // avisa aos OPs ao entrar em um domínio
 const AURORA_FRONTEIRA_ANNOUNCE_EXIT = true      // avisa aos OPs ao sair de um domínio
 
+// Origem principal dos administradores: arquivo editável no painel, relido a
+// cada aviso (não precisa dar /kubejs reload). As duas formas de path cobrem
+// as versões do KubeJS que resolvem o caminho dentro ou fora de kubejs/.
+const AURORA_FRONTEIRA_OPS_CONFIG_PATHS = [
+    'kubejs/config/aurora_ops.json',
+    'config/aurora_ops.json'
+]
+
 // Operadores sem OP vanilla (por exemplo, staff só com LuckPerms) podem ser
-// listados aqui pelo nome exato da conta.
+// listados aqui pelo nome exato da conta. O JSON é a forma preferida.
 const AURORA_FRONTEIRA_EXTRA_OPS = []
+
+var auroraFronteiraOpsConfigWarned = false
 
 const AURORA_FRONTEIRA_NBT_LAST_DOMAIN = 'aurora_fronteira_last_domain'
 const AURORA_FRONTEIRA_NBT_PENDING_DOMAIN = 'aurora_fronteira_pending_domain'
@@ -154,33 +168,161 @@ function auroraFronteiraTellPersonal(auroraFronteiraPlayer, auroraFronteiraMessa
 }
 
 /**
+ * Lê kubejs/config/aurora_ops.json via JsonIO do KubeJS.
+ * Tentamos os dois caminhos porque a resolução muda entre versões do KubeJS.
+ */
+function auroraFronteiraReadOpsConfig() {
+    for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < AURORA_FRONTEIRA_OPS_CONFIG_PATHS.length; auroraFronteiraIdx++) {
+        try {
+            const auroraFronteiraJson = JsonIO.read(AURORA_FRONTEIRA_OPS_CONFIG_PATHS[auroraFronteiraIdx])
+            if (auroraFronteiraJson) return auroraFronteiraJson
+        } catch (auroraFronteiraErr) {
+            // tenta o próximo caminho
+        }
+    }
+    if (!auroraFronteiraOpsConfigWarned) {
+        auroraFronteiraOpsConfigWarned = true
+        console.warn('[aurora-fronteira] nao consegui ler kubejs/config/aurora_ops.json; usando ops.json/isOp()')
+    }
+    return null
+}
+
+/** Normaliza "operators" do JSON em [{ name, uuid }], aceitando string ou objeto. */
+function auroraFronteiraConfigEntries(auroraFronteiraConfig) {
+    var auroraFronteiraEntries = []
+    if (!auroraFronteiraConfig) return auroraFronteiraEntries
+
+    var auroraFronteiraList = null
+    try {
+        auroraFronteiraList = auroraFronteiraConfig.operators
+    } catch (auroraFronteiraErr) {
+        auroraFronteiraList = null
+    }
+    if (!auroraFronteiraList) {
+        try {
+            auroraFronteiraList = auroraFronteiraConfig.get('operators')
+        } catch (auroraFronteiraErrGet) {
+            auroraFronteiraList = null
+        }
+    }
+    if (!auroraFronteiraList) return auroraFronteiraEntries
+
+    var auroraFronteiraLen = 0
+    try {
+        auroraFronteiraLen = auroraFronteiraList.length
+    } catch (auroraFronteiraErr2) {
+        auroraFronteiraLen = 0
+    }
+    if (!auroraFronteiraLen && typeof auroraFronteiraList.size === 'function') {
+        auroraFronteiraLen = auroraFronteiraList.size()
+    }
+
+    for (var auroraFronteiraIdx2 = 0; auroraFronteiraIdx2 < auroraFronteiraLen; auroraFronteiraIdx2++) {
+        var auroraFronteiraItem = auroraFronteiraList[auroraFronteiraIdx2]
+        if (auroraFronteiraItem === undefined || auroraFronteiraItem === null) {
+            if (typeof auroraFronteiraList.get === 'function') auroraFronteiraItem = auroraFronteiraList.get(auroraFronteiraIdx2)
+        }
+        if (typeof auroraFronteiraItem === 'string') {
+            auroraFronteiraEntries.push({ name: auroraFronteiraItem.toLowerCase(), uuid: '' })
+            continue
+        }
+        if (!auroraFronteiraItem) continue
+
+        var auroraFronteiraName = ''
+        var auroraFronteiraUuid = ''
+        try {
+            if (auroraFronteiraItem.name) auroraFronteiraName = String(auroraFronteiraItem.name)
+        } catch (auroraFronteiraErr3) {
+            // sem nome
+        }
+        try {
+            if (auroraFronteiraItem.uuid) auroraFronteiraUuid = String(auroraFronteiraItem.uuid)
+        } catch (auroraFronteiraErr4) {
+            // sem uuid
+        }
+        if (auroraFronteiraName || auroraFronteiraUuid) {
+            auroraFronteiraEntries.push({ name: auroraFronteiraName.toLowerCase(), uuid: auroraFronteiraUuid.toLowerCase() })
+        }
+    }
+    return auroraFronteiraEntries
+}
+
+/**
+ * Nome de um GameProfile. String(gameProfile) NÃO devolve só o nome (devolve
+ * algo como "GameProfile{id=..., name=...}"), por isso getName() vem primeiro.
+ */
+function auroraFronteiraProfileName(auroraFronteiraProfile) {
+    try {
+        const auroraFronteiraName = auroraFronteiraProfile.getName()
+        if (auroraFronteiraName) return String(auroraFronteiraName)
+    } catch (auroraFronteiraErr) {
+        // tenta campo abaixo
+    }
+    try {
+        if (auroraFronteiraProfile.name) return String(auroraFronteiraProfile.name)
+    } catch (auroraFronteiraErr2) {
+        // tenta string abaixo
+    }
+    const auroraFronteiraText = String(auroraFronteiraProfile)
+    const auroraFronteiraMatch = /name=([^,}]+)/.exec(auroraFronteiraText)
+    return auroraFronteiraMatch ? auroraFronteiraMatch[1].trim() : auroraFronteiraText
+}
+
+/** UUID do GameProfile, também usado para reconhecer admin que trocou de nome. */
+function auroraFronteiraProfileUuid(auroraFronteiraProfile) {
+    try {
+        const auroraFronteiraId = auroraFronteiraProfile.getId()
+        if (auroraFronteiraId) return String(auroraFronteiraId).toLowerCase()
+    } catch (auroraFronteiraErr) {
+        // tenta campo abaixo
+    }
+    try {
+        if (auroraFronteiraProfile.id) return String(auroraFronteiraProfile.id).toLowerCase()
+    } catch (auroraFronteiraErr2) {
+        // sem uuid
+    }
+    return ''
+}
+
+function auroraFronteiraConfigHas(auroraFronteiraEntries, auroraFronteiraName, auroraFronteiraUuid) {
+    const auroraFronteiraLower = String(auroraFronteiraName).toLowerCase()
+    const auroraFronteiraUuidLower = String(auroraFronteiraUuid || '').toLowerCase()
+    for (var auroraFronteiraIdx3 = 0; auroraFronteiraIdx3 < auroraFronteiraEntries.length; auroraFronteiraIdx3++) {
+        const auroraFronteiraEntry = auroraFronteiraEntries[auroraFronteiraIdx3]
+        if (auroraFronteiraEntry.name === auroraFronteiraLower) return true
+        if (auroraFronteiraUuidLower && auroraFronteiraEntry.uuid === auroraFronteiraUuidLower) return true
+    }
+    return false
+}
+
+/**
  * Nomes dos operadores segundo o próprio servidor, em minúsculas.
- *
- * Mesma fonte usada por aurora_mortis_biomes.js:
- * `getPlayerList().getOps().getUserList()` é a lista carregada do ops.json no
- * start e atualizada por /op e /deop em memória.
+ * Agora usando getName()/getId() do GameProfile, não String() direto.
  */
 function auroraFronteiraServerOpNames(auroraFronteiraServer) {
     var auroraFronteiraNames = []
     try {
         var auroraFronteiraKeys = auroraFronteiraServer.getPlayerList().getOps().getUserList()
-        for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < auroraFronteiraKeys.length; auroraFronteiraIdx++) {
-            auroraFronteiraNames.push(String(auroraFronteiraKeys[auroraFronteiraIdx]).toLowerCase())
+        for (var auroraFronteiraIdx4 = 0; auroraFronteiraIdx4 < auroraFronteiraKeys.length; auroraFronteiraIdx4++) {
+            const auroraFronteiraProfile = auroraFronteiraKeys[auroraFronteiraIdx4]
+            const auroraFronteiraName = auroraFronteiraProfileName(auroraFronteiraProfile)
+            if (auroraFronteiraName) auroraFronteiraNames.push(auroraFronteiraName.toLowerCase())
         }
-    } catch (auroraFronteiraErr) {
-        console.warn('[aurora-fronteira] nao consegui ler a lista de OPs do servidor: ' + auroraFronteiraErr)
+    } catch (auroraFronteiraErr5) {
+        console.warn('[aurora-fronteira] nao consegui ler a lista de OPs do servidor: ' + auroraFronteiraErr5)
     }
     return auroraFronteiraNames
 }
 
-/** true se o jogador é operador pela lista do servidor, pela lista extra ou por isOp(). */
-function auroraFronteiraIsStaff(auroraFronteiraTarget, auroraFronteiraOpNames) {
+/** true se o jogador está no JSON, no ops.json, na lista extra ou é isOp(). */
+function auroraFronteiraIsStaff(auroraFronteiraTarget, auroraFronteiraOpNames, auroraFronteiraConfigEntriesArg) {
     var auroraFronteiraName = ''
     try {
         auroraFronteiraName = String(auroraFronteiraTarget.profile.name)
     } catch (auroraFronteiraErr) {
         return false
     }
+    if (auroraFronteiraConfigHas(auroraFronteiraConfigEntriesArg, auroraFronteiraName, auroraFronteiraProfileUuid(auroraFronteiraTarget.profile))) return true
     if (AURORA_FRONTEIRA_EXTRA_OPS.indexOf(auroraFronteiraName) >= 0) return true
     if (auroraFronteiraOpNames.indexOf(auroraFronteiraName.toLowerCase()) >= 0) return true
     try {
@@ -199,11 +341,12 @@ function auroraFronteiraTellOps(auroraFronteiraServer, auroraFronteiraJsonArg, a
     var auroraFronteiraSent = 0
     var auroraFronteiraSentNames = []
     const auroraFronteiraOpNames = auroraFronteiraServerOpNames(auroraFronteiraServer)
+    const auroraFronteiraOpsFromConfig = auroraFronteiraConfigEntries(auroraFronteiraReadOpsConfig())
     const auroraFronteiraPlayers = auroraFronteiraServer.players
 
     for (var auroraFronteiraIdx2 = 0; auroraFronteiraIdx2 < auroraFronteiraPlayers.size(); auroraFronteiraIdx2++) {
         var auroraFronteiraTarget = auroraFronteiraPlayers.get(auroraFronteiraIdx2)
-        if (!auroraFronteiraIsStaff(auroraFronteiraTarget, auroraFronteiraOpNames)) continue
+        if (!auroraFronteiraIsStaff(auroraFronteiraTarget, auroraFronteiraOpNames, auroraFronteiraOpsFromConfig)) continue
         if (auroraFronteiraSkipName && String(auroraFronteiraTarget.profile.name) === auroraFronteiraSkipName) continue
 
         var auroraFronteiraOk = false

@@ -11,12 +11,13 @@
 //
 // Biomas de outros mods e biomas vanilla não geram aviso.
 //
-// Destinatários: operadores. A lista vem do próprio servidor
-// (`getPlayerList().getOps().getUserList()`), a mesma carregada do ops.json no
-// start e atualizada por /op e /deop, e o envio é feito um a um, por nome.
-// Neste servidor (Arclight + LuckPerms) o seletor `@a[level=2..]` não enxerga
-// todos os OPs, então ele fica só como último recurso. Também valem isOp() e
-// AURORA_EXTRA_OPS.
+// Destinatários: operadores. A lista principal vem de
+// kubejs/config/aurora_ops.json (editável no painel, relida a cada aviso) e é
+// complementada pelo ops.json do servidor (`getPlayerList().getOps()` lido com
+// getName()/getId()), por isOp() e por AURORA_EXTRA_OPS. O envio é feito um a
+// um, por nome. Neste servidor (Arclight + LuckPerms) o seletor
+// `@a[level=2..]` não enxerga todos os OPs, então ele fica só como último
+// recurso.
 //
 // Instalação: copie este arquivo para <servidor>/kubejs/server_scripts/
 // Aplicar sem reiniciar: /kubejs reload server_scripts
@@ -30,9 +31,19 @@ const AURORA_CHECK_EVERY_TICKS = 10            // checa a cada 0,5 s
 const AURORA_ENTER_COOLDOWN_TICKS = 600        // evita spam ao andar na borda do sub-bioma (30 s)
 const AURORA_ANNOUNCE_ON_JOIN = false          // true = avisa também quando o jogador loga já dentro do bioma
 
+// Origem principal dos administradores: arquivo editável no painel, relido a
+// cada aviso (não precisa dar /kubejs reload). As duas formas de path cobrem
+// as versões do KubeJS que resolvem o caminho dentro ou fora de kubejs/.
+const AURORA_OPS_CONFIG_PATHS = [
+    'kubejs/config/aurora_ops.json',
+    'config/aurora_ops.json'
+]
+
 // Operadores sem OP vanilla (por exemplo, staff só com LuckPerms) podem ser
-// listados aqui pelo nome exato da conta.
+// listados aqui pelo nome exato da conta. O JSON é a forma preferida.
 const AURORA_EXTRA_OPS = []
+
+var auroraOpsConfigWarned = false
 
 const AURORA_NBT_LAST_BIOME = 'aurora_last_biome'
 const AURORA_NBT_ENTER_MSG = 'aurora_last_biome_enter_msg'
@@ -90,34 +101,159 @@ function auroraCooldownAtivo(auroraDataArg, auroraKeyArg, auroraTickArg, auroraC
 }
 
 /**
+ * Lê kubejs/config/aurora_ops.json via JsonIO do KubeJS.
+ * Tentamos os dois caminhos porque a resolução muda entre versões do KubeJS.
+ */
+function auroraReadOpsConfig() {
+    for (var auroraIdx = 0; auroraIdx < AURORA_OPS_CONFIG_PATHS.length; auroraIdx++) {
+        try {
+            const auroraJson = JsonIO.read(AURORA_OPS_CONFIG_PATHS[auroraIdx])
+            if (auroraJson) return auroraJson
+        } catch (auroraErr) {
+            // tenta o próximo caminho
+        }
+    }
+    if (!auroraOpsConfigWarned) {
+        auroraOpsConfigWarned = true
+        console.warn('[aurora] nao consegui ler kubejs/config/aurora_ops.json; usando ops.json/isOp()')
+    }
+    return null
+}
+
+/** Normaliza "operators" do JSON em [{ name, uuid }], aceitando string ou objeto. */
+function auroraConfigEntries(auroraConfig) {
+    var auroraEntries = []
+    if (!auroraConfig) return auroraEntries
+
+    var auroraList = null
+    try {
+        auroraList = auroraConfig.operators
+    } catch (auroraErr) {
+        auroraList = null
+    }
+    if (!auroraList) {
+        try {
+            auroraList = auroraConfig.get('operators')
+        } catch (auroraErrGet) {
+            auroraList = null
+        }
+    }
+    if (!auroraList) return auroraEntries
+
+    var auroraLen = 0
+    try {
+        auroraLen = auroraList.length
+    } catch (auroraErr2) {
+        auroraLen = 0
+    }
+    if (!auroraLen && typeof auroraList.size === 'function') auroraLen = auroraList.size()
+
+    for (var auroraIdx2 = 0; auroraIdx2 < auroraLen; auroraIdx2++) {
+        var auroraItem = auroraList[auroraIdx2]
+        if (auroraItem === undefined || auroraItem === null) {
+            if (typeof auroraList.get === 'function') auroraItem = auroraList.get(auroraIdx2)
+        }
+        if (typeof auroraItem === 'string') {
+            auroraEntries.push({ name: auroraItem.toLowerCase(), uuid: '' })
+            continue
+        }
+        if (!auroraItem) continue
+
+        var auroraNameEntry = ''
+        var auroraUuidEntry = ''
+        try {
+            if (auroraItem.name) auroraNameEntry = String(auroraItem.name)
+        } catch (auroraErr3) {
+            // sem nome
+        }
+        try {
+            if (auroraItem.uuid) auroraUuidEntry = String(auroraItem.uuid)
+        } catch (auroraErr4) {
+            // sem uuid
+        }
+        if (auroraNameEntry || auroraUuidEntry) {
+            auroraEntries.push({ name: auroraNameEntry.toLowerCase(), uuid: auroraUuidEntry.toLowerCase() })
+        }
+    }
+    return auroraEntries
+}
+
+/**
+ * Nome de um GameProfile. String(gameProfile) NÃO devolve só o nome (devolve
+ * algo como "GameProfile{id=..., name=...}"), por isso getName() vem primeiro.
+ */
+function auroraProfileName(auroraProfile) {
+    try {
+        const auroraNameFromApi = auroraProfile.getName()
+        if (auroraNameFromApi) return String(auroraNameFromApi)
+    } catch (auroraErr) {
+        // tenta campo abaixo
+    }
+    try {
+        if (auroraProfile.name) return String(auroraProfile.name)
+    } catch (auroraErr2) {
+        // tenta string abaixo
+    }
+    const auroraText = String(auroraProfile)
+    const auroraMatch = /name=([^,}]+)/.exec(auroraText)
+    return auroraMatch ? auroraMatch[1].trim() : auroraText
+}
+
+/** UUID do GameProfile, também usado para reconhecer admin que trocou de nome. */
+function auroraProfileUuid(auroraProfile) {
+    try {
+        const auroraId = auroraProfile.getId()
+        if (auroraId) return String(auroraId).toLowerCase()
+    } catch (auroraErr) {
+        // tenta campo abaixo
+    }
+    try {
+        if (auroraProfile.id) return String(auroraProfile.id).toLowerCase()
+    } catch (auroraErr2) {
+        // sem uuid
+    }
+    return ''
+}
+
+function auroraConfigHas(auroraEntries, auroraName, auroraUuid) {
+    const auroraLower = String(auroraName).toLowerCase()
+    const auroraUuidLower = String(auroraUuid || '').toLowerCase()
+    for (var auroraIdx3 = 0; auroraIdx3 < auroraEntries.length; auroraIdx3++) {
+        const auroraEntry = auroraEntries[auroraIdx3]
+        if (auroraEntry.name === auroraLower) return true
+        if (auroraUuidLower && auroraEntry.uuid === auroraUuidLower) return true
+    }
+    return false
+}
+
+/**
  * Nomes dos operadores segundo o próprio servidor, em minúsculas.
- *
- * `getPlayerList().getOps().getUserList()` devolve a lista carregada do
- * ops.json no start e atualizada por /op e /deop em memória — é a mesma lista
- * que o comando /op usa, então não precisa ler arquivo (o filtro de classes do
- * KubeJS bloqueia java.nio.file.Files) nem recarregar o script.
+ * Agora usando getName()/getId() do GameProfile, não String() direto.
  */
 function auroraServerOpNames(auroraServerArg) {
     var auroraNames = []
     try {
         var auroraKeys = auroraServerArg.getPlayerList().getOps().getUserList()
-        for (var auroraIdx = 0; auroraIdx < auroraKeys.length; auroraIdx++) {
-            auroraNames.push(String(auroraKeys[auroraIdx]).toLowerCase())
+        for (var auroraIdx4 = 0; auroraIdx4 < auroraKeys.length; auroraIdx4++) {
+            const auroraProfile = auroraKeys[auroraIdx4]
+            const auroraNameFromOps = auroraProfileName(auroraProfile)
+            if (auroraNameFromOps) auroraNames.push(auroraNameFromOps.toLowerCase())
         }
-    } catch (auroraErr) {
-        console.warn('[aurora] nao consegui ler a lista de OPs do servidor: ' + auroraErr)
+    } catch (auroraErr5) {
+        console.warn('[aurora] nao consegui ler a lista de OPs do servidor: ' + auroraErr5)
     }
     return auroraNames
 }
 
-/** true se o jogador é operador pela lista do servidor, pela lista extra ou por isOp(). */
-function auroraIsStaff(auroraTargetArg, auroraOpNamesArg) {
+/** true se o jogador está no JSON, no ops.json, na lista extra ou é isOp(). */
+function auroraIsStaff(auroraTargetArg, auroraOpNamesArg, auroraConfigEntriesArg) {
     var auroraName = ''
     try {
         auroraName = String(auroraTargetArg.profile.name)
     } catch (auroraErr) {
         return false
     }
+    if (auroraConfigHas(auroraConfigEntriesArg, auroraName, auroraProfileUuid(auroraTargetArg.profile))) return true
     if (AURORA_EXTRA_OPS.indexOf(auroraName) >= 0) return true
     if (auroraOpNamesArg.indexOf(auroraName.toLowerCase()) >= 0) return true
     try {
@@ -135,11 +271,12 @@ function auroraTellOps(auroraServerArg, auroraJsonArg, auroraPlainArg) {
     var auroraSent = 0
     var auroraSentNames = []
     const auroraOpNames = auroraServerOpNames(auroraServerArg)
+    const auroraOpsFromConfig = auroraConfigEntries(auroraReadOpsConfig())
     const auroraPlayers = auroraServerArg.players
 
     for (var auroraIdx = 0; auroraIdx < auroraPlayers.size(); auroraIdx++) {
         var auroraTarget = auroraPlayers.get(auroraIdx)
-        if (!auroraIsStaff(auroraTarget, auroraOpNames)) continue
+        if (!auroraIsStaff(auroraTarget, auroraOpNames, auroraOpsFromConfig)) continue
 
         var auroraOk = false
         try {

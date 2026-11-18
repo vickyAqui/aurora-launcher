@@ -34,14 +34,16 @@ mesmo domínio** do mod `aurora_mortis` (ex.: `dominio_da_ilusao` →
   no console (`mudou de dominio: ...`), para diagnóstico.
 - Manda a mensagem **só para operadores**, incluindo: nome do jogador, id do
   bioma, coordenadas e dimensão.
-- A lista de operadores vem do **próprio servidor**
-  (`getPlayerList().getOps().getUserList()`): é a mesma lista carregada do
-  `ops.json` no start e atualizada por `/op` e `/deop` em memória, então muda na
-  hora, sem recarregar o script. O envio é feito **um a um, por nome**
-  (`tellraw <nome>`), porque neste servidor (Arclight + LuckPerms) o seletor
-  `@a[level=2..]` não enxerga todos os OPs — era por isso que parte da staff
-  ficava sem aviso. Se a lista não puder ser lida, o script cai para `isOp()`,
-  para `AURORA_EXTRA_OPS` e, por último, para `tellraw @a[level=2..]`.
+- A lista de administradores vem primeiramente de
+  **`kubejs/config/aurora_ops.json`** (arquivo compartilhado pelos dois scripts,
+  editável no painel, relido a cada aviso — não precisa recarregar o script).
+  Em seguida o script complementa com `ops.json`/`getOps()` do servidor,
+  `isOp()`, `AURORA_EXTRA_OPS` e, por último, `tellraw @a[level=2..]`.
+- O envio é feito **um a um, por nome** (`tellraw <nome>`), porque neste
+  servidor (Arclight + LuckPerms) o seletor `@a[level=2..]` não enxerga todos os
+  OPs. Ao ler `ops.json`, o script usa `getName()`/`getId()` do `GameProfile`:
+  converter o objeto direto em string não devolve o nome do jogador e era por
+  isso que parte da staff ficava sem aviso.
 - Ignora biomas vanilla e de outros mods (Biomes O' Plenty, BYG, Regions
   Unexplored, etc.).
 - Escreve no console quantos operadores receberam e quem eram (`ops=N [nomes]`),
@@ -98,6 +100,30 @@ logs/kubejs/server.log
 
 `(5 ops)` mostra quantos operadores receberam o aviso de fronteira.
 
+## Lista de administradores (`aurora_ops.json`)
+
+Arquivo: `<servidor>/kubejs/config/aurora_ops.json` (no repositório:
+`server-patch/kubejs/config/aurora_ops.json`). Os dois scripts usam a **mesma**
+lista. Ela vem preenchida com os administradores atuais do `ops.json` do
+servidor, mas pode ser editada livremente no painel:
+
+```json
+{
+  "operators": [
+    "NomeSimples",
+    { "name": "AMCaos", "uuid": "cd935f06-c626-37af-9dd7-7b5a9b68dd91" }
+  ]
+}
+```
+
+- Aceita **nome** (comparação sem diferenciar maiúsculas/minúsculas) e/ou
+  **UUID** — assim um admin que trocou de nome continua recebendo.
+- O arquivo é **relido a cada aviso**: adicionar ou remover alguém não exige
+  `/kubejs reload server_scripts`.
+- A lista do `ops.json` e o `isOp()` continuam funcionando como complemento;
+  o JSON serve para garantir quem deve receber mesmo quando o servidor não
+  reconhece o OP (Arclight + LuckPerms).
+
 ## Ajustes rápidos
 
 Tudo fica no topo de cada arquivo:
@@ -111,6 +137,7 @@ Tudo fica no topo de cada arquivo:
 | `AURORA_ENTER_COOLDOWN_TICKS` | `600` | Tempo mínimo entre avisos de sub-bioma do mesmo jogador (30 s) |
 | `AURORA_ANNOUNCE_ON_JOIN` | `false` | `true` avisa também quando o jogador loga já dentro do bioma |
 | `AURORA_EXTRA_OPS` | `[]` | Nomes de staff sem OP vanilla que também recebem o aviso |
+| `AURORA_OPS_CONFIG_PATHS` | `kubejs/config/aurora_ops.json` | Caminhos do JSON compartilhado de administradores |
 
 `aurora_mortis_fronteira.js`:
 
@@ -124,6 +151,7 @@ Tudo fica no topo de cada arquivo:
 | `AURORA_FRONTEIRA_ANNOUNCE_ENTER` | `true` | Avisar aos OPs ao entrar em um domínio |
 | `AURORA_FRONTEIRA_ANNOUNCE_EXIT` | `true` | Avisar aos OPs ao sair de um domínio |
 | `AURORA_FRONTEIRA_EXTRA_OPS` | `[]` | Nomes de staff sem OP vanilla que também recebem o aviso |
+| `AURORA_FRONTEIRA_OPS_CONFIG_PATHS` | `kubejs/config/aurora_ops.json` | Caminhos do JSON compartilhado de administradores |
 
 Para desligar um recurso: apague (ou renomeie para `.js.disabled`) o arquivo e
 rode `/kubejs reload server_scripts`.
