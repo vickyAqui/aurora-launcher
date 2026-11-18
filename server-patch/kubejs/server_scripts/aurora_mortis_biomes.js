@@ -105,17 +105,54 @@ function auroraCooldownAtivo(auroraDataArg, auroraKeyArg, auroraTickArg, auroraC
  * Tentamos os dois caminhos porque a resolução muda entre versões do KubeJS.
  */
 function auroraReadOpsConfig() {
+    var auroraReadErr = ''
+    var auroraPathsClass = null
+    var auroraFilesClass = null
+    try {
+        auroraPathsClass = Java.tryLoadClass('java.nio.file.Paths')
+        auroraFilesClass = Java.tryLoadClass('java.nio.file.Files')
+    } catch (auroraJavaErr) {
+        // sem Java.tryLoadClass nesta versão
+    }
     for (var auroraIdx = 0; auroraIdx < AURORA_OPS_CONFIG_PATHS.length; auroraIdx++) {
-        try {
-            const auroraJson = JsonIO.read(AURORA_OPS_CONFIG_PATHS[auroraIdx])
-            if (auroraJson) return auroraJson
-        } catch (auroraErr) {
-            // tenta o próximo caminho
+        var auroraCfgPath = AURORA_OPS_CONFIG_PATHS[auroraIdx]
+        var auroraVariants = [auroraCfgPath, './' + auroraCfgPath]
+        for (var auroraVarIdx = 0; auroraVarIdx < auroraVariants.length; auroraVarIdx++) {
+            var auroraVariant = auroraVariants[auroraVarIdx]
+            var auroraCandidates = [auroraVariant]
+            if (auroraPathsClass) {
+                try {
+                    auroraCandidates.push(auroraPathsClass.get(auroraVariant))
+                } catch (auroraPathErr) {
+                    // Paths.get indisponível
+                }
+            }
+            for (var auroraCandIdx = 0; auroraCandIdx < auroraCandidates.length; auroraCandIdx++) {
+                var auroraCandidate = auroraCandidates[auroraCandIdx]
+                try {
+                    var auroraJsonRead = JsonIO.read(auroraCandidate)
+                    if (auroraJsonRead) return auroraJsonRead
+                } catch (auroraErr) {
+                    auroraReadErr = String(auroraErr)
+                }
+                // Fallback: lê o arquivo como texto e faz parse no JS.
+                if (auroraFilesClass && typeof auroraCandidate !== 'string') {
+                    try {
+                        var auroraText = auroraFilesClass.readString(auroraCandidate)
+                        if (auroraText) {
+                            var auroraParsed = JSON.parse(String(auroraText))
+                            if (auroraParsed) return auroraParsed
+                        }
+                    } catch (auroraParseErr) {
+                        auroraReadErr = String(auroraParseErr)
+                    }
+                }
+            }
         }
     }
     if (!auroraOpsConfigWarned) {
         auroraOpsConfigWarned = true
-        console.warn('[aurora] nao consegui ler kubejs/config/aurora_ops.json; usando ops.json/isOp()')
+        console.warn('[aurora] nao consegui ler kubejs/config/aurora_ops.json (' + auroraReadErr + '); usando ops.json/isOp()')
     }
     return null
 }
@@ -219,7 +256,7 @@ function auroraConfigHas(auroraEntries, auroraName, auroraUuid) {
     const auroraLower = String(auroraName).toLowerCase()
     const auroraUuidLower = String(auroraUuid || '').toLowerCase()
     for (var auroraIdx3 = 0; auroraIdx3 < auroraEntries.length; auroraIdx3++) {
-        const auroraEntry = auroraEntries[auroraIdx3]
+        var auroraEntry = auroraEntries[auroraIdx3]
         if (auroraEntry.name === auroraLower) return true
         if (auroraUuidLower && auroraEntry.uuid === auroraUuidLower) return true
     }
@@ -235,9 +272,9 @@ function auroraServerOpNames(auroraServerArg) {
     try {
         var auroraKeys = auroraServerArg.getPlayerList().getOps().getUserList()
         for (var auroraIdx4 = 0; auroraIdx4 < auroraKeys.length; auroraIdx4++) {
-            const auroraProfile = auroraKeys[auroraIdx4]
-            const auroraNameFromOps = auroraProfileName(auroraProfile)
-            if (auroraNameFromOps) auroraNames.push(auroraNameFromOps.toLowerCase())
+            var auroraOpProfile = auroraKeys[auroraIdx4]
+            var auroraOpName = auroraProfileName(auroraOpProfile)
+            if (auroraOpName) auroraNames.push(auroraOpName.toLowerCase())
         }
     } catch (auroraErr5) {
         console.warn('[aurora] nao consegui ler a lista de OPs do servidor: ' + auroraErr5)

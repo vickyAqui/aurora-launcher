@@ -172,17 +172,54 @@ function auroraFronteiraTellPersonal(auroraFronteiraPlayer, auroraFronteiraMessa
  * Tentamos os dois caminhos porque a resolução muda entre versões do KubeJS.
  */
 function auroraFronteiraReadOpsConfig() {
+    var auroraFronteiraReadErr = ''
+    var auroraFronteiraPathsClass = null
+    var auroraFronteiraFilesClass = null
+    try {
+        auroraFronteiraPathsClass = Java.tryLoadClass('java.nio.file.Paths')
+        auroraFronteiraFilesClass = Java.tryLoadClass('java.nio.file.Files')
+    } catch (auroraFronteiraJavaErr) {
+        // sem Java.tryLoadClass nesta versão
+    }
     for (var auroraFronteiraIdx = 0; auroraFronteiraIdx < AURORA_FRONTEIRA_OPS_CONFIG_PATHS.length; auroraFronteiraIdx++) {
-        try {
-            const auroraFronteiraJson = JsonIO.read(AURORA_FRONTEIRA_OPS_CONFIG_PATHS[auroraFronteiraIdx])
-            if (auroraFronteiraJson) return auroraFronteiraJson
-        } catch (auroraFronteiraErr) {
-            // tenta o próximo caminho
+        var auroraFronteiraCfgPath = AURORA_FRONTEIRA_OPS_CONFIG_PATHS[auroraFronteiraIdx]
+        var auroraFronteiraVariants = [auroraFronteiraCfgPath, './' + auroraFronteiraCfgPath]
+        for (var auroraFronteiraVarIdx = 0; auroraFronteiraVarIdx < auroraFronteiraVariants.length; auroraFronteiraVarIdx++) {
+            var auroraFronteiraVariant = auroraFronteiraVariants[auroraFronteiraVarIdx]
+            var auroraFronteiraCandidates = [auroraFronteiraVariant]
+            if (auroraFronteiraPathsClass) {
+                try {
+                    auroraFronteiraCandidates.push(auroraFronteiraPathsClass.get(auroraFronteiraVariant))
+                } catch (auroraFronteiraPathErr) {
+                    // Paths.get indisponível
+                }
+            }
+            for (var auroraFronteiraCandIdx = 0; auroraFronteiraCandIdx < auroraFronteiraCandidates.length; auroraFronteiraCandIdx++) {
+                var auroraFronteiraCandidate = auroraFronteiraCandidates[auroraFronteiraCandIdx]
+                try {
+                    var auroraFronteiraJsonRead = JsonIO.read(auroraFronteiraCandidate)
+                    if (auroraFronteiraJsonRead) return auroraFronteiraJsonRead
+                } catch (auroraFronteiraErr) {
+                    auroraFronteiraReadErr = String(auroraFronteiraErr)
+                }
+                // Fallback: lê o arquivo como texto e faz parse no JS.
+                if (auroraFronteiraFilesClass && typeof auroraFronteiraCandidate !== 'string') {
+                    try {
+                        var auroraFronteiraText = auroraFronteiraFilesClass.readString(auroraFronteiraCandidate)
+                        if (auroraFronteiraText) {
+                            var auroraFronteiraParsed = JSON.parse(String(auroraFronteiraText))
+                            if (auroraFronteiraParsed) return auroraFronteiraParsed
+                        }
+                    } catch (auroraFronteiraParseErr) {
+                        auroraFronteiraReadErr = String(auroraFronteiraParseErr)
+                    }
+                }
+            }
         }
     }
     if (!auroraFronteiraOpsConfigWarned) {
         auroraFronteiraOpsConfigWarned = true
-        console.warn('[aurora-fronteira] nao consegui ler kubejs/config/aurora_ops.json; usando ops.json/isOp()')
+        console.warn('[aurora-fronteira] nao consegui ler kubejs/config/aurora_ops.json (' + auroraFronteiraReadErr + '); usando ops.json/isOp()')
     }
     return null
 }
@@ -288,7 +325,7 @@ function auroraFronteiraConfigHas(auroraFronteiraEntries, auroraFronteiraName, a
     const auroraFronteiraLower = String(auroraFronteiraName).toLowerCase()
     const auroraFronteiraUuidLower = String(auroraFronteiraUuid || '').toLowerCase()
     for (var auroraFronteiraIdx3 = 0; auroraFronteiraIdx3 < auroraFronteiraEntries.length; auroraFronteiraIdx3++) {
-        const auroraFronteiraEntry = auroraFronteiraEntries[auroraFronteiraIdx3]
+        var auroraFronteiraEntry = auroraFronteiraEntries[auroraFronteiraIdx3]
         if (auroraFronteiraEntry.name === auroraFronteiraLower) return true
         if (auroraFronteiraUuidLower && auroraFronteiraEntry.uuid === auroraFronteiraUuidLower) return true
     }
@@ -304,9 +341,9 @@ function auroraFronteiraServerOpNames(auroraFronteiraServer) {
     try {
         var auroraFronteiraKeys = auroraFronteiraServer.getPlayerList().getOps().getUserList()
         for (var auroraFronteiraIdx4 = 0; auroraFronteiraIdx4 < auroraFronteiraKeys.length; auroraFronteiraIdx4++) {
-            const auroraFronteiraProfile = auroraFronteiraKeys[auroraFronteiraIdx4]
-            const auroraFronteiraName = auroraFronteiraProfileName(auroraFronteiraProfile)
-            if (auroraFronteiraName) auroraFronteiraNames.push(auroraFronteiraName.toLowerCase())
+            var auroraFronteiraOpProfile = auroraFronteiraKeys[auroraFronteiraIdx4]
+            var auroraFronteiraOpName = auroraFronteiraProfileName(auroraFronteiraOpProfile)
+            if (auroraFronteiraOpName) auroraFronteiraNames.push(auroraFronteiraOpName.toLowerCase())
         }
     } catch (auroraFronteiraErr5) {
         console.warn('[aurora-fronteira] nao consegui ler a lista de OPs do servidor: ' + auroraFronteiraErr5)
@@ -606,4 +643,13 @@ function auroraFronteiraCheck(auroraFronteiraPlayer, auroraFronteiraTick) {
     }
 
     auroraFronteiraNotifyCross(auroraFronteiraPlayer, auroraFronteiraStable, auroraFronteiraDomain)
+}
+
+// Diagnóstico único ao carregar/recarregar: confirma quantos administradores
+// vieram do JSON editável (sem precisar esperar uma travessia real).
+try {
+    var auroraFronteiraBootEntries = auroraFronteiraConfigEntries(auroraFronteiraReadOpsConfig())
+    console.info('[aurora-fronteira] diagnostico: ' + auroraFronteiraBootEntries.length + ' administradores no JSON')
+} catch (auroraFronteiraBootErr) {
+    console.warn('[aurora-fronteira] diagnostico falhou: ' + auroraFronteiraBootErr)
 }
