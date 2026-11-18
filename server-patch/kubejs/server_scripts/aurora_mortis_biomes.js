@@ -253,9 +253,12 @@ function auroraIsStaff(auroraTargetArg, auroraOpNamesArg, auroraConfigEntriesArg
     } catch (auroraErr) {
         return false
     }
-    if (auroraConfigHas(auroraConfigEntriesArg, auroraName, auroraProfileUuid(auroraTargetArg.profile))) return true
+    const auroraUuid = auroraProfileUuid(auroraTargetArg.profile)
+    if (auroraConfigHas(auroraConfigEntriesArg, auroraName, auroraUuid)) return true
     if (AURORA_EXTRA_OPS.indexOf(auroraName) >= 0) return true
     if (auroraOpNamesArg.indexOf(auroraName.toLowerCase()) >= 0) return true
+    // Em algumas versões getUserList() devolve UUIDs em vez de nomes.
+    if (auroraUuid && auroraOpNamesArg.indexOf(auroraUuid) >= 0) return true
     try {
         return auroraTargetArg.isOp() === true
     } catch (auroraErr2) {

@@ -322,9 +322,12 @@ function auroraFronteiraIsStaff(auroraFronteiraTarget, auroraFronteiraOpNames, a
     } catch (auroraFronteiraErr) {
         return false
     }
-    if (auroraFronteiraConfigHas(auroraFronteiraConfigEntriesArg, auroraFronteiraName, auroraFronteiraProfileUuid(auroraFronteiraTarget.profile))) return true
+    const auroraFronteiraUuid = auroraFronteiraProfileUuid(auroraFronteiraTarget.profile)
+    if (auroraFronteiraConfigHas(auroraFronteiraConfigEntriesArg, auroraFronteiraName, auroraFronteiraUuid)) return true
     if (AURORA_FRONTEIRA_EXTRA_OPS.indexOf(auroraFronteiraName) >= 0) return true
     if (auroraFronteiraOpNames.indexOf(auroraFronteiraName.toLowerCase()) >= 0) return true
+    // Em algumas versões getUserList() devolve UUIDs em vez de nomes.
+    if (auroraFronteiraUuid && auroraFronteiraOpNames.indexOf(auroraFronteiraUuid) >= 0) return true
     try {
         return auroraFronteiraTarget.isOp() === true
     } catch (auroraFronteiraErr2) {
