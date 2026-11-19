@@ -17,6 +17,12 @@
 // Disparo espontaneo: o BloodmoonManagerProcedure sorteia bloodmoon_chance (padrao
 // 5%) a cada noite. Mantemos esse valor em 0 para a bloodmoon so ocorrer quando
 // alguem iniciar manualmente com /bloodmoon moon_event start.
+//
+// Fim prematuro: o manager agenda endBloodmoon() 10 ticks depois de ver
+// bloodmoonActive=true e isNight()==false em QUALQUER dimensao. O startBloodmoon()
+// do mod NAO muda o horario, entao um start manual durante o dia sempre agenda
+// esse fim antes mesmo de ajustarmos as dimensoes. Como o agendamento nao e
+// reavaliado, corrigimos o horario e reiniciamos a bloodmoon quando isso acontece.
 
 var auroraBmApplied = false
 var auroraBmPrevActive = false
@@ -24,6 +30,9 @@ var auroraBmSaved = {}
 var auroraBmWarned = false
 var auroraBmUtils = null
 var auroraBmVarsClass = null
+var auroraBmTick = 0
+var auroraBmStartTick = -1
+var auroraBmRestarts = 0
 
 var AURORA_BM_MOON_TEXTURE = 'bloodmoon:textures/entities/bloodmoon.png'
 
@@ -99,6 +108,8 @@ ServerEvents.tick((event) => {
     }
 
     if (ativo && !auroraBmPrevActive) {
+        auroraBmStartTick = auroraBmTick
+        auroraBmRestarts = 0
         console.info('[aurora-bloodmoon] iniciou: ajustando dimensoes e lua vermelha')
         auroraBmMoonCommand(event, 'set')
         auroraBmSaved = {}
@@ -123,24 +134,45 @@ ServerEvents.tick((event) => {
     }
 
     if (!ativo && auroraBmPrevActive) {
-        auroraBmMoonCommand(event, 'clear')
-        var count = 0
-        for (var key in auroraBmSaved) {
-            if (auroraBmSaved.hasOwnProperty(key)) {
-                count++
-            }
-        }
-        if (count > 0) {
+        var duracao = auroraBmTick - auroraBmStartTick
+        if (duracao >= 0 && duracao <= 300 && auroraBmRestarts < 3) {
+            // Fim agendado pelo manager antes de ajustarmos o horario. O end ja
+            // rodou (mensagem "The strange moon is fading"), entao garantimos que
+            // todas as dimensoes estao de noite ANTES de religar o evento, senao
+            // o manager agenda outro fim 10 ticks depois.
             auroraBmLoopLevels(event, (level) => {
-                var k = String(level)
-                if (auroraBmSaved.hasOwnProperty(k)) {
-                    level.setDayTime(auroraBmSaved[k])
+                if (!auroraBmUtils.isNight(level)) {
+                    level.setDayTime(auroraBmNightTime(level.getDayTime()))
                 }
             })
-            console.info('[aurora-bloodmoon] encerrou: horario de ' + count + ' dimensoes restaurado')
+            auroraBmServer(event).runCommand('bloodmoon moon_event start')
+            ativo = vars.bloodmoonActive
+            auroraBmRestarts++
+            auroraBmStartTick = auroraBmTick
+            console.info('[aurora-bloodmoon] fim espurio do manager (' + duracao + ' ticks) corrigido: bloodmoon reiniciada')
+        } else {
+            auroraBmMoonCommand(event, 'clear')
+            var count = 0
+            for (var key in auroraBmSaved) {
+                if (auroraBmSaved.hasOwnProperty(key)) {
+                    count++
+                }
+            }
+            if (count > 0) {
+                auroraBmLoopLevels(event, (level) => {
+                    var k = String(level)
+                    if (auroraBmSaved.hasOwnProperty(k)) {
+                        level.setDayTime(auroraBmSaved[k])
+                    }
+                })
+                console.info('[aurora-bloodmoon] encerrou: horario de ' + count + ' dimensoes restaurado')
+            }
+            auroraBmSaved = {}
+            auroraBmStartTick = -1
+            auroraBmRestarts = 0
         }
-        auroraBmSaved = {}
     }
 
+    auroraBmTick++
     auroraBmPrevActive = ativo
 })
