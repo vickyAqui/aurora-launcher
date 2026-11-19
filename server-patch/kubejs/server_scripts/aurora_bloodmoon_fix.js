@@ -13,6 +13,10 @@
 // servidor. O CustomSkyboxes, que esta no modpack, recebe comandos do servidor:
 // usamos "customskyboxes set/clear ... moon" com a textura vermelha do proprio
 // Bloodmoon. O comando fica salvo no servidor e e reenviado a quem entrar depois.
+//
+// Disparo espontaneo: o BloodmoonManagerProcedure sorteia bloodmoon_chance (padrao
+// 5%) a cada noite. Mantemos esse valor em 0 para a bloodmoon so ocorrer quando
+// alguem iniciar manualmente com /bloodmoon moon_event start.
 
 var auroraBmApplied = false
 var auroraBmPrevActive = false
@@ -83,6 +87,16 @@ ServerEvents.tick((event) => {
     }
 
     var ativo = vars.bloodmoonActive
+
+    // O manager do mod sortea uma bloodmoon automaticamente usando bloodmoon_chance
+    // (padrao 5% a cada noite). Zerar aqui impede o disparo espontaneo sem afetar
+    // o comando manual /bloodmoon moon_event start.
+    if (vars.bloodmoon_chance !== 0) {
+        var chanceAntiga = vars.bloodmoon_chance
+        vars.bloodmoon_chance = 0
+        vars.syncData(world)
+        console.info('[aurora-bloodmoon] chance automatica ' + chanceAntiga + ' -> 0 (desativada)')
+    }
 
     if (ativo && !auroraBmPrevActive) {
         console.info('[aurora-bloodmoon] iniciou: ajustando dimensoes e lua vermelha')
