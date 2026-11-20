@@ -221,11 +221,11 @@
       "type": "MOD"
     },
     {
-      "name": "aurora_vicky-1.0.0.jar",
+      "name": "aurora_vicky-1.0.1.jar",
       "path": "mods/",
-      "size": 9139,
-      "sha1": "220e053f021de3b05dc199af9a861c87786b3be8",
-      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_vicky-1.0.0.jar",
+      "size": 17122,
+      "sha1": "483c00a62a9d1772dab41c6753a6d2a50a48af0e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_vicky-1.0.1.jar",
       "type": "MOD"
     },
     {

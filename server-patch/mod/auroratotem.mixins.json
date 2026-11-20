@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.aurora.totem.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+  ],
+  "client": [
+    "TotemOfPossessionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

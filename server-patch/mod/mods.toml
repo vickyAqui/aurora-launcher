@@ -4,11 +4,12 @@ license="All Rights Reserved"
 
 [[mods]]
 modId="aurora_vicky"
-version="1.0.0"
+version="1.0.1"
 displayName="Aurora Vicky"
 authors="Aurora Studios"
 description='''
 Modelo e textura do Caldeirao Futuro para a brewing stand.
+Troca as particulas do Totem of Possession (Alex's Caves) pelo sprite personalizado.
 '''
 displayTest="IGNORE_SERVER_VERSION"
 
@@ -18,3 +19,10 @@ displayTest="IGNORE_SERVER_VERSION"
     versionRange="[47,)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.aurora_vicky]]
+    modId="alexscaves"
+    mandatory=true
+    versionRange="[2.0.2,)"
+    ordering="AFTER"
+    side="CLIENT"
