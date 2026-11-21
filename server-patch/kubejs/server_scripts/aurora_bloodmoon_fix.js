@@ -33,8 +33,18 @@ var auroraBmVarsClass = null
 var auroraBmTick = 0
 var auroraBmStartTick = -1
 var auroraBmRestarts = 0
+var auroraBmFxTriggered = false
+var auroraBmMusicPlaying = false
 
 var AURORA_BM_MOON_TEXTURE = 'bloodmoon:textures/entities/bloodmoon.png'
+
+// Efeito + trilha disparados no inicio da bloodmoon. O stop da trilha e agendado
+// 30 segundos depois (600 ticks) com fade de 2 segundos (40 ticks).
+var AURORA_BM_EARTHQUAKE_CMD = 'effect give @a alexsmobs:earthquake 15 1 true'
+var AURORA_BM_MUSIC_ID = 'bloodmoon_fury'
+var AURORA_BM_MUSIC_URL = 'https://youtu.be/ECaneS01wCs?si=r1hKL7k1Eau3nN7i'
+var AURORA_BM_MUSIC_FADE = 40
+var AURORA_BM_MUSIC_STOP_AT = 600
 
 function auroraBmNightTime(dayTime) {
     return Math.floor(dayTime / 24000) * 24000 + 13000
@@ -49,6 +59,23 @@ function auroraBmLoopLevels(event, callback) {
 
 function auroraBmServer(event) {
     return event.server
+}
+
+function auroraBmRunCommand(event, cmd) {
+    try {
+        var result = auroraBmServer(event).runCommand(cmd)
+        console.info('[aurora-bloodmoon] cmd: ' + cmd + ' -> ' + result)
+    } catch (e) {
+        console.warn('[aurora-bloodmoon] falha no comando "' + cmd + '": ' + e)
+    }
+}
+
+function auroraBmStopMusic(event) {
+    if (!auroraBmMusicPlaying) {
+        return
+    }
+    auroraBmMusicPlaying = false
+    auroraBmRunCommand(event, 'sotpl stop @a ' + AURORA_BM_MUSIC_ID + ' ' + AURORA_BM_MUSIC_FADE)
 }
 
 function auroraBmMoonCommand(event, action) {
@@ -123,6 +150,13 @@ ServerEvents.tick((event) => {
                 console.info('[aurora-bloodmoon]   ' + key + ': ' + original + ' -> ' + novo)
             }
         })
+        if (!auroraBmFxTriggered) {
+            auroraBmFxTriggered = true
+            auroraBmRunCommand(event, AURORA_BM_EARTHQUAKE_CMD)
+            auroraBmRunCommand(event, 'sotpl play @a ' + AURORA_BM_MUSIC_ID + ' url ' + AURORA_BM_MUSIC_URL + ' 100 20 ' + AURORA_BM_MUSIC_FADE + ' true false 1.0 MUSIC')
+            auroraBmMusicPlaying = true
+            console.info('[aurora-bloodmoon] terremoto + trilha disparados; fade agendado para 30s')
+        }
     }
 
     if (ativo) {
@@ -131,6 +165,10 @@ ServerEvents.tick((event) => {
                 level.setDayTime(auroraBmNightTime(level.getDayTime()))
             }
         })
+        if (auroraBmMusicPlaying && auroraBmStartTick >= 0 && auroraBmTick - auroraBmStartTick >= AURORA_BM_MUSIC_STOP_AT) {
+            console.info('[aurora-bloodmoon] 30s atingidos: fade-out da trilha')
+            auroraBmStopMusic(event)
+        }
     }
 
     if (!ativo && auroraBmPrevActive) {
@@ -167,6 +205,8 @@ ServerEvents.tick((event) => {
                 })
                 console.info('[aurora-bloodmoon] encerrou: horario de ' + count + ' dimensoes restaurado')
             }
+            auroraBmStopMusic(event)
+            auroraBmFxTriggered = false
             auroraBmSaved = {}
             auroraBmStartTick = -1
             auroraBmRestarts = 0

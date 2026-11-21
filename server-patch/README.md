@@ -126,6 +126,51 @@ mudar. Nesse caso, revise o `tools/Patch.java` e recompile. O fonte está inclu�
   textura da **brewing stand** pelo caldeirão "Caldeirão Futuro". Instruções
   abaixo.
 
+## Bloodmoon Update — mensagens em português
+
+O Bloodmoon Update 1.4.1 grava as mensagens de início/fim direto no constant pool de
+`BloodmoonUtils.class` (não há config nem tradução para editar):
+
+| Ocorrência | Original | Patchado |
+|---|---|---|
+| início | `§c💀 A bloodmoon is rising... Beware of the monsters... 💀` | `§4§lA Raiva clama por uma resolução` |
+| fim | `The strange moon is fading` | `§4§lA Raiva se acalma...` |
+
+`§4` é vermelho forte e `§l` é negrito. O patch muda **somente essas duas strings**;
+o jar resultante tem as mesmas 215 entradas do original, com um único `.class`
+diferente. O id/versão do mod não mudam, então clientes não precisam de nada.
+
+### Instalação
+
+1. Pare o servidor.
+2. Substitua `mods/bloodmoon-1.20.1-1.4.1-forge-1.20.1.jar` pelo jar patchado em
+   `server-patch/mods/` (mantenha o mesmo nome).
+3. Inicie o servidor. Não precisa recarregar scripts.
+
+### Reaplicar (se o mod atualizar)
+
+```powershell
+python server-patch/tools/patch-bloodmoon-messages.py `
+  <jar-original> `
+  server-patch/mods/bloodmoon-1.20.1-1.4.1-forge-1.20.1.jar
+```
+
+O script localiza as mensagens pelo texto antigo, reescreve as entradas UTF-8 e
+reconstrói o jar. Se o texto mudar na versão nova, atualize `REPLACEMENTS` no
+topo do script.
+
+### Efeito e trilha no início
+
+`kubejs/server_scripts/aurora_bloodmoon_fix.js` também dispara, na transição
+`bloodmoonActive false → true`:
+
+- `effect give @a alexsmobs:earthquake 15 1 true` (15s, nível 1, sem partículas);
+- `sotpl play @a bloodmoon_fury url https://youtu.be/ECaneS01wCs?si=r1hKL7k1Eau3nN7i 100 20 40 true false 1.0 MUSIC`.
+
+Aos 30 segundos (600 ticks) o script envia `sotpl stop @a bloodmoon_fury 40`,
+com fade de 2 segundos. Se a bloodmoon terminar antes, o stop é enviado na hora.
+Isso funciona com `/kubejs reload server_scripts`, sem restart.
+
 ## Caldeirão Futuro (mod de recursos)
 
 Modelos e texturas de bloco são renderizados pelo **cliente**. Antes isso era um
