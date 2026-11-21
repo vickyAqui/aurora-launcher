@@ -217,36 +217,80 @@ ServerEvents.tick((event) => {
     auroraBmPrevActive = ativo
 })
 
-// Chama o mod direto, sem passar pelo comando /bloodmoon. Util quando o jar
-// precisa ser trocado sem restart: o classloader pode perder as classes dos
-// procedures dos comandos, mas BloodmoonUtils ja carregada continua funcionando.
+/** Responde ao comando tanto no chat quanto no console do painel. */
+function auroraBmResponder(source, msg) {
+    try {
+        source.sendSuccess(Text.of(msg), false)
+    } catch (e) {
+        console.warn('[aurora-bloodmoon] falha ao responder: ' + e)
+    }
+}
+
+/** Chama o mod direto, sem passar pelo comando /bloodmoon (que pode quebrar
+ *  se o jar tiver sido trocado com o servidor rodando). */
+function auroraBmAction(server, source, acao) {
+    try {
+        if (auroraBmUtils == null) {
+            auroraBmUtils = Java.loadClass('net.foufakirby.bloodmoon.util.common.BloodmoonUtils')
+        }
+        var mundo = server.getOverworld()
+        if (acao === 'start') {
+            auroraBmUtils.startBloodmoon(mundo)
+            auroraBmResponder(source, '§4§l[Aurora] §cA Raiva despertou!')
+            console.info('[aurora-bloodmoon] iniciada via /aurorabm')
+        } else if (acao === 'end') {
+            auroraBmUtils.endBloodmoon(mundo)
+            auroraBmResponder(source, '§4§l[Aurora] §cA Raiva se acalmou.')
+            console.info('[aurora-bloodmoon] encerrada via /aurorabm')
+        } else {
+            var ativa = false
+            try {
+                ativa = auroraBmUtils.isBloodMoon(mundo)
+            } catch (e) {
+                ativa = false
+            }
+            auroraBmResponder(source, '[aurora-bloodmoon] ' + (ativa ? 'ATIVA' : 'DESATIVADA') + '. Use /aurorabm start|end|status.')
+        }
+    } catch (e) {
+        auroraBmResponder(source, '§c[aurora-bloodmoon] ERRO: ' + e)
+        console.error('[aurora-bloodmoon] ERRO na acao: ' + e)
+    }
+}
+
+// Registro normal: da autocomplete e ajuda no /help. Só aparece depois de
+// reiniciar o servidor, por isso o interceptador abaixo é o que funciona agora.
+ServerEvents.commandRegistry(event => {
+    const cmds = event.commands
+    event.register(
+        cmds.literal('aurorabm')
+            .requires(src => src.hasPermission(2))
+            .then(cmds.literal('start').executes(ctx => auroraBmAction(ctx.source.server, ctx.source, 'start')))
+            .then(cmds.literal('end').executes(ctx => auroraBmAction(ctx.source.server, ctx.source, 'end')))
+            .then(cmds.literal('status').executes(ctx => auroraBmAction(ctx.source.server, ctx.source, 'status')))
+            .executes(ctx => auroraBmAction(ctx.source.server, ctx.source, 'status'))
+    )
+})
+
+// Interceptador: funciona na hora, mesmo sem restart e sem registro no dispatcher.
 ServerEvents.command(event => {
-    var auroraPartes
     var auroraAcao
     var auroraSource
 
     try {
         // var de proposito: o Rhino reclama de redeclaration no mesmo escopo.
         var auroraInput = String(event.input || '').replace(/^\/+/, '').trim()
-        auroraPartes = auroraInput.split(/\s+/)
-        if (auroraPartes[0].toLowerCase() !== 'aurorabm') return
+        var auroraPartes = auroraInput.split(/\s+/)
+        var auroraNome = auroraPartes[0].toLowerCase()
+        if (auroraNome !== 'aurorabm' && auroraNome !== 'aurorabloodmoon') return
 
-        auroraAcao = auroraPartes.length > 1 ? auroraPartes[1].toLowerCase() : ''
-        if (auroraAcao !== 'start' && auroraAcao !== 'end') return
-
+        auroraAcao = auroraPartes.length > 1 ? auroraPartes[1].toLowerCase() : 'status'
         auroraSource = event.parseResults.context.source
-        if (!auroraSource.hasPermission(2)) return
 
-        if (auroraBmUtils == null) {
-            auroraBmUtils = Java.loadClass('net.foufakirby.bloodmoon.util.common.BloodmoonUtils')
-        }
-        var mundo = event.server.getOverworld()
-        if (auroraAcao === 'start') {
-            auroraBmUtils.startBloodmoon(mundo)
-            console.info('[aurora-bloodmoon] iniciada via /aurorabm')
+        if (auroraAcao !== 'start' && auroraAcao !== 'end' && auroraAcao !== 'status') {
+            auroraBmResponder(auroraSource, '[aurora-bloodmoon] Use /aurorabm start|end|status.')
         } else {
-            auroraBmUtils.endBloodmoon(mundo)
-            console.info('[aurora-bloodmoon] encerrada via /aurorabm')
+            if (!auroraSource.hasPermission(2)) return
+            auroraBmAction(event.server, auroraSource, auroraAcao)
         }
     } catch (auroraErr) {
         console.error('[aurora-bloodmoon] ERRO no comando: ' + auroraErr)
