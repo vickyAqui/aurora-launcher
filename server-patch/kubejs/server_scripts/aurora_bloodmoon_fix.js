@@ -183,7 +183,7 @@ ServerEvents.tick((event) => {
                     level.setDayTime(auroraBmNightTime(level.getDayTime()))
                 }
             })
-            auroraBmServer(event).runCommand('bloodmoon moon_event start')
+            auroraBmUtils.startBloodmoon(world)
             ativo = vars.bloodmoonActive
             auroraBmRestarts++
             auroraBmStartTick = auroraBmTick
@@ -215,4 +215,44 @@ ServerEvents.tick((event) => {
 
     auroraBmTick++
     auroraBmPrevActive = ativo
+})
+
+// Chama o mod direto, sem passar pelo comando /bloodmoon. Util quando o jar
+// precisa ser trocado sem restart: o classloader pode perder as classes dos
+// procedures dos comandos, mas BloodmoonUtils ja carregada continua funcionando.
+ServerEvents.command(event => {
+    var auroraPartes
+    var auroraAcao
+    var auroraSource
+
+    try {
+        // var de proposito: o Rhino reclama de redeclaration no mesmo escopo.
+        var auroraInput = String(event.input || '').replace(/^\/+/, '').trim()
+        auroraPartes = auroraInput.split(/\s+/)
+        if (auroraPartes[0].toLowerCase() !== 'aurorabm') return
+
+        auroraAcao = auroraPartes.length > 1 ? auroraPartes[1].toLowerCase() : ''
+        if (auroraAcao !== 'start' && auroraAcao !== 'end') return
+
+        auroraSource = event.parseResults.context.source
+        if (!auroraSource.hasPermission(2)) return
+
+        if (auroraBmUtils == null) {
+            auroraBmUtils = Java.loadClass('net.foufakirby.bloodmoon.util.common.BloodmoonUtils')
+        }
+        var mundo = event.server.getOverworld()
+        if (auroraAcao === 'start') {
+            auroraBmUtils.startBloodmoon(mundo)
+            console.info('[aurora-bloodmoon] iniciada via /aurorabm')
+        } else {
+            auroraBmUtils.endBloodmoon(mundo)
+            console.info('[aurora-bloodmoon] encerrada via /aurorabm')
+        }
+    } catch (auroraErr) {
+        console.error('[aurora-bloodmoon] ERRO no comando: ' + auroraErr)
+        return
+    }
+
+    // Fora do try: cancel() lanca uma excecao interna de controle do KubeJS.
+    return event.cancel()
 })

@@ -147,6 +147,11 @@ diferente. O id/versão do mod não mudam, então clientes não precisam de nada
    `server-patch/mods/` (mantenha o mesmo nome).
 3. Inicie o servidor. Não precisa recarregar scripts.
 
+> **Atenção:** nunca sobrescreva o jar com o servidor rodando. O classloader
+> mantém os offsets do zip em memória e as classes ainda não carregadas passam
+> a falhar com `NoClassDefFoundError` (o comando `/bloodmoon moon_event start`
+> é o primeiro a quebrar). Se isso acontecer,pare e inicie de novo.
+
 ### Reaplicar (se o mod atualizar)
 
 ```powershell
