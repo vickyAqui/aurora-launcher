@@ -63,8 +63,15 @@ function auroraBornSpawnsEntityId(entity) {
     }
 }
 
-function auroraBornSpawnsIsModMob(id) {
-    return id.indexOf(AURORA_BORN_SPAWNS_NAMESPACE + ':') === 0
+function auroraBornSpawnsIsModMob(id, entity) {
+    if (id.indexOf(AURORA_BORN_SPAWNS_NAMESPACE + ':') === 0) return true
+    // MCreator usa pacote estável para todas as entidades do mod; cobre casos
+    // em que Rhino não consegue ler o ResourceLocation do EntityType.
+    try {
+        return String(entity.getClass().getName()).indexOf('net.mcreator.borninchaosv.') === 0
+    } catch (e) {
+        return false
+    }
 }
 
 EntityEvents.checkSpawn((event) => {
@@ -75,9 +82,13 @@ EntityEvents.checkSpawn((event) => {
         if (String(event.getType().name()) !== 'NATURAL') return
         var entity = event.getEntity()
         var id = auroraBornSpawnsEntityId(entity)
-        if (!auroraBornSpawnsIsModMob(id)) return
+        if (!auroraBornSpawnsIsModMob(id, entity)) return
 
         auroraBornSpawnsChecked++
+        if (auroraBornSpawnsChecked <= 3) {
+            console.info('[aurora-born-spawns] detectado ' + id + ' (' +
+                entity.getClass().getName() + ')')
+        }
         var biome = auroraBornSpawnsBiomeId(event.getLevel(), entity.blockPosition())
         if (auroraBornSpawnsAllowed(biome)) return
 
