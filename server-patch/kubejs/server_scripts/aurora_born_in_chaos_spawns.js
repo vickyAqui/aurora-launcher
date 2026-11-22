@@ -1,17 +1,18 @@
 // Spawn natural dos mobs do Born in Chaos restrito ao bioma de pesadelo.
 //
-// Todos os mobs do mod (namespace `born_in_chaos_v1`) podem nascer somente em:
+// Todos os mobs do mod (namespace `born_in_chaos_v1`, confirmado no mods.toml)
+// podem nascer somente em:
 //   - aurora_mortis:dominio_do_pesadelo
 //   - aurora_mortis:dominio_de_olhos_do_pesadelo
 //   - aurora_mortis:pesadelo
 // Fora desses biomas o spawn natural é cancelado. Spawners, ovos de spawn e
 // spawns vindos de chunks gerados não são afetados: só MobSpawnType.NATURAL.
 //
-// A lista de entidades é lida do registro do Forge, então novos mobs do mod
-// entram automaticamente, sem precisar atualizar este script.
+// Como o namespace identifica todos os mobs do mod, não é necessário manter
+// uma lista manual de entidades: mobs novos do mod entram automaticamente.
 //
 // Comandos (também funcionam no console do painel, sem a barra):
-//   /bornspawns           mostra o estado, os biomas liberados e o total de mobs
+//   /bornspawns           mostra o estado, os biomas liberados e os contadores
 //   /bornspawns on|off    reativa/desativa o bloqueio em quente
 
 var AURORA_BORN_SPAWNS_ENABLED = true
@@ -22,17 +23,8 @@ var AURORA_BORN_SPAWNS_BIOMES = [
     'aurora_mortis:pesadelo'
 ]
 
-var auroraBornSpawnsMobs = null
 var auroraBornSpawnsChecked = 0
 var auroraBornSpawnsBlocked = 0
-var auroraBornSpawnsRegistries = null
-
-function auroraBornSpawnsRegistriesClass() {
-    if (auroraBornSpawnsRegistries == null) {
-        auroraBornSpawnsRegistries = Java.loadClass('net.minecraftforge.registries.ForgeRegistries')
-    }
-    return auroraBornSpawnsRegistries
-}
 
 function auroraBornSpawnsBiomeId(level, pos) {
     try {
@@ -50,39 +42,29 @@ function auroraBornSpawnsAllowed(biome) {
     return false
 }
 
+/** Id de registro da entidade, ex.: "born_in_chaos_v1:cultist". */
 function auroraBornSpawnsEntityId(entity) {
     try {
-        var rl = auroraBornSpawnsRegistriesClass().ENTITIES.getKey(entity.getType())
-        return rl == null ? '' : String(rl)
+        var rl = entity.getType().getRegistryName()
+        if (rl != null) return String(rl)
     } catch (e) {
+        // tenta as alternativas abaixo
+    }
+    try {
+        var rl2 = Java.loadClass('net.minecraftforge.registries.ForgeRegistries').ENTITIES.getKey(entity.getType())
+        if (rl2 != null) return String(rl2)
+    } catch (e2) {
+        // última tentativa abaixo
+    }
+    try {
+        return String(entity.getType())
+    } catch (e3) {
         return ''
     }
 }
 
-function auroraBornSpawnsEntityIds() {
-    if (auroraBornSpawnsMobs != null) return auroraBornSpawnsMobs
-    var ids = []
-    try {
-        var keys = auroraBornSpawnsRegistriesClass().ENTITIES.getKeys().iterator()
-        while (keys.hasNext()) {
-            var id = String(keys.next())
-            if (id.indexOf(AURORA_BORN_SPAWNS_NAMESPACE + ':') === 0) ids.push(id)
-        }
-    } catch (e) {
-        console.warn('[aurora-born-spawns] falha ao ler registro: ' + e)
-    }
-    console.info('[aurora-born-spawns] mobs do mod detectados: ' + ids.length)
-    auroraBornSpawnsMobs = ids
-    return ids
-}
-
 function auroraBornSpawnsIsModMob(id) {
-    if (id.indexOf(AURORA_BORN_SPAWNS_NAMESPACE + ':') !== 0) return false
-    var ids = auroraBornSpawnsEntityIds()
-    for (var i = 0; i < ids.length; i++) {
-        if (ids[i] === id) return true
-    }
-    return ids.length === 0
+    return id.indexOf(AURORA_BORN_SPAWNS_NAMESPACE + ':') === 0
 }
 
 EntityEvents.checkSpawn((event) => {
@@ -124,7 +106,7 @@ function auroraBornSpawnsReply(source, msg) {
 function auroraBornSpawnsStatus() {
     var status = AURORA_BORN_SPAWNS_ENABLED ? '§aATIVO' : '§cDESATIVADO'
     return '§6[Aurora] Born in Chaos spawn: ' + status +
-        ' §7| mobs: ' + auroraBornSpawnsEntityIds().length +
+        ' §7| namespace: ' + AURORA_BORN_SPAWNS_NAMESPACE +
         ' | verificados: ' + auroraBornSpawnsChecked +
         ' | bloqueados: ' + auroraBornSpawnsBlocked
 }
@@ -190,6 +172,6 @@ ServerEvents.command((event) => {
         console.error('[aurora-born-spawns] ERRO no comando: ' + auroraErr)
         return
     }
-    // Fora do try: cancel() lança uma exceção de controle do KubeJS.
+    // Fora do try: cancel() lança exceção de controle do KubeJS.
     return event.cancel()
 })
