@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.aurorastudios.vicky.pronouns.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [],
+  "client": [
+    "PronounNameTagMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

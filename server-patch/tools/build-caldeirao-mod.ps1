@@ -16,8 +16,9 @@
 param(
   [string]$ModSource = (Join-Path $PSScriptRoot '..\mod'),
   [string]$AssetsDir = (Join-Path $PSScriptRoot '..\resourcepack\assets'),
-  [string]$Output = (Join-Path $PSScriptRoot '..\aurora_vicky-1.0.1.jar'),
+  [string]$Output = (Join-Path $PSScriptRoot '..\aurora_vicky-1.0.2.jar'),
   [string]$ModpackMods = (Join-Path $PSScriptRoot '..\..\modpack\mods'),
+  [string]$Libraries = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\libraries'),
   [string]$JdkHome = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\runtime\jre-17'),
   [string]$ForgeJar = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\libraries\net\minecraftforge\javafmllanguage\1.20.1-47.4.10\javafmllanguage-1.20.1-47.4.10.jar'),
   [string]$ForgeUniversal = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\libraries\net\minecraftforge\forge\1.20.1-47.4.10\forge-1.20.1-47.4.10-universal.jar'),
@@ -38,6 +39,26 @@ $ForgeUniversal = (Resolve-Path $ForgeUniversal).Path
 $MinecraftSrg = (Resolve-Path $MinecraftSrg).Path
 $FmlCore = (Resolve-Path $FmlCore).Path
 $EventBus = (Resolve-Path $EventBus).Path
+$Libraries = (Resolve-Path $Libraries).Path
+
+function Resolve-Lib([string]$pattern) {
+  $hit = Get-ChildItem -Path $Libraries -Recurse -File -Filter $pattern -ErrorAction SilentlyContinue |
+    Select-Object -First 1
+  if (-not $hit) { throw "Library not found: $pattern" }
+  return $hit.FullName
+}
+
+# Extra libraries needed by the pronoun code (persistence, commands, network, mixin render).
+$ExtraLibs = @(
+  'fmlloader-1.20.1-47.4.10.jar',
+  'gson-2.10.1.jar',
+  'brigadier-1.1.8.jar',
+  'netty-buffer-4.1.82.Final.jar',
+  'netty-common-4.1.82.Final.jar',
+  'joml-1.10.5.jar',
+  'mixin-0.8.5.jar',
+  'log4j-api-2.19.0.jar'
+) | ForEach-Object { Resolve-Lib $_ }
 
 $javac = Join-Path $JdkHome 'bin\javac.exe'
 $jar = Join-Path $JdkHome 'bin\jar.exe'
@@ -60,14 +81,17 @@ try {
   if (-not (Test-Path $classesDir)) { throw "Prebuilt classes not found: $classesDir" }
   Copy-Item (Join-Path $classesDir 'com') (Join-Path $stage 'com') -Recurse -Force
   Copy-Item (Join-Path $ModSource 'auroratotem.mixins.json') $stage -Force
+  Copy-Item (Join-Path $ModSource 'aurorapronouns.mixins.json') $stage -Force
 
   $sources = Get-ChildItem (Join-Path $ModSource 'src') -Recurse -Filter *.java | ForEach-Object { $_.FullName }
   if (-not $sources) { throw 'No Java sources found.' }
 
   # Built as an array on purpose: passing -classpath inline makes PowerShell 5.1
   # hand javac a broken argument list ("invalid flag: :").
-  $classpath = @($ForgeJar, $ForgeUniversal, $MinecraftSrg, $FmlCore, $EventBus, (Join-Path $ModSource 'classes')) -join ';'
-  $javacArgs = @('-encoding', 'UTF-8', '-source', '17', '-target', '17', '-classpath', $classpath, '-d', $stage) + $sources
+  $classpath = (@($ForgeJar, $ForgeUniversal, $MinecraftSrg, $FmlCore, $EventBus) + $ExtraLibs + @((Join-Path $ModSource 'classes'))) -join ';'
+  # No refmap is needed: every mixin target/injector uses SRG names with remap=false.
+  $javacArgs = @('-encoding', 'UTF-8', '-source', '17', '-target', '17', '-proc:none',
+    '-classpath', $classpath, '-d', $stage) + $sources
   & $javac @javacArgs
   if ($LASTEXITCODE -ne 0) { throw "javac failed with exit code $LASTEXITCODE" }
 

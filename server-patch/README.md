@@ -193,11 +193,14 @@ Por que mod e não pack de servidor:
 - assets de mod (`mod_resources`) **não aparecem** na tela de resource packs,
   então o jogador não consegue desativar o modelo.
 
-O mod é `aurora_vicky-1.0.1.jar` (mod id `aurora_vicky`): uma classe `@Mod` (registra o jar e a
-partícula customizada) + `META-INF/mods.toml` + `pack.mcmeta` + `assets/` + um mixin client-side.
-Ele usa `displayTest="IGNORE_SERVER_VERSION"`, então o cliente entra em servidores que não têm o
-mod sem aviso de incompatibilidade. O servidor **não precisa** do mod: as partículas do tótem são
-emitidas no cliente e o mixin só roda no cliente.
+O mod é `aurora_vicky-1.0.2.jar` (mod id `aurora_vicky`): uma classe `@Mod` (registra o jar, a
+partícula customizada e os pronomes) + `META-INF/mods.toml` + `pack.mcmeta` + `assets/` + dois
+mixins client-side. Ele usa `displayTest="IGNORE_SERVER_VERSION"`, então o cliente entra em
+servidores que não têm o mod sem aviso de incompatibilidade.
+
+- **Caldeirão e partícula do tótem:** só o cliente precisa do mod (o servidor não precisa).
+- **Pronomes:** o servidor **precisa** do mod — é ele que registra `/pronome`, guarda os dados por
+  UUID e sincroniza com os clientes. Sem o mod no servidor o comando não existe e nada aparece.
 
 ### O que o mod muda
 
@@ -209,6 +212,18 @@ emitidas no cliente e o mixin só roda no cliente.
 | `assets/aurora_vicky/textures/block/caldeirao_futuro.png` | textura 128×128 |
 | `auroratotem.mixins.json` + `com/aurora/totem/mixin/TotemOfPossessionMixin` | troca o `DustParticleOptions.REDSTONE` emitido pelo `TotemOfPossessionItem.onUseTick` pela partícula `auroratotem:totem_viola` |
 | `assets/auroratotem/particles/totem_viola.json` + `textures/particle/totem_viola.png` | sprite violeta usado pela partícula (imagem `viola.png` fornecida pelo usuário) |
+| `aurorapronouns.mixins.json` + `com/aurorastudios/vicky/pronouns/mixin/PronounNameTagMixin` | desenha o pronome como segunda linha menor abaixo da name tag |
+
+### Pronomes
+
+Cada jogador escolhe o próprio pronome com `/pronome <texto>` (ex.: `/pronome §dela/ela`).
+O texto aparece abaixo do nome no mundo, em escala reduzida, com cor/decoração via códigos `§`
+(`§c`, `§l`, `§o`, `§r`, etc.). `/pronome limpar` remove; `/pronome` sozinho mostra a ajuda.
+
+Os dados ficam em `config/aurora_pronouns.json` no servidor, no formato `UUID -> texto`, e são
+enviados a cada cliente ao entrar e a todos quando alguém define/altera o pronome. O lado do
+servidor valida e limita o texto a 32 caracteres (códigos `§` contam), descarta caracteres de
+controle e só aceita códigos de formatação válidos.
 
 O mixin intercepta **apenas** o `addParticle` dentro de `onUseTick` (é o único ponto do método que
 emite partícula), então redstone e outros efeitos não são afetados. A classe é compilada com
@@ -237,8 +252,10 @@ estão na escala 0–16 (16 unidades = textura inteira).
 ### Estrutura
 
 - `mod/mods.toml`, `mod/pack.mcmeta` — metadados do mod
-- `mod/src/com/aurorastudios/vicky/AuroraVicky.java` — classe `@Mod` (registro da partícula)
-- `mod/auroratotem.mixins.json` — config do mixin client-side
+- `mod/src/com/aurorastudios/vicky/AuroraVicky.java` — classe `@Mod` (partícula, comando e sincronização)
+- `mod/src/com/aurorastudios/vicky/pronouns/` — storage, comando, rede, parser de texto e mixin da tag
+- `mod/auroratotem.mixins.json` — config do mixin da partícula
+- `mod/aurorapronouns.mixins.json` — config do mixin do pronome
 - `mod/totem-src/` — fontes Java do mixin/registro da partícula (referência)
 - `mod/classes/` — `.class` reobfuscados pelo ForgeGradle, copiados para o jar
 - `resourcepack/assets/` — assets reaproveitados (blockstate, modelos, textura, partícula)
@@ -282,6 +299,9 @@ release `server-pack` (com o zip antigo) foi apagada.
   em volta da entidade (redstone continua normal).
 - Tela de resource packs: o mod **não** aparece na lista, então não há como
   desativar por ali.
+- Com o mod também no servidor: `/pronome §dela/ela` deve mostrar `ela/ela` em rosa abaixo
+  do nome de quem definiu; `/pronome limpar` remove; o texto sobrevive a restart (arquivo
+  `config/aurora_pronouns.json`). Outros jogadores veem a tag sem precisar digitar nada.
 
 ## Arquivos
 
@@ -291,7 +311,7 @@ release `server-pack` (com o zip antigo) foi apagada.
 - `tools/patch.ps1` — atalho para Windows
 - `resourcepack/assets/` — assets do caldeirão (blockstate, modelos, textura)
 - `mod/` — fonte do mod (`mods.toml`, `pack.mcmeta`, `@Mod`, mixin e assets)
-- `aurora_vicky-1.0.1.jar` — mod gerado, copiado para `modpack/mods/`
+- `aurora_vicky-1.0.2.jar` — mod gerado, copiado para `modpack/mods/`
 - `tools/build-caldeirao-mod.ps1` — compila o mod e copia para o modpack
 - `NOTICE.md` — atribuição e aviso de modificação
 - `licenses/` — textos das licenças Apache-2.0 e AFL-3.0
