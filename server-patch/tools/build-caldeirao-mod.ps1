@@ -16,7 +16,7 @@
 param(
   [string]$ModSource = (Join-Path $PSScriptRoot '..\mod'),
   [string]$AssetsDir = (Join-Path $PSScriptRoot '..\resourcepack\assets'),
-  [string]$Output = (Join-Path $PSScriptRoot '..\aurora_vicky-1.0.2.jar'),
+  [string]$Output = (Join-Path $PSScriptRoot '..\aurora_vicky-1.0.3.jar'),
   [string]$ModpackMods = (Join-Path $PSScriptRoot '..\..\modpack\mods'),
   [string]$Libraries = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\libraries'),
   [string]$JdkHome = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\runtime\jre-17'),

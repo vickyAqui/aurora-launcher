@@ -52,6 +52,8 @@ const tag = process.env.MODPACK_TAG || 'modpack'
 const modpackDir = path.resolve(process.env.MODPACK_DIR || './modpack')
 const baseUrl = `https://github.com/${repo}/releases/download/${tag}`
 const MANIFEST_ASSET = 'modpack.json'
+// Server-side plugin published in the same release; it is not part of modpack.json.
+const EXTRA_ASSETS = new Set(['SoundtrackplayerPLUGIN-1.0.1-arclight.jar'])
 
 const headers = {
   Authorization: `Bearer ${token}`,
@@ -177,7 +179,7 @@ async function main() {
     else console.log(`  Up to date: ${name}`)
   }
 
-  const keep = new Set([...wanted.keys(), MANIFEST_ASSET])
+  const keep = new Set([...wanted.keys(), MANIFEST_ASSET, ...EXTRA_ASSETS])
   const leftovers = [...remote.values()].filter((asset) => !keep.has(asset.name))
 
   console.log(

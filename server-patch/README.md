@@ -193,10 +193,14 @@ Por que mod e não pack de servidor:
 - assets de mod (`mod_resources`) **não aparecem** na tela de resource packs,
   então o jogador não consegue desativar o modelo.
 
-O mod é `aurora_vicky-1.0.2.jar` (mod id `aurora_vicky`): uma classe `@Mod` (registra o jar, a
+O mod é `aurora_vicky-1.0.3.jar` (mod id `aurora_vicky`): uma classe `@Mod` (registra o jar, a
 partícula customizada e os pronomes) + `META-INF/mods.toml` + `pack.mcmeta` + `assets/` + dois
 mixins client-side. Ele usa `displayTest="IGNORE_SERVER_VERSION"`, então o cliente entra em
 servidores que não têm o mod sem aviso de incompatibilidade.
+
+Na 1.0.3 o jar também inclui as texturas de interface (inventário, botões, fundos de menu) do
+`aurora_mortis_lib`, para garantir que o tema Aurora apareça mesmo quando outro mod carrega
+depois e sobrescreve os assets padrão.
 
 - **Caldeirão e partícula do tótem:** só o cliente precisa do mod (o servidor não precisa).
 - **Pronomes:** o servidor **precisa** do mod — é ele que registra `/pronome`, guarda os dados por
@@ -213,6 +217,7 @@ servidores que não têm o mod sem aviso de incompatibilidade.
 | `auroratotem.mixins.json` + `com/aurora/totem/mixin/TotemOfPossessionMixin` | troca o `DustParticleOptions.REDSTONE` emitido pelo `TotemOfPossessionItem.onUseTick` pela partícula `auroratotem:totem_viola` |
 | `assets/auroratotem/particles/totem_viola.json` + `textures/particle/totem_viola.png` | sprite violeta usado pela partícula (imagem `viola.png` fornecida pelo usuário) |
 | `aurorapronouns.mixins.json` + `com/aurorastudios/vicky/pronouns/mixin/PronounNameTagMixin` | desenha o pronome como segunda linha menor abaixo da name tag |
+| `assets/minecraft/textures/gui/**` | interface Aurora (botões, inventário, menus) do `aurora_mortis_lib`, replicada aqui para garantir precedência |
 
 ### Pronomes
 
@@ -278,7 +283,7 @@ O `build-caldeirao-mod.ps1` usa o JDK 17 do launcher
 (`%APPDATA%\.aurora_studios\aurora-studios\runtime\jre-17`) e jars das bibliotecas do launcher
 (`javafmllanguage`, `forge-universal`, `fmlcore`, `eventbus` e o `client-srg`) como classpath,
 além dos `.class` em `mod/classes/`. Se o jar mudar de conteúdo, **suba a versão no nome**
-(`aurora_vicky-1.0.2.jar`): o launcher compara tamanho e SHA1 do manifesto.
+(`aurora_vicky-1.0.3.jar`): o launcher compara tamanho e SHA1 do manifesto.
 
 Para mudar o sprite, substitua `resourcepack/assets/auroratotem/textures/particle/totem_viola.png`
 e recompile o jar. Para mudar o código do mixin, edite `mod/totem-src/`, recompile com ForgeGradle
@@ -309,9 +314,9 @@ release `server-pack` (com o zip antigo) foi apagada.
 - `tools/patch.jar` — patcher autocontido (Java 17+)
 - `tools/Patch.java` — fonte do patcher
 - `tools/patch.ps1` — atalho para Windows
-- `resourcepack/assets/` — assets do caldeirão (blockstate, modelos, textura)
+- `resourcepack/assets/` — assets do caldeirão (blockstate, modelos, textura) e da interface Aurora
 - `mod/` — fonte do mod (`mods.toml`, `pack.mcmeta`, `@Mod`, mixin e assets)
-- `aurora_vicky-1.0.2.jar` — mod gerado, copiado para `modpack/mods/`
+- `aurora_vicky-1.0.3.jar` — mod gerado, copiado para `modpack/mods/`
 - `tools/build-caldeirao-mod.ps1` — compila o mod e copia para o modpack
 - `NOTICE.md` — atribuição e aviso de modificação
 - `licenses/` — textos das licenças Apache-2.0 e AFL-3.0
