@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,6 +24,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(EntityRenderer.class)
 public class PronounNameTagMixin {
+    private static final Logger LOGGER = LogManager.getLogger("AuroraPronounsRender");
+    private static long aurora$ultimoLog = 0L;
     private static final float SCALE = 0.72F;
     private static final float LINE_Y = 15.0F;
 
@@ -39,6 +43,11 @@ public class PronounNameTagMixin {
         Component pronoun = PronounClientCache.get(entity.m_20148_());
         if (pronoun == null) {
             return;
+        }
+        long agora = System.currentTimeMillis();
+        if (agora - aurora$ultimoLog > 5000L) {
+            aurora$ultimoLog = agora;
+            LOGGER.info("[aurora-pronouns] desenhando '{}' em {}", pronoun.getString(), entity.m_7755_().getString());
         }
 
         Font font = Minecraft.m_91087_().f_91062_;

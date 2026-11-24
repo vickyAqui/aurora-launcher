@@ -22,10 +22,15 @@ aurora_vicky-1.0.2.jar (caldeirão + partículas do totem + pronomes)
   SHA256  27F4ED84616751AA2FAC4B43273718587312E1B6668D006F4CA2CA9535E76FFB
   size    29879
 
-aurora_vicky-1.0.3.jar (caldeirão + totem + pronomes + GUI do Aurora Mortis, usado no modpack)
+aurora_vicky-1.0.3.jar (caldeirão + totem + pronomes + GUI do Aurora Mortis)
   SHA1    2C66852C14E024F355EEAC53455BFAE557DE3DB7
   SHA256  124278B20838A4D24B0A354A0CE5AB4885AC73511BC9A8352EF6037EE42C5C72
   size    295123
+
+aurora_vicky-1.0.4.jar (igual 1.0.3 + logs de diagnóstico do /pronome, usado no modpack)
+  SHA1    23D766E081571998CEB15E9A18E2D1EC809EB585
+  SHA256  56970AE1680478C4922267FAF287070C4D8DEB4046BE61CDC39569082644F49F
+  size    295965
 
 resourcepack/assets/minecraft/models/block/brewing_stand.json (modelo do caldeirão)
   SHA1    D32E58E103EA0F6C38F9D99B6F32FA379D1F2CA8

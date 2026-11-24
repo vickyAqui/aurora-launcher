@@ -11,9 +11,12 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.UUID;
 import java.util.function.Supplier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** One small packet used both for setting and for clearing a pronoun. */
 public final class PronounNetwork {
+    private static final Logger LOGGER = LogManager.getLogger("AuroraPronouns");
     private static final String VERSION = "1";
     private static SimpleChannel channel;
 
@@ -62,6 +65,7 @@ public final class PronounNetwork {
 
         public static void handle(SetPronounPacket packet, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().setPacketHandled(true);
+            LOGGER.info("[aurora-pronouns] packet recebido uuid={} raw='{}'", packet.uuid, packet.raw);
             PronounClientCache.set(packet.uuid, packet.raw);
         }
     }

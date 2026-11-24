@@ -11,9 +11,12 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** /pronome <texto> — each player picks their own pronoun. /pronome limpar removes it. */
 public final class PronounCommand {
+    private static final Logger LOGGER = LogManager.getLogger("AuroraPronouns");
     private PronounCommand() {
     }
 
@@ -43,6 +46,7 @@ public final class PronounCommand {
         UUID uuid = player.m_20148_();
         PronounStorage.set(uuid, raw);
         PronounNetwork.sendToAll(uuid, raw);
+        LOGGER.info("[aurora-pronouns] /pronome definido para {} ({}): '{}'", player.m_20148_(), player.m_7755_().getString(), raw);
 
         MutableComponent feedback = Component.m_237113_("§aPronome definido: ");
         feedback.m_7220_(PronounText.parse(raw));
