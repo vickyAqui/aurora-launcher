@@ -209,7 +209,9 @@ separado `auroratotem`) e adiciona logs (`AuroraPronouns` e `AuroraPronounsRende
 etapas do `/pronome` para diagnosticar por que o texto não aparece em terceira pessoa. As classes
 pré-compiladas do tótem foram patchadas: o lambda de `SpriteParticleRegistration` usa o nome SRG
 `m_107419_` exigido pelo Forge 47.4.10 (o nome `create` do ForgeGradle causava `AbstractMethodError`
-ao registrar o provider).
+ao registrar o provider). Os dois arquivos `*.mixins.json` do jar precisam estar declarados em
+`[[mixins]]` no `mods.toml`: sem isso o FML carrega o mod mas ignora os mixins em silêncio, então o
+packet do pronome chegava ao cliente e nada era desenhado na name tag.
 
 - **Caldeirão e partícula do tótem:** só o cliente precisa do mod (o servidor não precisa).
 - **Pronomes:** o servidor **precisa** do mod — é ele que registra `/pronome`, guarda os dados por
