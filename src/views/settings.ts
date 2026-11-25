@@ -14,6 +14,7 @@ import { CpmViewer } from '../cpmViewer'
 import { initPerformanceTab, refreshPerformanceTab } from './performance'
 import { initModDiagnosis } from './modDiagnosis'
 import type { UpdateProgress } from '../../electron/handlers/update'
+import { clampMemoryGB, maxSafeMemoryGB } from '../performancePresets'
 
 const resolutionList = [
   { label: 'Auto (default)', value: '854x480', width: 854, height: 480 },
@@ -29,14 +30,16 @@ const resolutionList = [
 ]
 
 let currentSettings: IGameSettings
+let systemTotalMem = 8
 const customSelects = new Map<string, CustomSelect>()
 
 export async function initSettings() {
   const sysInfo = await system.getInfo()
   currentSettings = await settings.get()
+  systemTotalMem = sysInfo.totalMem
 
   initUIListeners()
-  initDualSlider(sysInfo.totalMem)
+  initDualSlider(sysInfo.maxMemory ?? maxSafeMemoryGB(sysInfo.totalMem))
   initFormValues(sysInfo.resolution)
   enhanceSettingsSelects()
   initJavaDetection()
@@ -147,8 +150,8 @@ function initFormValues(resolution: { width: number; height: number }) {
   const launcherActionSelect = document.getElementById('launcher-action-select') as HTMLSelectElement
   const javaSelect = document.getElementById('java-select') as HTMLSelectElement
 
-  if (minInput) minInput.value = currentSettings.memory.min + ''
-  if (maxInput) maxInput.value = currentSettings.memory.max + ''
+  if (minInput) minInput.value = clampMemoryGB(currentSettings.memory.min, systemTotalMem) + ''
+  if (maxInput) maxInput.value = clampMemoryGB(currentSettings.memory.max, systemTotalMem) + ''
   if (resolutionSelect) {
     const availableResolutions = getAvailableResolutions(resolution)
     resolutionSelect.innerHTML = ''
@@ -179,8 +182,8 @@ async function saveSettings() {
   const newSettings: IGameSettings = {
     ...currentSettings,
     memory: {
-      min: parseFloat(minInput.value),
-      max: parseFloat(maxInput.value)
+      min: clampMemoryGB(parseFloat(minInput.value), systemTotalMem),
+      max: clampMemoryGB(parseFloat(maxInput.value), systemTotalMem)
     },
     resolution: {
       height: resolutionList.find((r) => r.value === resolutionSelect.value)?.height ?? 854,

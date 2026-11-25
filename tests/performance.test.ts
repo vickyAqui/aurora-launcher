@@ -18,6 +18,8 @@ import {
 import {
   PERFORMANCE_PROFILES,
   buildJvmArgs,
+  clampMemoryGB,
+  maxSafeMemoryGB,
   suggestMemoryGB,
   type PerformanceProfileId
 } from '../src/performancePresets'
@@ -99,6 +101,14 @@ describe('performance presets', () => {
     expect(suggestMemoryGB(16)).toBe(6)
     expect(suggestMemoryGB(32)).toBe(8)
     expect(suggestMemoryGB(0)).toBe(4)
+  })
+
+  it('never allows a heap larger than the machine can afford', () => {
+    expect(maxSafeMemoryGB(8)).toBe(4)
+    expect(clampMemoryGB(10, 8)).toBe(4)
+    expect(clampMemoryGB(10, 16)).toBe(6)
+    expect(clampMemoryGB(10, 32)).toBe(8)
+    expect(clampMemoryGB(Number.NaN, 8)).toBe(4)
   })
 
   it('builds Aikar flags without duplicating the heap size', () => {

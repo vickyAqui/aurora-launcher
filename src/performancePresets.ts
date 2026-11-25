@@ -416,6 +416,30 @@ export function suggestMemoryGB(totalMemGB: number): number {
 }
 
 /**
+ * Maior heap que o launcher deve aceitar nesta máquina, em GB.
+ *
+ * O slider já vinha limitado à RAM física (16 GB no máximo), mas isso ainda permite
+ * `-Xmx10G` em quem tem 8 GB — o jogo passa a usar swap e trava em ciclos de GC.
+ * O limite é a mesma recomendação usada no botão “Aplicar perfil”, que deixa
+ * memória livre para o sistema, o navegador e o próprio JVM fora do heap.
+ */
+export function maxSafeMemoryGB(totalMemGB: number): number {
+  return suggestMemoryGB(totalMemGB)
+}
+
+/**
+ * Aplica o limite de memória da máquina a um valor pedido pelo jogador.
+ *
+ * Usado tanto ao salvar as configurações quanto imediatamente antes do launch,
+ * para que um `settings.json` antigo não consiga abrir o jogo com heap excessivo.
+ */
+export function clampMemoryGB(requested: number, totalMemGB: number): number {
+  const cap = maxSafeMemoryGB(totalMemGB)
+  const value = Number.isFinite(requested) ? Math.round(requested * 2) / 2 : 4
+  return Math.max(0.5, Math.min(cap, value))
+}
+
+/**
  * JVM flags applied on top of the heap size chosen by the launcher.
  *
  * This is the Aikar/G1 set without `-Xmx`/`-Xms`: `eml-lib` already writes those from the memory
