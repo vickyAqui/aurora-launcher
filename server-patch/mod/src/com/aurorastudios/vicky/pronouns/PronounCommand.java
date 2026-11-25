@@ -44,9 +44,9 @@ public final class PronounCommand {
         }
 
         UUID uuid = player.m_20148_();
+        LOGGER.info("[aurora-pronouns] /pronome definido para {} ({}): '{}'", player.m_20148_(), player.m_7755_().getString(), raw);
         PronounStorage.set(uuid, raw);
         PronounNetwork.sendToAll(uuid, raw);
-        LOGGER.info("[aurora-pronouns] /pronome definido para {} ({}): '{}'", player.m_20148_(), player.m_7755_().getString(), raw);
 
         MutableComponent feedback = Component.m_237113_("§aPronome definido: ");
         feedback.m_7220_(PronounText.parse(raw));

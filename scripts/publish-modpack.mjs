@@ -25,7 +25,7 @@
  */
 import { promises as fs, readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
-import { buildManifestEntries, sanitizeAssetName, validateManifest, walk } from './modpack-utils.mjs'
+import { assetNameFor, buildManifestEntries, sanitizeAssetName, validateManifest, walk } from './modpack-utils.mjs'
 
 const loadEnv = (file = '.env') => {
   const abs = path.resolve(file)
@@ -156,7 +156,7 @@ async function main() {
 
   const wanted = new Map()
   for (const file of files) {
-    const name = sanitizeAssetName(file.name)
+    const name = assetNameFor(file)
     const clash = wanted.get(name)
     if (clash) {
       console.error(`\nERROR: "${file.name}" and "${clash.name}" are both stored by GitHub as "${name}".`)
@@ -215,6 +215,10 @@ async function main() {
   // even if GitHub folds a name differently than we expect.
   entries = entries.map((entry) => {
     const url = entry.type === 'MOD' ? urls.get(sanitizeAssetName(entry.name)) : undefined
+    if (!url && entry.rel?.startsWith('kubejs/')) {
+      const kubejsUrl = urls.get(assetNameFor(entry))
+      if (kubejsUrl) return { ...entry, url: kubejsUrl }
+    }
     return url ? { ...entry, url } : entry
   })
 

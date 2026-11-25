@@ -24,6 +24,21 @@ export function sanitizeAssetName(name) {
     .replace(/^\.|\.$/g, '')
 }
 
+/**
+ * Name used for a file in the GitHub release. Release assets must have unique
+ * names, but KubeJS resource packs mirror Minecraft's own file names
+ * (`logo.png`, `brewing_stand.json`, …) in several folders. Prefixing those
+ * with their relative path keeps every upload distinct while the manifest's
+ * `name`/`path` still tell the launcher where to write the file on disk.
+ */
+export function assetNameFor(file) {
+  const rel = file.rel ?? `${file.path ?? ''}${file.name ?? ''}`
+  if (rel.startsWith('kubejs/')) {
+    return rel.replace(/[^\w.-]+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '')
+  }
+  return sanitizeAssetName(file.name)
+}
+
 export function sha1(filePath) {
   const hash = createHash('sha1')
   const stream = createReadStream(filePath)
@@ -80,7 +95,7 @@ export function toManifestPath(rel) {
  */
 export async function buildManifestEntries({ folders, files, baseUrl, urlFor }) {
   const entries = []
-  const urlOf = (entry) => urlFor?.(entry) ?? `${baseUrl}/${encodeURIComponent(sanitizeAssetName(entry.name))}`
+  const urlOf = (entry) => urlFor?.(entry) ?? `${baseUrl}/${encodeURIComponent(assetNameFor(entry))}`
 
   for (const folder of folders) {
     entries.push({
@@ -95,7 +110,7 @@ export async function buildManifestEntries({ folders, files, baseUrl, urlFor }) 
     // Non-mod files such as CraftPresence settings belong in their game-directory folder. EML Lib
     // supports CONFIG entries and uses the same path/name resolution as MOD entries, while keeping
     // the manifest validator from treating a config file as a jar that must live under mods/.
-    const type = file.rel.startsWith('config/') ? 'CONFIG' : 'MOD'
+    const type = file.rel.startsWith('config/') || file.rel.startsWith('kubejs/') ? 'CONFIG' : 'MOD'
     entries.push({
       name: file.name,
       path: toManifestPath(file.rel),

@@ -1,6 +1,6 @@
 package com.aurora.totem.client;
 
-import com.aurora.totem.AuroraTotemMod;
+import com.aurorastudios.vicky.AuroraVicky;
 import com.aurora.totem.registry.ModParticles;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -15,7 +15,7 @@ import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = AuroraTotemMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = AuroraVicky.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientParticleSetup {
     @SubscribeEvent
     public static void onRegisterProviders(RegisterParticleProvidersEvent event) {

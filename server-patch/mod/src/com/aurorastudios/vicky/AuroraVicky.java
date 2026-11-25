@@ -15,6 +15,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Mod de recursos: carrega os assets do jar (modelo e textura do Caldeirao
@@ -30,8 +32,10 @@ import java.util.UUID;
 @Mod(AuroraVicky.MOD_ID)
 public final class AuroraVicky {
     public static final String MOD_ID = "aurora_vicky";
+    private static final Logger LOGGER = LogManager.getLogger("AuroraPronouns");
 
     public AuroraVicky() {
+        LOGGER.info("[aurora-pronouns] === MOD CARREGADO (aurora_vicky 1.0.5) ===");
         ModParticles.PARTICLES.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         // The channel must be created during mod construction, before the
@@ -61,6 +65,8 @@ public final class AuroraVicky {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
+        LOGGER.info("[aurora-pronouns] jogador logado: {} ({} pronomes salvos)",
+                player.m_7755_().getString(), PronounStorage.all().size());
         PronounStorage.all().forEach((stored, raw) ->
                 PronounNetwork.sendTo(player, UUID.fromString(stored), raw));
     }

@@ -16,7 +16,7 @@
 param(
   [string]$ModSource = (Join-Path $PSScriptRoot '..\mod'),
   [string]$AssetsDir = (Join-Path $PSScriptRoot '..\resourcepack\assets'),
-  [string]$Output = (Join-Path $PSScriptRoot '..\aurora_vicky-1.0.4.jar'),
+  [string]$Output = (Join-Path $PSScriptRoot '..\aurora_vicky-1.0.5.jar'),
   [string]$ModpackMods = (Join-Path $PSScriptRoot '..\..\modpack\mods'),
   [string]$Libraries = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\libraries'),
   [string]$JdkHome = (Join-Path $env:APPDATA '\.aurora_studios\aurora-studios\runtime\jre-17'),
@@ -75,20 +75,61 @@ try {
   Copy-Item (Join-Path $ModSource 'pack.mcmeta') $stage
   Copy-Item $AssetsDir (Join-Path $stage 'assets') -Recurse
 
-  # Totem of Possession particle swap (mixin). The classes are prebuilt with
-  # ForgeGradle and reobfuscated to SRG names; see mod/totem-src for sources.
+  # Totem particle swap classes are prebuilt with ForgeGradle and reobfuscated
+  # to SRG names; pronouns are compiled from source. Both use aurora_vicky.
   $classesDir = Join-Path $ModSource 'classes'
   if (-not (Test-Path $classesDir)) { throw "Prebuilt classes not found: $classesDir" }
   Copy-Item (Join-Path $classesDir 'com') (Join-Path $stage 'com') -Recurse -Force
   Copy-Item (Join-Path $ModSource 'auroratotem.mixins.json') $stage -Force
   Copy-Item (Join-Path $ModSource 'aurorapronouns.mixins.json') $stage -Force
 
-  $sources = Get-ChildItem (Join-Path $ModSource 'src') -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+  $sources = @()
+  $sources += Get-ChildItem (Join-Path $ModSource 'src') -Recurse -Filter *.java | ForEach-Object { $_.FullName }
   if (-not $sources) { throw 'No Java sources found.' }
+
+  # The totem classes were originally compiled with ForgeGradle and are
+  # prebuilt/reobfuscated to SRG names. Only their hard-coded mod id is patched
+  # here (auroratotem -> aurora_vicky) so they stay compatible with the SRG
+  # classpath used by this script.
+  $patchedClasses = @(
+    'com\aurora\totem\registry\ModParticles.class',
+    'com\aurora\totem\client\ClientParticleSetup.class'
+  )
+  foreach ($relative in $patchedClasses) {
+    $target = Join-Path $stage $relative
+    $bytes = [IO.File]::ReadAllBytes($target)
+    $oldBytes = [Text.Encoding]::UTF8.GetBytes('auroratotem')
+    $newBytes = [Text.Encoding]::UTF8.GetBytes('aurora_vicky')
+    $patched = $false
+    for ($i = 0; $i -le $bytes.Length - $oldBytes.Length; $i++) {
+      $match = $true
+      for ($j = 0; $j -lt $oldBytes.Length; $j++) {
+        if ($bytes[$i + $j] -ne $oldBytes[$j]) { $match = $false; break }
+      }
+      if ($match) {
+        for ($j = 0; $j -lt $newBytes.Length; $j++) { $bytes[$i + $j] = $newBytes[$j] }
+        $patched = $true
+        break
+      }
+    }
+    if (-not $patched) {
+      # Classes are already patched (idempotent rebuild) — verify the new id.
+      $newFound = $false
+      for ($i = 0; $i -le $bytes.Length - $newBytes.Length; $i++) {
+        $match = $true
+        for ($j = 0; $j -lt $newBytes.Length; $j++) {
+          if ($bytes[$i + $j] -ne $newBytes[$j]) { $match = $false; break }
+        }
+        if ($match) { $newFound = $true; break }
+      }
+      if (-not $newFound) { throw "Neither auroratotem nor aurora_vicky found in $relative" }
+    }
+    [IO.File]::WriteAllBytes($target, $bytes)
+  }
 
   # Built as an array on purpose: passing -classpath inline makes PowerShell 5.1
   # hand javac a broken argument list ("invalid flag: :").
-  $classpath = (@($ForgeJar, $ForgeUniversal, $MinecraftSrg, $FmlCore, $EventBus) + $ExtraLibs + @((Join-Path $ModSource 'classes'))) -join ';'
+  $classpath = (@($ForgeJar, $ForgeUniversal, $MinecraftSrg, $FmlCore, $EventBus) + $ExtraLibs + @($classesDir)) -join ';'
   # No refmap is needed: every mixin target/injector uses SRG names with remap=false.
   $javacArgs = @('-encoding', 'UTF-8', '-source', '17', '-target', '17', '-proc:none',
     '-classpath', $classpath, '-d', $stage) + $sources

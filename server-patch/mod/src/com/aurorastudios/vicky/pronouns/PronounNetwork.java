@@ -38,10 +38,12 @@ public final class PronounNetwork {
     }
 
     public static void sendToAll(UUID uuid, String raw) {
+        LOGGER.info("[aurora-pronouns] sendToAll uuid={} raw='{}'", uuid, raw);
         channel.send(PacketDistributor.ALL.noArg(), new SetPronounPacket(uuid, raw));
     }
 
     public static void sendTo(ServerPlayer player, UUID uuid, String raw) {
+        LOGGER.info("[aurora-pronouns] sendTo {} uuid={} raw='{}'", player.m_7755_().getString(), uuid, raw);
         channel.send(PacketDistributor.PLAYER.with(() -> player), new SetPronounPacket(uuid, raw));
     }
 

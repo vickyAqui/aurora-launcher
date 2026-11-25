@@ -47,7 +47,7 @@ public class PronounNameTagMixin {
         long agora = System.currentTimeMillis();
         if (agora - aurora$ultimoLog > 5000L) {
             aurora$ultimoLog = agora;
-            LOGGER.info("[aurora-pronouns] desenhando '{}' em {}", pronoun.getString(), entity.m_7755_().getString());
+            LOGGER.info("[aurora-pronouns] DESENHANDO '{}' em {}", pronoun.getString(), entity.m_7755_().getString());
         }
 
         Font font = Minecraft.m_91087_().f_91062_;
