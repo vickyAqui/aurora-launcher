@@ -126,7 +126,7 @@ Para alterar a identidade visual, substitua os arquivos da pasta `build/`:
 | ---------- | --------------------- | ------------------------ |
 | Windows    | `npm run release:win` | `.exe` (instalador NSIS) |
 | macOS      | `npm run release:mac` | `.dmg` (imagem de disco) |
-| Linux      | `npm run release:lin` | `.AppImage`              |
+| Linux      | `npm run release:lin` | `.AppImage` e `.deb`     |
 
 Os arquivos compilados ficam na pasta `release/`.
 

@@ -3,6 +3,11 @@
 Guia para quando o `Aurora-Studios-<versão>.AppImage` não abre em distribuições baseadas em
 Ubuntu/Debian (ZorinOS, Ubuntu, Mint, Pop!\_OS, elementary...).
 
+> **ZorinOS 18 (Ubuntu 24.04):** o duplo-clique não faz nada se o `libfuse2t64` não estiver
+> instalado. Rode os comandos da [seção 3](#3-dlopen-error-loading-libfuso2-ou-nada-acontece).
+> A partir da próxima release também publicamos um `.deb`, que não depende de FUSE e é a forma
+> recomendada no Zorin 18.
+
 ## 1. Primeiro: rode pelo terminal
 
 Abrir pelo terminal mostra o erro real, que o duplo-clique esconde.
