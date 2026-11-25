@@ -127,6 +127,16 @@ try {
     [IO.File]::WriteAllBytes($target, $bytes)
   }
 
+  # The prebuilt ClientParticleSetup was compiled with ForgeGradle, whose lambda
+  # for SpriteParticleRegistration was named "create". Forge 47.4.10 dispatches
+  # that interface method as m_107419_, so an unpatched lambda crashes the game
+  # with AbstractMethodError during RegisterParticleProvidersEvent.
+  $particleSetup = [IO.File]::ReadAllBytes((Join-Path $stage 'com\aurora\totem\client\ClientParticleSetup.class'))
+  $text = [Text.Encoding]::UTF8.GetString($particleSetup)
+  if (-not $text.Contains('m_107419_') -or $text.Contains('create')) {
+    throw 'ClientParticleSetup.class lambda must use the SRG name m_107419_ (not create).'
+  }
+
   # Built as an array on purpose: passing -classpath inline makes PowerShell 5.1
   # hand javac a broken argument list ("invalid flag: :").
   $classpath = (@($ForgeJar, $ForgeUniversal, $MinecraftSrg, $FmlCore, $EventBus) + $ExtraLibs + @($classesDir)) -join ';'

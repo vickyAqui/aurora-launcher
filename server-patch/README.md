@@ -206,7 +206,10 @@ depois e sobrescreve os assets padrão. Porém o Connector carrega `vanilla` **d
 `modpack/kubejs/assets/minecraft/`, que o KubeJS carrega por último (precedência máxima).
 A 1.0.5 também unifica a partícula do tótem no mod id `aurora_vicky` (não existe mais o mod
 separado `auroratotem`) e adiciona logs (`AuroraPronouns` e `AuroraPronounsRender`) em todas as
-etapas do `/pronome` para diagnosticar por que o texto não aparece em terceira pessoa.
+etapas do `/pronome` para diagnosticar por que o texto não aparece em terceira pessoa. As classes
+pré-compiladas do tótem foram patchadas: o lambda de `SpriteParticleRegistration` usa o nome SRG
+`m_107419_` exigido pelo Forge 47.4.10 (o nome `create` do ForgeGradle causava `AbstractMethodError`
+ao registrar o provider).
 
 - **Caldeirão e partícula do tótem:** só o cliente precisa do mod (o servidor não precisa).
 - **Pronomes:** o servidor **precisa** do mod — é ele que registra `/pronome`, guarda os dados por

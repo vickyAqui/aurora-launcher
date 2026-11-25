@@ -32,10 +32,10 @@ aurora_vicky-1.0.4.jar (igual 1.0.3 + logs de diagnóstico do /pronome)
   SHA256  56970AE1680478C4922267FAF287070C4D8DEB4046BE61CDC39569082644F49F
   size    295965
 
-aurora_vicky-1.0.5.jar (logs de diagnóstico completos do /pronome + totem unificado no mod id aurora_vicky, usado no modpack)
-  SHA1    E7094BC9BFDA2198D9AA5B2086B6F5D15496E460
-  SHA256  BBAC41C37388B669EE00A53D134B010CDC917B58E14A2E3F007F2E7CB62CD47F
-  size    296365
+aurora_vicky-1.0.5.jar (logs de diagnóstico completos do /pronome, totem unificado no mod id aurora_vicky e lambda do provider com nome SRG m_107419_, usado no modpack)
+  SHA1    F7740CEC8846CA678091158888A4CC31D216C355
+  SHA256  F7AAF7C01FCFDAD290AedeAA9401A77C129D40E0C40D2DF1E63D9CB1377969BA
+  size    296370
 
 resourcepack/assets/minecraft/models/block/brewing_stand.json (modelo do caldeirão)
   SHA1    D32E58E103EA0F6C38F9D99B6F32FA379D1F2CA8
