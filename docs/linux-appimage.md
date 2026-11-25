@@ -5,8 +5,8 @@ Ubuntu/Debian (ZorinOS, Ubuntu, Mint, Pop!\_OS, elementary...).
 
 > **ZorinOS 18 (Ubuntu 24.04):** o duplo-clique não faz nada se o `libfuse2t64` não estiver
 > instalado. Rode os comandos da [seção 3](#3-dlopen-error-loading-libfuso2-ou-nada-acontece).
-> A partir da próxima release também publicamos um `.deb`, que não depende de FUSE e é a forma
-> recomendada no Zorin 18.
+> A partir da v1.2.8 também publicamos um `.deb`, que não depende de FUSE e é a forma recomendada
+> no Zorin 18.
 
 ## 1. Primeiro: rode pelo terminal
 
@@ -60,7 +60,7 @@ funcionar dentro do AppImage. Teste:
 ```
 
 Se abrir, o problema é o sandbox. Para uso diário, crie um atalho `.desktop` com `--no-sandbox` ou
-instale a versão `.deb` (quando disponível), que configura o sandbox corretamente.
+instale a versão `.deb` (disponível a partir da v1.2.8), que configura o sandbox corretamente.
 
 > `--no-sandbox` reduz o isolamento do processo. Use só se as outras opções não funcionarem.
 
