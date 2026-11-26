@@ -7,6 +7,7 @@ Dois scripts de servidor **independentes** (um não interfere no outro):
 | `aurora_mortis_biomes.js` | operadores (OP) | jogador troca de **sub-bioma** dentro do mesmo domínio do mod |
 | `aurora_mortis_fronteira.js` | operadores (OP) e, na travessia entre domínios, quem cruzou | jogador entra, sai ou passa de um domínio do mod para outro |
 | `aurora_born_in_chaos_spawns.js` | — (controle de spawn) | spawn natural de mobs do Born in Chaos |
+| `aurora_ajuda.js` | operadores (OP) | jogador usa `/ajuda {motivo}` |
 
 Não alteram o mod nem o modpack: usam o KubeJS que já está no pack.
 
@@ -17,6 +18,20 @@ spawn natural é cancelado; spawns de spawners e de ovos de spawn não são
 afetados. O comando `/bornspawns` (alias `/aurorabornspawns`) mostra o estado e o
 bioma liberado; `/bornspawns on|off` alterna o bloqueio em quente.
 
+O `aurora_ajuda.js` implementa `/ajuda {motivo}`: qualquer jogador pode pedir
+ajuda e **todos os operadores online** recebem no chat:
+
+```
+[AJUDA] NomeDoJogador: motivo que ele digitou
+```
+
+É mensagem de chat, sem som e sem título. Quem pediu vê só uma confirmação
+privada (`[Ajuda] Enviado aos operadores (N).`) e tem **cooldown de 30 s** por
+jogador. O motivo é livre (texto até 160 caracteres) e aparece no `/help`.
+Os destinatários vêm de `kubejs/config/aurora_ops.json`, do `ops.json` e de
+`isOp()` — a mesma lógica dos avisos de bioma/fronteira. Depois de copiar o
+arquivo, `/kubejs reload server_scripts` já habilita o interceptador; o `/help`
+com o argumento aparece após restart do servidor.
 
 > **Divisão de trabalho (importante):** só o `aurora_mortis_fronteira.js`
 > anuncia cruzamento de fronteira no chat (para os OPs e, na travessia entre
