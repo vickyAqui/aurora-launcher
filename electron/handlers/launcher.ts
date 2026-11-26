@@ -1,5 +1,4 @@
 import { ipcMain, BrowserWindow, app } from 'electron'
-import os from 'node:os'
 import { Launcher } from 'eml-lib'
 import type { Account } from 'eml-lib'
 import type { IGameSettings } from './settings'
@@ -9,7 +8,6 @@ import { endSession, startSession } from './stats'
 import { ModpackUnavailableError, prepareMods, type IPreparedMods } from './mods'
 import { applySelectedModel } from './cpm'
 import { applyStoredPerformanceProfile } from '../performance'
-import { clampMemoryGB } from '../../src/performancePresets'
 import { getGameDir } from '../gamedir'
 import { ensureFreshAccount } from './auth'
 
@@ -170,17 +168,12 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
     // O jogo regrava `options.txt` e os configs ao fechar. O perfil de desempenho é reaplicado
     // agora, e as flags JVM vêm do mesmo perfil. O valor do slider de RAM vence o valor salvo.
     let javaArgs: string[] = []
-    // Última linha de defesa: um settings.json antigo pode ter 10 GB salvos mesmo em uma
-    // máquina de 8 GB. Nunca deixe esse valor chegar ao eml-lib nem ao perfil salvo.
-    const totalMemGB = Math.round(os.totalmem() / 1024 / 1024 / 1024)
-    const heapMax = clampMemoryGB(settings.memory.max, totalMemGB)
-    const heapMin = Math.min(heapMax, Math.max(0.5, clampMemoryGB(settings.memory.min, totalMemGB)))
     try {
       const applied = applyStoredPerformanceProfile(
         getGameDir(slug),
         app.getPath('userData'),
         slug,
-        heapMax
+        settings.memory.max
       )
       if (applied?.javaArgs) javaArgs = applied.javaArgs
     } catch (err) {
@@ -201,8 +194,8 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
         },
         java: javaWithArgs,
         memory: {
-          min: heapMin * 1024,
-          max: heapMax * 1024
+          min: +settings.memory.min * 1024,
+          max: +settings.memory.max * 1024
         },
         window: {
           width: settings.resolution.width,

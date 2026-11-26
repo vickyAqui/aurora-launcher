@@ -10,13 +10,14 @@ import {
   applyPerformanceProfile,
   hasSelectedShaderPack,
   listBackupFiles,
+  normalizeMemory,
   readPerformanceState,
   restorePerformanceProfile,
   type IPerformanceApplyResult,
   type IPerformanceRestoreResult,
   type IPerformanceState
 } from '../performance'
-import { clampMemoryGB, suggestMemoryGB, type PerformanceProfileId } from '../../src/performancePresets'
+import { suggestMemoryGB, type PerformanceProfileId } from '../../src/performancePresets'
 
 export type { IPerformanceApplyResult, IPerformanceRestoreResult, IPerformanceState }
 
@@ -101,14 +102,13 @@ export function registerPerformanceHandlers() {
         const userDataDir = app.getPath('userData')
         const previous = readPerformanceState(userDataDir, targetSlug)
         const settings = readGameSettings()
-        const totalMemGB = Math.round(os.totalmem() / 1024 / 1024 / 1024)
 
         const result = applyPerformanceProfile({
           gameDir: getGameDir(targetSlug),
           userDataDir,
           slug: targetSlug,
           profileId,
-          memory: clampMemoryGB(memory, totalMemGB),
+          memory: normalizeMemory(memory),
           // The memory from before the first apply is what Undo restores. Applying another profile
           // keeps it, so switching profiles never overwrites the player's original choice.
           previousMemory: previous ? previous.previousMemory : settings.memory
