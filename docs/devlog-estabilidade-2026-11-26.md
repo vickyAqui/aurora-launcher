@@ -47,7 +47,9 @@ Registro isolado das mudanças e do diagnóstico. **Sem restart do servidor, sem
    - `aurora_mortis_fronteira.js`: polling de bioma de 5 → **10 ticks** (o debounce continua em 40 ticks, então a detecção não perde travessias).
    - `aurora_mortis_fronteira.js`, `aurora_mortis_biomes.js` e `aurora_ajuda.js`: cache de **30 s** do `aurora_ops.json`. Antes cada aviso podia fazer até 8 tentativas de leitura (2 paths × 2 variantes × 2 formas de caminho) para os 76 operadores.
 
-Validação: `npm run build` OK; `npx vitest run tests/performance.test.ts` → 23/23 testes OK; `node --check` passou nos **26** scripts KubeJS.
+11. Partícula do Totem of Possession: o efeito grande **não** era o `DustParticleOptions` já interceptado pelo mixin, e sim `alexscaves:totem_explosion` (disparado por `TotemExplosion`), que ainda usava os 16 sprites de explosão da vanilla. Adicionado override em `modpack/kubejs/assets/alexscaves/particles/totem_explosion.json` (16 frames apontando para `aurora_vicky:totem_viola`), com cópia idêntica em `server-patch/resourcepack/assets/alexscaves/` para entrar no jar numa próxima build. O cliente aplica com **F3+T** (reload de recursos), sem restart do servidor e sem novo jar.
+
+Validação: `npm run build` OK; `npx vitest run tests/performance.test.ts` → 23/23 testes OK; `node --check` passou nos **26** scripts KubeJS; ambos os JSON validados com `JSON.parse`.
 
 ## Não alterado / pendente
 
