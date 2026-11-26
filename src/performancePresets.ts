@@ -400,14 +400,19 @@ export function getPerformanceProfile(id: PerformanceProfileId): IPerformancePro
 export function suggestMemoryGB(totalMemGB: number): number {
   if (!Number.isFinite(totalMemGB) || totalMemGB <= 0) return 4
 
+  // Alinhado ao `recommendedMemory` de config/memorysettings.json do modpack,
+  // arredondado para GB inteiros. A antiga tabela chegava a 8 GB em qualquer
+  // máquina com mais de 24 GB, enquanto o pack recomenda 5-7 GB nessa faixa.
   const table: Array<[number, number]> = [
     [4, 2],
     [6, 3],
     [8, 4],
     [12, 5],
-    [16, 6],
-    [24, 7],
-    [Number.POSITIVE_INFINITY, 8]
+    [16, 7],
+    [24, 8],
+    [32, 9],
+    [64, 10],
+    [Number.POSITIVE_INFINITY, 10]
   ]
 
   const recommended = table.find(([limit]) => totalMemGB <= limit)?.[1] ?? 8

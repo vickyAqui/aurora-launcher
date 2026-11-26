@@ -1,0 +1,10 @@
+{
+  "preventSearchIgnoredItems": false,
+  "ingredientDedupe": false,
+  "resourceLocationDedupe": true,
+  "debugItemStackModifications": false,
+  "logIntervalInMinutes": 30,
+  "showSummaryOnDebugScreen": true,
+  "memoryUsageWarningPercentage": 90,
+  "debugThreadsStuck": false
+}

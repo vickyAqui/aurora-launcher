@@ -1,0 +1,10 @@
+# Memoria e GC ajustados para 315 mods / ~9.4GB de limite do container
+-Xms6G
+-Xmx7G
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=./crash-reports/heapdump.hprof
+# GC logging: sem isso nao ha como saber se pausas de GC contribuem nos picos.
+# Preparado no repo; so passa a valer apos restart do servidor.
+-Xlog:gc*:file=./logs/gc.log:time,uptime,level,tags:filecount=5,filesize=20M

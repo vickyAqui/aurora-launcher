@@ -96,8 +96,10 @@ describe('performance presets', () => {
     expect(suggestMemoryGB(4)).toBe(2)
     expect(suggestMemoryGB(8)).toBe(4)
     expect(suggestMemoryGB(12)).toBe(5)
-    expect(suggestMemoryGB(16)).toBe(6)
-    expect(suggestMemoryGB(32)).toBe(8)
+    expect(suggestMemoryGB(16)).toBe(7)
+    expect(suggestMemoryGB(24)).toBe(8)
+    expect(suggestMemoryGB(32)).toBe(9)
+    expect(suggestMemoryGB(64)).toBe(10)
     expect(suggestMemoryGB(0)).toBe(4)
   })
 

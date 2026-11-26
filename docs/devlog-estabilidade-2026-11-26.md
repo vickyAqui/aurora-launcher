@@ -38,8 +38,11 @@ Registro isolado das mudanças e do diagnóstico. **Sem restart do servidor, sem
    - `aurora_chunk_guard.js`: janela de 600 → **617 ticks** (intervalo primo).
    - `aurora_chunk_locator.js`: log de 300 → **600 ticks**, offset 150. O pregen já lê os jogadores diretamente, então esse log é só diagnóstico.
    - Objetivo: quebrar o alinhamento que fazia cleanup + diag + locator + guard rodarem no mesmo tick e despejarem ~2000 linhas no mesmo instante.
+7. `src/performancePresets.ts`: tabela de `suggestMemoryGB()` alinhada ao `recommendedMemory` do `memorysettings.json` do pack (2/3/4/5/7/8/9/10 GB), mantendo o limite de metade da RAM física. É apenas uma **recomendação**; a escolha do jogador continua prevalecendo. Testes atualizados.
+8. `server-patch/user_jvm_args.txt`: preparado com `-Xlog:gc*:file=./logs/gc.log...` para medir pausas de GC. **Preparado no repo, não enviado ao servidor**; só vale após restart.
+9. `server-patch/config/alltheleaks.json`: preparado com `logIntervalInMinutes=30` (era 10) e `ingredientDedupe=false`. Também **preparado no repo, não enviado**; o mod lê a config no boot.
 
-Validação: `npm run build` OK; `npx vitest run tests/performance.test.ts` → 23/23 testes OK.
+Validação: `npm run build` OK; `npx vitest run tests/performance.test.ts` → 23/23 testes OK; `node --check` passou nos 5 scripts KubeJS alterados.
 
 ## Não alterado / pendente
 
@@ -47,11 +50,9 @@ Validação: `npm run build` OK; `npx vitest run tests/performance.test.ts` → 
 - A mudança de `ingredientDedupe` em `aurora_runtime_configs.js` só passa a valer quando o KubeJS for recarregado manualmente. Até lá, o servidor segue executando a versão antiga em memória.
 - `AuroraMortis_Ex`: sem config de intervalo; não foi editado nenhum jar.
 - `Noezis`: sem limpeza de POI/entidades; qualquer correção exigiria backup e janela de manutenção.
-- Outras otimizações **avaliadas e não aplicadas** (dependem de decisão ou de restart):
-  - `server.properties` / JVM: não há `-Xlog:gc`, então pausas de GC não aparecem no log. Adicionar GC logging ajudaria a medir, mas exige restart do servidor.
-  - `config/alltheleaks.json`: `logIntervalInMinutes=10`. Subir para 30 reduziria o custo do summary, mas também reduziria diagnóstico; não mexido.
-  - `config/betterchunkloading.json` e `config/smoothchunk.json` já estão com valores conservadores (`predictionarea=3`, `predictionLoadingSpeed=0.5`, `chunkUnloadLimit=20`, `disableProtoSave=true`); não há ganho óbvio sem medir.
-  - `suggestMemoryGB()` do launcher recomenda até 8 GB, enquanto `config/memorysettings.json` do pack recomenda 5–7 GB para 16–24 GB de RAM. Alinhar a recomendação pode reduzir pausas de GC em quem coloca 8 GB, mas mexe no comportamento do launcher — só com autorização.
-  - `Noezis`: limpeza de POIs/entidades duplicadas exige backup e janela de manutenção.
+- `server-patch/user_jvm_args.txt` e `server-patch/config/alltheleaks.json` são apenas **preparações locais**: não foram enviados ao servidor e não têm efeito em runtime sem restart.
+- `config/betterchunkloading.json` e `config/smoothchunk.json` já estão com valores conservadores (`predictionarea=3`, `predictionLoadingSpeed=0.5`, `chunkUnloadLimit=20`, `disableProtoSave=true`); não há ganho óbvio sem medir.
+- `Noezis`: limpeza de POIs/entidades duplicadas exige backup e janela de manutenção; não foi feita.
+- Starlium a cada 10 min é `CLEANUP_INTERVAL = 12000l` hardcoded no jar; sem editar o mod não há config para ajustar.
 - Release `v1.2.9` permanece como está; nenhuma versão/tag/release foi criada.
 - O PAT do GitHub colado no chat não foi salvo nem usado e ainda precisa ser revogado pelo usuário.
