@@ -18,7 +18,8 @@
     "release:lin": "npm run build && electron-builder --linux",
     "modpack:build": "node scripts/build-modpack.mjs",
     "modpack:publish": "node scripts/publish-modpack.mjs",
-    "modpack:update": "node scripts/update-modpack.mjs"
+    "modpack:update": "node scripts/update-modpack.mjs",
+    "emojis:sync": "node scripts/generate-discord-emojis.mjs"
   },
   "build": {
     "appId": "com.aurorastudios.launcher",
