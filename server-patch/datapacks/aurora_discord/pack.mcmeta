@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "Emojis do Discord da Aurora (gerado por scripts/generate-discord-emojis.mjs)"
+  }
+}
