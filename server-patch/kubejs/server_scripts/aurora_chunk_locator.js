@@ -4,7 +4,9 @@ var auroraLocTick = 0
 
 ServerEvents.tick(event => {
     auroraLocTick++
-    if (auroraLocTick !== 100 && auroraLocTick % 300 !== 0) return
+    // 600 ticks (30 s) em vez de 300: o pregen le os jogadores diretamente,
+    // entao este log e apenas diagnostico e nao precisa de 15 em 15 segundos.
+    if (auroraLocTick !== 100 && auroraLocTick % 600 !== 150) return
     try {
         var players = event.server.getPlayers()
         for (var i = 0; i < players.length; i++) {

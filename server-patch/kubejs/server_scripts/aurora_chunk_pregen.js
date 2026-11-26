@@ -16,7 +16,9 @@ var pregenCz = 0
 var pregenCycles = 0
 var pregenIndex = 0
 
-var PREGEN_RAIO = 256
+// 256 blocos (16 chunks) geravam ~1089 chunks por ciclo e picos de 11-24 s.
+// 160 blocos (10 chunks) cobrem quase toda a render distance de 12 com ~1/3 do trabalho.
+var PREGEN_RAIO = 160
 var PREGEN_CICLO = 3600        // 3 min entre trocas de jogador
 var PREGEN_MIN_MOVIMENTO = 128 // 8 chunks: ignora deslocamentos curtos
 var PREGEN_MIN_RECADASTRO = 3600

@@ -17,7 +17,9 @@ ServerEvents.tick(event => {
     }
     auroraDiagUltimo = agora
 
-    if (event.server.tickCount % 600 !== 0 || auroraDiagCont === 0) return
+    // 610 ticks (30,5 s) em vez de 600: evita alinhar com cleanup/locator/guard
+    // no mesmo tick e concentrar varias linhas de log e trabalho em um so instante.
+    if (event.server.tickCount % 610 !== 150 || auroraDiagCont === 0) return
     var media = auroraDiagSoma / auroraDiagCont
     var status = media <= 50 ? 'OK' : (media <= 100 ? 'ATENCAO' : 'LAG')
     console.info('[aurora-perf-diag] tick=' + event.server.tickCount +

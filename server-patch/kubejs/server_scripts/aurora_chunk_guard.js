@@ -5,7 +5,8 @@ var auroraGuardTicks = 0
 
 ServerEvents.tick(event => {
     auroraGuardTicks++
-    if (auroraGuardTicks % 600 !== 0) return
+    // 617 ticks (~30,8 s): intervalo primo evita coincidir com diag/cleanup/locator.
+    if (auroraGuardTicks % 617 !== 0) return
     try {
         event.server.runCommandSilent('betterchunkloading setsimdist 1')
         console.info('[aurora-chunk-guard] simdist=1 reforcado (viewdist=12)')
