@@ -28,13 +28,16 @@ Registro isolado das mudanças e do diagnóstico. **Sem restart do servidor, sem
    - `aurora_chunk_boost.js` (desativado), `aurora_chunk_guard.js`, `aurora_chunk_locator.js`
    - `aurora_perf_apply.js`, `aurora_perf_diag.js`, `aurora_perf_fix.js`, `aurora_setsim.js`
    - `example.js`
+3. `server-patch/kubejs/config/common.properties`: versionado do remoto (329 B) — faltava no repo.
+4. `aurora_crawler_nest_damage.js`: normalizado para LF; o conteúdo já era idêntico ao remoto, só os fins de linha diferiam.
+5. `server-patch/kubejs/server_scripts/aurora_runtime_configs.js`: `ingredientDedupe` também passou de `true` para `false` no servidor, para manter os dois lados alinhados. **Ainda sem efeito em runtime**, porque o KubeJS não foi recarregado.
 
 Validação: `npm run build` OK; `npx vitest run tests/performance.test.ts` → 23/23 testes OK.
 
 ## Não alterado / pendente
 
 - **Reload do servidor**: o acesso remoto é SFTP-only (`Unable to exec`), então não foi possível rodar `/kubejs reload server_scripts`. Precisa ser feito no console do servidor, manualmente, quando o usuário decidir. Isso ativará o cleanup com limites 64/32, o pregen atualizado e o `/ajuda`.
-- `aurora_runtime_configs.js` no servidor continua com `ingredientDedupe = true`; isso não afeta a config do cliente (que é local) e não foi mexido para não mudar comportamento do servidor sem reload.
+- A mudança de `ingredientDedupe` em `aurora_runtime_configs.js` só passa a valer quando o KubeJS for recarregado manualmente. Até lá, o servidor segue executando a versão antiga em memória.
 - `AuroraMortis_Ex`: sem config de intervalo; não foi editado nenhum jar.
 - `Noezis`: sem limpeza de POI/entidades; qualquer correção exigiria backup e janela de manutenção.
 - Release `v1.2.9` permanece como está; nenhuma versão/tag/release foi criada.

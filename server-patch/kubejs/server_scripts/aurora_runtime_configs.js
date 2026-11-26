@@ -23,7 +23,9 @@ ServerEvents.tick((event) => {
     try {
         var ATL = Java.loadClass('dev.uncandango.alltheleaks.config.ATLProperties')
         var atl = ATL.get()
-        atl.ingredientDedupe = true
+        // ingredientDedupe desligado: no cliente ele gera 1066 ATLUnsupportedOperation
+        // em JEI/Hexerei. O servidor nao roda JEI, mas mantemos os dois lados alinhados.
+        atl.ingredientDedupe = false
         atl.resourceLocationDedupe = true
         console.info('[aurora-configs] AllTheLeaks dedupe: ' + atl.ingredientDedupe + '/' + atl.resourceLocationDedupe)
     } catch (e) { console.warn('[aurora-configs] AllTheLeaks erro: ' + e) }
