@@ -42,7 +42,12 @@ Registro isolado das mudanças e do diagnóstico. **Sem restart do servidor, sem
 8. `server-patch/user_jvm_args.txt`: preparado com `-Xlog:gc*:file=./logs/gc.log...` para medir pausas de GC. **Preparado no repo, não enviado ao servidor**; só vale após restart.
 9. `server-patch/config/alltheleaks.json`: preparado com `logIntervalInMinutes=30` (era 10) e `ingredientDedupe=false`. Também **preparado no repo, não enviado**; o mod lê a config no boot.
 
-Validação: `npm run build` OK; `npx vitest run tests/performance.test.ts` → 23/23 testes OK; `node --check` passou nos 5 scripts KubeJS alterados.
+10. Otimizações em caminhos quentes de scripts (também **somente em disco**, sem efeito até reload):
+   - `aurora_bloodmoon_guard.js` e `aurora_born_in_chaos_spawns.js`: `ForgeRegistries` é carregado uma vez e reaproveitado no `checkSpawn`, em vez de `Java.loadClass` a cada spawn natural.
+   - `aurora_mortis_fronteira.js`: polling de bioma de 5 → **10 ticks** (o debounce continua em 40 ticks, então a detecção não perde travessias).
+   - `aurora_mortis_fronteira.js`, `aurora_mortis_biomes.js` e `aurora_ajuda.js`: cache de **30 s** do `aurora_ops.json`. Antes cada aviso podia fazer até 8 tentativas de leitura (2 paths × 2 variantes × 2 formas de caminho) para os 76 operadores.
+
+Validação: `npm run build` OK; `npx vitest run tests/performance.test.ts` → 23/23 testes OK; `node --check` passou nos **26** scripts KubeJS.
 
 ## Não alterado / pendente
 

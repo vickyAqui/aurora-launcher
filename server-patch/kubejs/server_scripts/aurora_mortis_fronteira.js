@@ -44,7 +44,7 @@
 // levam o prefixo `auroraFronteira`/`AURORA_FRONTEIRA_`.
 
 const AURORA_FRONTEIRA_NAMESPACE = 'aurora_mortis'
-const AURORA_FRONTEIRA_CHECK_EVERY_TICKS = 5     // checa a cada 0,25 s
+const AURORA_FRONTEIRA_CHECK_EVERY_TICKS = 10    // checa a cada 0,5 s (debounce é 40 ticks)
 const AURORA_FRONTEIRA_DEBOUNCE_TICKS = 40       // 2 s no novo domínio antes de avisar
 const AURORA_FRONTEIRA_EXIT_GRACE_TICKS = 200    // 10 s fora antes de avisar a saída
 const AURORA_FRONTEIRA_COOLDOWN_TICKS = 1        // 1 tick: rede de segurança, não engole travessia
@@ -66,6 +66,9 @@ const AURORA_FRONTEIRA_OPS_CONFIG_PATHS = [
 const AURORA_FRONTEIRA_EXTRA_OPS = []
 
 var auroraFronteiraOpsConfigWarned = false
+var auroraFronteiraOpsCache = null
+var auroraFronteiraOpsCacheAte = 0
+const AURORA_FRONTEIRA_OPS_CACHE_MS = 30000
 
 const AURORA_FRONTEIRA_NBT_LAST_DOMAIN = 'aurora_fronteira_last_domain'
 const AURORA_FRONTEIRA_NBT_PENDING_DOMAIN = 'aurora_fronteira_pending_domain'
@@ -222,6 +225,15 @@ function auroraFronteiraReadOpsConfig() {
         console.warn('[aurora-fronteira] nao consegui ler kubejs/config/aurora_ops.json (' + auroraFronteiraReadErr + '); usando ops.json/isOp()')
     }
     return null
+}
+
+/** Cache de 30 s: o JSON é editável no painel, mas não precisa ser relido a cada aviso. */
+function auroraFronteiraReadOpsConfigCached() {
+    var auroraFronteiraAgora = Date.now()
+    if (auroraFronteiraOpsCache && auroraFronteiraAgora < auroraFronteiraOpsCacheAte) return auroraFronteiraOpsCache
+    auroraFronteiraOpsCache = auroraFronteiraReadOpsConfig()
+    auroraFronteiraOpsCacheAte = auroraFronteiraAgora + AURORA_FRONTEIRA_OPS_CACHE_MS
+    return auroraFronteiraOpsCache
 }
 
 /** Normaliza "operators" do JSON em [{ name, uuid }], aceitando string ou objeto. */
@@ -381,7 +393,7 @@ function auroraFronteiraTellOps(auroraFronteiraServer, auroraFronteiraJsonArg, a
     var auroraFronteiraSent = 0
     var auroraFronteiraSentNames = []
     const auroraFronteiraOpNames = auroraFronteiraServerOpNames(auroraFronteiraServer)
-    const auroraFronteiraOpsFromConfig = auroraFronteiraConfigEntries(auroraFronteiraReadOpsConfig())
+    const auroraFronteiraOpsFromConfig = auroraFronteiraConfigEntries(auroraFronteiraReadOpsConfigCached())
     const auroraFronteiraPlayers = auroraFronteiraServer.players
 
     for (var auroraFronteiraIdx2 = 0; auroraFronteiraIdx2 < auroraFronteiraPlayers.size(); auroraFronteiraIdx2++) {

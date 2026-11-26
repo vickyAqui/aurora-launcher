@@ -44,6 +44,9 @@ const AURORA_OPS_CONFIG_PATHS = [
 const AURORA_EXTRA_OPS = []
 
 var auroraOpsConfigWarned = false
+var auroraOpsCache = null
+var auroraOpsCacheAte = 0
+const AURORA_OPS_CACHE_MS = 30000
 
 const AURORA_NBT_LAST_BIOME = 'aurora_last_biome'
 const AURORA_NBT_ENTER_MSG = 'aurora_last_biome_enter_msg'
@@ -155,6 +158,15 @@ function auroraReadOpsConfig() {
         console.warn('[aurora] nao consegui ler kubejs/config/aurora_ops.json (' + auroraReadErr + '); usando ops.json/isOp()')
     }
     return null
+}
+
+/** Cache de 30 s: o JSON é editável no painel, mas não precisa ser relido a cada aviso. */
+function auroraReadOpsConfigCached() {
+    var auroraAgora = Date.now()
+    if (auroraOpsCache && auroraAgora < auroraOpsCacheAte) return auroraOpsCache
+    auroraOpsCache = auroraReadOpsConfig()
+    auroraOpsCacheAte = auroraAgora + AURORA_OPS_CACHE_MS
+    return auroraOpsCache
 }
 
 /** Normaliza "operators" do JSON em [{ name, uuid }], aceitando string ou objeto. */
@@ -311,7 +323,7 @@ function auroraTellOps(auroraServerArg, auroraJsonArg, auroraPlainArg) {
     var auroraSent = 0
     var auroraSentNames = []
     const auroraOpNames = auroraServerOpNames(auroraServerArg)
-    const auroraOpsFromConfig = auroraConfigEntries(auroraReadOpsConfig())
+    const auroraOpsFromConfig = auroraConfigEntries(auroraReadOpsConfigCached())
     const auroraPlayers = auroraServerArg.players
 
     for (var auroraIdx = 0; auroraIdx < auroraPlayers.size(); auroraIdx++) {

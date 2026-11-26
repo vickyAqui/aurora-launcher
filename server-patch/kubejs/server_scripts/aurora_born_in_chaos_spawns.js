@@ -25,6 +25,8 @@ var AURORA_BORN_SPAWNS_BIOMES = [
 
 var auroraBornSpawnsChecked = 0
 var auroraBornSpawnsBlocked = 0
+// Java.loadClass e caro no Rhino; evita repeti-lo em cada spawn natural.
+var auroraBornSpawnsForgeRegistries = null
 
 function auroraBornSpawnsBiomeId(level, pos) {
     try {
@@ -51,7 +53,10 @@ function auroraBornSpawnsEntityId(entity) {
         // tenta as alternativas abaixo
     }
     try {
-        var rl2 = Java.loadClass('net.minecraftforge.registries.ForgeRegistries').ENTITIES.getKey(entity.getType())
+        if (!auroraBornSpawnsForgeRegistries) {
+            auroraBornSpawnsForgeRegistries = Java.loadClass('net.minecraftforge.registries.ForgeRegistries')
+        }
+        var rl2 = auroraBornSpawnsForgeRegistries.ENTITIES.getKey(entity.getType())
         if (rl2 != null) return String(rl2)
     } catch (e2) {
         // última tentativa abaixo

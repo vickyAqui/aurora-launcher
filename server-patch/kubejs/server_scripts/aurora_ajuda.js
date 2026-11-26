@@ -20,6 +20,9 @@
 const AURORA_AJUDA_COOLDOWN_TICKS = 600       // 30 s (20 ticks/s)
 const AURORA_AJUDA_NBT_LAST = 'aurora_ajuda_ultimo_pedido'
 const AURORA_AJUDA_MAX_MOTIVO = 160
+const AURORA_AJUDA_CFG_CACHE_MS = 30000
+var auroraAjudaCfgCache = null
+var auroraAjudaCfgCacheAte = 0
 const AURORA_AJUDA_OPS_CONFIG_PATHS = [
     'kubejs/config/aurora_ops.json',
     'config/aurora_ops.json'
@@ -41,18 +44,27 @@ function auroraAjudaCarregarStaff() {
     var auroraCfg = null
     var auroraErro = ''
 
-    for (var auroraI = 0; auroraI < AURORA_AJUDA_OPS_CONFIG_PATHS.length; auroraI++) {
-        var auroraPath = AURORA_AJUDA_OPS_CONFIG_PATHS[auroraI]
-        var auroraTentativas = [auroraPath, './' + auroraPath]
-        for (var auroraJ = 0; auroraJ < auroraTentativas.length; auroraJ++) {
-            try {
-                auroraCfg = JsonIO.read(auroraTentativas[auroraJ])
-                if (auroraCfg) break
-            } catch (auroraLeErro) {
-                auroraErro = String(auroraLeErro)
+    var auroraAgora = Date.now()
+    if (auroraAjudaCfgCache && auroraAgora < auroraAjudaCfgCacheAte) {
+        auroraCfg = auroraAjudaCfgCache
+    } else {
+        for (var auroraI = 0; auroraI < AURORA_AJUDA_OPS_CONFIG_PATHS.length; auroraI++) {
+            var auroraPath = AURORA_AJUDA_OPS_CONFIG_PATHS[auroraI]
+            var auroraTentativas = [auroraPath, './' + auroraPath]
+            for (var auroraJ = 0; auroraJ < auroraTentativas.length; auroraJ++) {
+                try {
+                    auroraCfg = JsonIO.read(auroraTentativas[auroraJ])
+                    if (auroraCfg) break
+                } catch (auroraLeErro) {
+                    auroraErro = String(auroraLeErro)
+                }
             }
+            if (auroraCfg) break
         }
-        if (auroraCfg) break
+        if (auroraCfg) {
+            auroraAjudaCfgCache = auroraCfg
+            auroraAjudaCfgCacheAte = auroraAgora + AURORA_AJUDA_CFG_CACHE_MS
+        }
     }
 
     if (!auroraCfg && auroraErro) {

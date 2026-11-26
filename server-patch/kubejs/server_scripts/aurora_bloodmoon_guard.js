@@ -6,6 +6,8 @@
 // spawn natural antes do mob entrar no mundo (equivale ao BadMobs, mas em runtime).
 // Spawners, ovos e chunks ja gerados continuam funcionando normalmente.
 var auroraGuardBloqueios = 0
+// Java.loadClass e caro no Rhino; este checkSpawn roda para todo spawn natural.
+var auroraGuardForgeRegistries = null
 
 var AURORA_GUARD_IDS = [
     'alexsmobs:skelewag'
@@ -17,7 +19,10 @@ function auroraGuardEntityId(entity) {
         if (rl != null) return String(rl)
     } catch (e) {}
     try {
-        var rl2 = Java.loadClass('net.minecraftforge.registries.ForgeRegistries').ENTITIES.getKey(entity.getType())
+        if (!auroraGuardForgeRegistries) {
+            auroraGuardForgeRegistries = Java.loadClass('net.minecraftforge.registries.ForgeRegistries')
+        }
+        var rl2 = auroraGuardForgeRegistries.ENTITIES.getKey(entity.getType())
         if (rl2 != null) return String(rl2)
     } catch (e2) {}
     return ''
