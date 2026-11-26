@@ -150,7 +150,7 @@ export const PERFORMANCE_PROFILES: IPerformanceProfile[] = [
       depth: 1
     },
     allTheLeaks: {
-      ingredientDedupe: true,
+      ingredientDedupe: false,
       resourceLocationDedupe: true
     },
     oculusShaders: false,
@@ -257,7 +257,7 @@ export const PERFORMANCE_PROFILES: IPerformanceProfile[] = [
       depth: 2
     },
     allTheLeaks: {
-      ingredientDedupe: true,
+      ingredientDedupe: false,
       resourceLocationDedupe: true
     },
     oculusShaders: false,
@@ -364,7 +364,7 @@ export const PERFORMANCE_PROFILES: IPerformanceProfile[] = [
       depth: 2
     },
     allTheLeaks: {
-      ingredientDedupe: true,
+      ingredientDedupe: false,
       resourceLocationDedupe: true
     },
     oculusShaders: 'auto',
