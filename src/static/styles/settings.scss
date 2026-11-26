@@ -170,6 +170,7 @@
   }
 
   select,
+  textarea,
   input[type="text"] {
     color-scheme: dark;
     width: 100%;
@@ -189,9 +190,46 @@
     }
   }
 
+  textarea {
+    resize: vertical;
+    min-height: 84px;
+    font-family: var(--font-mono, monospace);
+    line-height: 1.5;
+  }
+
   option {
     background-color: var(--bg-elevated);
     color: var(--text-main);
+  }
+}
+
+.jvm-args-help {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+
+  code {
+    color: var(--text-main);
+  }
+}
+
+.jvm-args-status {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+
+  &:empty {
+    display: none;
+  }
+
+  &.ok {
+    color: var(--accent-green, var(--text-muted));
+  }
+
+  &.error {
+    color: var(--accent-pink);
   }
 }
 

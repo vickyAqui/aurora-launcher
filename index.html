@@ -301,6 +301,17 @@
                   <p id="java-detected-status" class="java-detected-status"></p>
                 </div>
               </div>
+
+              <div class="setting-group">
+                <label for="extra-jvm-args"><i class="fa-fw fa-solid fa-terminal"></i>&nbsp;&nbsp;Argumentos JVM extras</label>
+                <textarea id="extra-jvm-args" rows="4" spellcheck="false" placeholder="-XX:+UseG1GC&#10;-Dminecraft.client.jar.version=1.20.1"></textarea>
+                <p class="jvm-args-help">
+                  Aplicados antes de iniciar o jogo, depois do perfil de desempenho. Um argumento por linha;
+                  aspas são aceitas para valores com espaço. A RAM continua pelo slider: <code>-Xmx</code>,
+                  <code>-Xms</code>, <code>-jar</code>, <code>-cp</code> e a classe principal são ignorados.
+                </p>
+                <p id="jvm-args-status" class="jvm-args-status"></p>
+              </div>
             </section>
 
             <section id="tab-performance" class="tab-content">

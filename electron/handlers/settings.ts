@@ -3,6 +3,7 @@ import logger from 'electron-log/main'
 import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
+import { normalizeJvmArgs } from '../../src/jvmArgs'
 
 const settingsPath = path.join(app.getPath('userData'), 'settings.json')
 
@@ -28,6 +29,8 @@ export interface IGameSettings {
     fullscreen: boolean
   }
   launcherAction: 'close' | 'keep' | 'hide'
+  /** Argumentos JVM extras digitados pelo jogador, um por linha. */
+  extraJvmArgs: string
 }
 
 export const DEFAULT_SETTINGS: IGameSettings = {
@@ -42,7 +45,8 @@ export const DEFAULT_SETTINGS: IGameSettings = {
     height: 720,
     fullscreen: false
   },
-  launcherAction: 'close'
+  launcherAction: 'close',
+  extraJvmArgs: ''
 }
 
 export function registerSettingsHandlers() {
@@ -53,7 +57,13 @@ export function registerSettingsHandlers() {
         return DEFAULT_SETTINGS
       }
       const data = fs.readFileSync(settingsPath, 'utf-8')
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(data) }
+      const stored = JSON.parse(data) as Partial<IGameSettings>
+      return {
+        ...DEFAULT_SETTINGS,
+        ...stored,
+        // settings.json também pode ser editado à mão: filtra de novo na leitura.
+        extraJvmArgs: normalizeJvmArgs(stored.extraJvmArgs)
+      }
     } catch (err) {
       logger.error('Error reading settings:', err)
       return DEFAULT_SETTINGS
@@ -62,7 +72,12 @@ export function registerSettingsHandlers() {
 
   ipcMain.handle('settings:set', async (_event, newSettings: IGameSettings) => {
     try {
-      fs.writeFileSync(settingsPath, JSON.stringify(newSettings, null, 2))
+      const toSave: IGameSettings = {
+        ...DEFAULT_SETTINGS,
+        ...newSettings,
+        extraJvmArgs: normalizeJvmArgs(newSettings?.extraJvmArgs)
+      }
+      fs.writeFileSync(settingsPath, JSON.stringify(toSave, null, 2))
       return true
     } catch (err) {
       logger.error('Error writing settings:', err)

@@ -188,10 +188,10 @@ function auroraAjudaAvisarOps(auroraServerArg, auroraJsonArg, auroraSimplesArg) 
 
 function auroraAjudaJson(auroraNomeArg, auroraMotivoArg) {
     return JSON.stringify([
-        { text: '[AJUDA] ', color: 'gold' },
-        { text: auroraNomeArg, color: 'white' },
-        { text: ': ', color: 'gray' },
-        { text: auroraMotivoArg, color: 'yellow' }
+        { text: '[AJUDA] ', color: 'light_purple', bold: true },
+        { text: auroraNomeArg, color: 'light_purple', bold: true },
+        { text: ': ', color: 'light_purple', bold: true },
+        { text: auroraMotivoArg, color: 'light_purple', bold: true }
     ])
 }
 
@@ -281,7 +281,7 @@ function auroraAjudaPedir(auroraServerArg, auroraSourceArg, auroraMotivoArg) {
     auroraData.putLong(AURORA_AJUDA_NBT_LAST, auroraTick)
 
     var auroraJson = auroraAjudaJson(auroraNome, auroraMotivo)
-    var auroraSimples = '[AJUDA] ' + auroraNome + ': ' + auroraMotivo
+    var auroraSimples = '§l§d[AJUDA] ' + auroraNome + ': ' + auroraMotivo + '§r'
     var auroraEnviados = auroraAjudaAvisarOps(auroraServerArg, auroraJson, auroraSimples)
 
     if (auroraEnviados.length === 0) {

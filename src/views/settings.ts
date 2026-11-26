@@ -14,6 +14,7 @@ import { CpmViewer } from '../cpmViewer'
 import { initPerformanceTab, refreshPerformanceTab } from './performance'
 import { initModDiagnosis } from './modDiagnosis'
 import type { UpdateProgress } from '../../electron/handlers/update'
+import { normalizeJvmArgs, parseJvmArgs } from '../jvmArgs'
 
 const resolutionList = [
   { label: 'Auto (default)', value: '854x480', width: 854, height: 480 },
@@ -65,8 +66,7 @@ function initUIListeners() {
   const logoutBtn = document.getElementById('btn-logout')
 
   closeBtn?.addEventListener('click', async () => {
-    await saveSettings()
-    closeOverlay('settings')
+    if (await saveSettings()) closeOverlay('settings')
   })
 
   logoutBtn?.addEventListener('click', async () => {
@@ -92,6 +92,8 @@ function initUIListeners() {
       if (targetTab === 'performance') void refreshPerformanceTab()
     })
   })
+
+  initJvmArgsField()
 }
 
 function initDualSlider(maxRamSystem: number) {
@@ -166,15 +168,67 @@ function initFormValues(resolution: { width: number; height: number }) {
   if (launcherActionSelect) launcherActionSelect.value = currentSettings.launcherAction
   if (javaSelect) javaSelect.value = currentSettings.java === 'bundled' || currentSettings.java === 'system' || currentSettings.java === 'path' ? currentSettings.java : 'bundled'
 
+  const jvmArgsInput = document.getElementById('extra-jvm-args') as HTMLTextAreaElement | null
+  if (jvmArgsInput) {
+    jvmArgsInput.value = currentSettings.extraJvmArgs ?? ''
+    renderJvmArgsStatus(jvmArgsInput.value)
+  }
+
   minInput.dispatchEvent(new Event('input'))
 }
 
-async function saveSettings() {
+function initJvmArgsField() {
+  const input = document.getElementById('extra-jvm-args') as HTMLTextAreaElement | null
+  input?.addEventListener('input', () => renderJvmArgsStatus(input.value))
+}
+
+function renderJvmArgsStatus(raw: string) {
+  const status = document.getElementById('jvm-args-status')
+  if (!status) return
+
+  const result = parseJvmArgs(raw)
+  status.classList.remove('ok', 'error')
+  if (result.errors.length > 0) {
+    status.classList.add('error')
+    status.innerText = result.errors.join(' ')
+  } else if (result.args.length > 0) {
+    status.classList.add('ok')
+    status.innerText = `${result.args.length} argumento(s) válido(s).${result.warnings.length ? ' ' + result.warnings.join(' ') : ''}`
+  } else {
+    status.innerText = result.warnings.join(' ')
+  }
+}
+
+/** Retorna false quando o jogador cancela o aviso de argumentos inválidos. */
+async function saveSettings(): Promise<boolean> {
   const minInput = document.getElementById('ram-min') as HTMLInputElement
   const maxInput = document.getElementById('ram-max') as HTMLInputElement
   const launcherActionSelect = document.getElementById('launcher-action-select') as HTMLSelectElement
   const resolutionSelect = document.getElementById('resolution-select') as HTMLSelectElement
   const javaSelect = document.getElementById('java-select') as HTMLSelectElement
+  const jvmArgsInput = document.getElementById('extra-jvm-args') as HTMLTextAreaElement | null
+  const rawJvmArgs = jvmArgsInput?.value ?? ''
+  const jvmArgsResult = parseJvmArgs(rawJvmArgs)
+
+  if (jvmArgsResult.errors.length > 0) {
+    const salvar = await Dialog.show(
+      'Estes argumentos JVM foram ignorados:\n\n' +
+        jvmArgsResult.errors.join('\n') +
+        '\n\nSalvar apenas os argumentos válidos?',
+      [
+        { text: 'Voltar', type: 'cancel' },
+        { text: 'Salvar sem eles', type: 'ok' }
+      ],
+      'Argumentos JVM'
+    )
+    if (!salvar) return false
+  }
+
+  const extraJvmArgs = normalizeJvmArgs(rawJvmArgs)
+  if (jvmArgsInput) {
+    jvmArgsInput.value = extraJvmArgs
+    renderJvmArgsStatus(extraJvmArgs)
+  }
 
   const newSettings: IGameSettings = {
     ...currentSettings,
@@ -189,11 +243,13 @@ async function saveSettings() {
     },
     java: javaSelect.value === 'bundled' ? 'bundled' : javaSelect.value === 'system' ? 'system' : 'path',
     javaPath: currentSettings.javaPath,
-    launcherAction: launcherActionSelect.value as 'close' | 'keep' | 'hide'
+    launcherAction: launcherActionSelect.value as 'close' | 'keep' | 'hide',
+    extraJvmArgs
   }
 
   await settings.set(newSettings)
   currentSettings = newSettings
+  return true
 }
 
 function getAvailableResolutions(systemResolution: { width: number; height: number }) {

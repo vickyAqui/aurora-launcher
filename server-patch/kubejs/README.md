@@ -25,7 +25,7 @@ ajuda e **todos os operadores online** recebem no chat:
 [AJUDA] NomeDoJogador: motivo que ele digitou
 ```
 
-É mensagem de chat, sem som e sem título. Quem pediu vê só uma confirmação
+A mensagem aparece **roxo e em negrito**, sem som e sem título. Quem pediu vê só uma confirmação
 privada (`[Ajuda] Enviado aos operadores (N).`) e tem **cooldown de 30 s** por
 jogador. O motivo é livre (texto até 160 caracteres) e aparece no `/help`.
 Os destinatários vêm de `kubejs/config/aurora_ops.json`, do `ops.json` e de

@@ -10,6 +10,7 @@ import { applySelectedModel } from './cpm'
 import { applyStoredPerformanceProfile } from '../performance'
 import { getGameDir } from '../gamedir'
 import { ensureFreshAccount } from './auth'
+import { parseJvmArgs } from '../../src/jvmArgs'
 
 /**
  * Hands the filtered manifest to `eml-lib` through a `data:` URL, so the downloader only ever sees
@@ -180,7 +181,15 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
       logger.error('Could not apply the performance profile before launch:', err)
     }
 
-    const javaWithArgs = javaArgs.length > 0 ? { ...java, args: javaArgs } : java
+    // Os argumentos digitados pelo jogador vêm DEPOIS do perfil, para poder sobrescrever
+    // uma flag -D dele. settings.json também é filtrado na leitura/gravação, mas repetir
+    // a validação aqui cobre arquivos editados diretamente.
+    const parsedExtra = parseJvmArgs(settings.extraJvmArgs)
+    if (parsedExtra.errors.length > 0) {
+      logger.warn('Ignored invalid extra JVM arguments:', parsedExtra.errors)
+    }
+    const allJavaArgs = [...javaArgs, ...parsedExtra.args]
+    const javaWithArgs = allJavaArgs.length > 0 ? { ...java, args: allJavaArgs } : java
 
     let launcher: Launcher
     try {
