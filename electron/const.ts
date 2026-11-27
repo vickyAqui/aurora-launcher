@@ -1,13 +1,13 @@
 export const MODPACK_URL = 'https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json'
 
 /**
- * Endereço público do EML AdminTool. Vazio enquanto o painel não estiver exposto na internet:
- * o launcher continua no modo atual (GitHub Releases) e nada muda para os jogadores.
+ * Endereço público do Aurora Admin. O launcher tenta o manifesto do painel primeiro e
+ * cai para o GitHub Releases se ele estiver fora — o jogo nunca fica sem modpack por causa disso.
  *
- * Pode ser sobrescrito sem rebuild por `AURORA_ADMIN_URL` ou por
+ * Pode ser sobrescrito sem rebuild por `AURORA_ADMIN_URL` (use '' para desligar) ou por
  * `<appData>/aurora-admin-tool.json` (`{ "url": "https://..." }`).
  */
-export const DEFAULT_ADMIN_URL = ''
+export const DEFAULT_ADMIN_URL = 'https://aurora-admin-0gu0.onrender.com'
 
 export const ROOT_DIR = 'aurora-studios'
 

@@ -53,6 +53,8 @@ function respondWith(manifest: unknown) {
 }
 
 beforeEach(() => {
+  // Estes testes exercitam o fluxo do GitHub; o painel é ligado só nos casos específicos.
+  process.env.AURORA_ADMIN_URL = ''
   tmp = useTempGame('aurora-handler-')
   gameDir = tmp.gameDir
   modsDir = tmp.modsDir

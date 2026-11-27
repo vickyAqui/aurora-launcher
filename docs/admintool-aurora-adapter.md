@@ -6,9 +6,11 @@ Transformar o EML AdminTool em **nosso** painel: a página onde a equipe cuida d
 e publica o modpack. O storage dos arquivos passa a ser o **GitHub Releases**, não o disco do
 servidor. Assim o painel pode rodar em hosting gratuito sem disco persistente e sem cartão.
 
-O launcher **não muda**: continua lendo `MODPACK_URL`
-(`.../releases/download/modpack/modpack.json`). A integração com AdminTool feita em `4024699`
-fica desligada (sem `AURORA_ADMIN_URL`), como está hoje.
+O launcher continua lendo `MODPACK_URL`
+(`.../releases/download/modpack/modpack.json`) como fallback. A integração de `4024699` agora
+aponta para `https://aurora-admin-0gu0.onrender.com` por padrão (`DEFAULT_ADMIN_URL`): o manifesto
+vem do painel quando ele estiver online e volta para o GitHub se falhar. O binário v1.2.9 já
+publicado **não contém** essa integração — ela entra no build da próxima release.
 
 ## Por que o GitHub
 

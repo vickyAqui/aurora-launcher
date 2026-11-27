@@ -1,6 +1,7 @@
 import { writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { DEFAULT_ADMIN_URL } from '../electron/const'
 import { ADMIN_TOOL_CONFIG_FILE, adminToolManifestUrl, getAdminToolConfig } from '../electron/admintool'
 import { TEST_SLUG, useTempGame, type TempGame } from './helpers'
 
@@ -23,7 +24,12 @@ afterEach(() => {
 })
 
 describe('getAdminToolConfig', () => {
-  it('stays off by default, so the current GitHub flow is untouched', () => {
+  it('points to the Aurora panel by default', () => {
+    expect(getAdminToolConfig()).toEqual({ url: DEFAULT_ADMIN_URL, slug: TEST_SLUG })
+  })
+
+  it('can be switched off with an empty AURORA_ADMIN_URL', () => {
+    process.env.AURORA_ADMIN_URL = ''
     expect(getAdminToolConfig()).toBeNull()
   })
 
@@ -59,7 +65,7 @@ describe('getAdminToolConfig', () => {
     process.env.AURORA_ADMIN_URL = 'ftp://at.example.com'
     expect(getAdminToolConfig()).toBeNull()
 
-    delete process.env.AURORA_ADMIN_URL
+    process.env.AURORA_ADMIN_URL = ''
     writeFileSync(path.join(tmp.appData, ADMIN_TOOL_CONFIG_FILE), 'not json')
     expect(getAdminToolConfig()).toBeNull()
   })
