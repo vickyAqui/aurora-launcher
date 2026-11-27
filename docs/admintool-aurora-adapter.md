@@ -32,7 +32,7 @@ Equipe -> Aurora Admin (fork do EML AdminTool)
        Launcher -> MODPACK_URL -> jogadores
 ```
 
-- **Fork**: `aurora-admintool` (repo separado, sob controle da Aurora).
+- **Fork**: `vickyAqui/EML-AuroraTools` (repo separado, sob controle da Aurora).
 - **Banco**: manter o Prisma/Postgres do AdminTool para login/PIN/profiles. Na nuvem, usar
   Postgres gratuito externo (Neon/Supabase); localmente, o Compose atual já serve.
 - **Storage**: módulo novo `$lib/server/github-storage.ts` no fork, portando
@@ -62,7 +62,7 @@ Equipe -> Aurora Admin (fork do EML AdminTool)
 
 ## Fases
 
-1. **Fork + adapter**: criar `aurora-admintool`, adicionar `github-storage.ts`, a rota
+1. **Fork + adapter**: usar `vickyAqui/EML-AuroraTools`, adicionar `github-storage.ts`, as rotas
    `/api/aurora/*` e a página `/dashboard/aurora`. Manter o resto do AdminTool intacto.
 2. **Teste local**: usar o Compose atual com um Postgres local e um token de teste; enviar um
    arquivo pequeno, publicar, conferir se o `modpack.json` gerado casa com o nosso.
@@ -73,7 +73,7 @@ Equipe -> Aurora Admin (fork do EML AdminTool)
 
 ## Pendências para começar
 
-- Onde criar o fork (`vickyAqui/aurora-admintool` ou outro nome).
+- ~~Onde criar o fork~~: `vickyAqui/EML-AuroraTools`.
 - Como o token será entregue ao servidor (variável de ambiente no painel do host, nunca no chat).
 - Definir se a página Aurora substitui de vez o **Files Updater** nativo ou convive com ele (o
   nativo continuaria escrevendo no disco efêmero e não serve mais para produção).
