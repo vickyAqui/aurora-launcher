@@ -1,0 +1,62 @@
+# EML AdminTool 2.7.2 — instância local (Aurora Studios)
+# Uso: docker compose -f server-patch/admintool/docker-compose.yml up -d
+# Documentação: https://emlproject.com/docs/eml-admintool
+name: aurora-admintool
+
+networks:
+  network:
+
+services:
+  web:
+    image: ghcr.io/electron-minecraft-launcher/eml-admintool:2.7.2
+    restart: unless-stopped
+    networks:
+      - network
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: 'production'
+      BODY_SIZE_LIMIT: 'Infinity'
+    volumes:
+      - files:/app/files
+      - env:/app/env
+      - data:/app/data
+    ports:
+      - '8080:3000'
+    depends_on:
+      - dbs
+  dbs:
+    image: postgres:18.1
+    restart: unless-stopped
+    networks:
+      - network
+    environment:
+      POSTGRES_USER: eml
+      POSTGRES_PASSWORD: eml
+      POSTGRES_DB: eml_admintool
+    volumes:
+      - database:/var/lib/postgresql
+  upd:
+    image: ghcr.io/electron-minecraft-launcher/eml-admintool-updater:1.1.0
+    restart: unless-stopped
+    networks:
+      - network
+    environment:
+      - ENVIRONMENT=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./docker-compose.yml:/app/compose/docker-compose.prod.yml
+      - ./.env:/app/compose/.env:ro
+      - env:/app/env:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - web
+    labels:
+      - com.eml.admintool.updater
+
+volumes:
+  database:
+  files:
+  env:
+  data:
