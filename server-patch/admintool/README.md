@@ -77,7 +77,70 @@ escolha uma destas opções:
 
 Sons **vanilla** (`minecraft:ambient.cave`, etc.) já funcionam com `/playsound` hoje, sem pack.
 
+## Conectar o launcher ao painel
+
+O launcher **não** estava conectado: ele lê o manifesto de
+`https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json` e usa
+`electron-updater` (GitHub Releases) para o `.exe`. O código já suporta o AdminTool, mas começa
+desligado — sem URL configurada nada muda para os jogadores.
+
+### Como ativar (sem recompilar)
+
+Crie `<appData>/aurora-admin-tool.json` (no Windows, `%APPDATA%\aurora-admin-tool.json`):
+
+```json
+{
+  "url": "https://painel.seudominio.com",
+  "slug": "aurora-studios"
+}
+```
+
+Ou use `AURORA_ADMIN_URL` (e opcionalmente `AURORA_ADMIN_SLUG`) no processo do launcher.
+A URL precisa ser **acessível pelos jogadores** e usar HTTPS na internet.
+
+O launcher passa a ler:
+
+```
+<url>/api/files-updater/<slug>
+```
+
+— que é o mesmo endpoint usado pelo `eml-lib`. Se o painel falhar, ele cai automaticamente para o
+manifesto do GitHub e mantém o último manifesto em cache por 60 s. A versão/loader continuam
+`1.20.1` / Forge `1.20.1-47.4.10`, e o manifesto filtrado pelas escolhas de mods do jogador é
+preservado.
+
+### No painel
+
+1. Crie/edite o perfil com **slug exatamente `aurora-studios`**, Forge `1.20.1-47.4.10` e IP
+   `79.182.128.137:25565`.
+2. Envie o conteúdo para o Files Updater mantendo a estrutura do jogo:
+   `mods/`, `config/`, `kubejs/assets/minecraft/...`, `resourcepacks/aurora_sounds.zip`.
+3. **Não envie** `options.txt`, `config/cpm.json`, `user_jvm_args.txt`, `disabled-mods.json`,
+   `logs/`, `saves/` — o launcher reaplica esses arquivos e o upload sobrescreveria o jogador.
+4. Deleções no Files Updater também propagam. Cuidado ao remover arquivos.
+
+### Expor na internet
+
+O painel hoje é local (`192.168.15.12` só existe na sua LAN). Para os jogadores receberem os
+arquivos, escolha uma destas opções:
+
+- **Cloudflare Tunnel** (recomendado): sem abrir portas, HTTPS gratuito, aponta para
+  `http://localhost:8080`; exige domínio na Cloudflare.
+- **VPS + Caddy/Nginx**: Docker Compose na VPS, domínio e certificado TLS;
+
+Em ambos, use `ORIGIN=https://painel.seudominio.com` no `.env` do Compose e reinicie o stack.
+Depois coloque a mesma URL no `aurora-admin-tool.json` de cada cliente (ou embuta na próxima
+versão do launcher).
+
+### Bootstraps
+
+Não migrar agora. O `.exe` continua sendo distribuído por GitHub Releases/`electron-updater`.
+Bootstraps exigiria publicar os 3 arquivos por plataforma com `.yml` na versão exata do
+`package.json`, com risco de update loop; a permissão ficaria só com você.
+
 ## Estado
 
-Nada disso foi enviado ao servidor de jogo. Nenhuma versão do launcher foi alterada.
-O painel é apenas a instância local; upload, restart do servidor e release continuam manuais.
+Código preparado: `electron/admintool.ts`, `electron/launchConfig.ts`, `electron/const.ts`,
+`electron/handlers/mods.ts` e `electron/handlers/launcher.ts`. Build e testes focados passaram.
+Nada foi enviado ao servidor de jogo; nenhuma versão/tag/release foi criada. A conexão só vale
+para quem tiver a URL configurada e o painel exposto.

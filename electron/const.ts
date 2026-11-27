@@ -1,5 +1,14 @@
 export const MODPACK_URL = 'https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json'
 
+/**
+ * Endereço público do EML AdminTool. Vazio enquanto o painel não estiver exposto na internet:
+ * o launcher continua no modo atual (GitHub Releases) e nada muda para os jogadores.
+ *
+ * Pode ser sobrescrito sem rebuild por `AURORA_ADMIN_URL` ou por
+ * `<appData>/aurora-admin-tool.json` (`{ "url": "https://..." }`).
+ */
+export const DEFAULT_ADMIN_URL = ''
+
 export const ROOT_DIR = 'aurora-studios'
 
 export const MINECRAFT = {

@@ -3,7 +3,9 @@ import { Launcher } from 'eml-lib'
 import type { Account } from 'eml-lib'
 import type { IGameSettings } from './settings'
 import logger from 'electron-log/main'
-import { DEFAULT_PROFILE, MINECRAFT, ROOT_DIR } from '../const'
+import { DEFAULT_PROFILE } from '../const'
+import { getAdminToolConfig } from '../admintool'
+import { buildLauncherConfig } from '../launchConfig'
 import { endSession, startSession } from './stats'
 import { ModpackUnavailableError, prepareMods, type IPreparedMods } from './mods'
 import { applySelectedModel } from './cpm'
@@ -156,7 +158,9 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
       return
     }
 
-    const minecraft = { ...MINECRAFT, modpackUrl: toDataUrl(prepared.manifest) }
+    // Sem URL configurada, `admin` é null e o launch segue idêntico ao modo GitHub Releases.
+    const admin = getAdminToolConfig(slug)
+    const modpackDataUrl = toDataUrl(prepared.manifest)
 
     // O CPM regrava `config/cpm.json` quando o jogo fecha, então a escolha feita na aba Modelos
     // é reaplicada agora, imediatamente antes de abrir o jogo. Sem escolha no launcher, nada muda.
@@ -193,25 +197,24 @@ export function registerLauncherHandlers(mainWindow: BrowserWindow) {
 
     let launcher: Launcher
     try {
-      launcher = new Launcher({
-        root: ROOT_DIR,
-        profile: { slug: profileSlug || DEFAULT_PROFILE.slug },
-        account: account,
-        minecraft: minecraft,
-        cleaning: {
-          enabled: false
-        },
-        java: javaWithArgs,
-        memory: {
-          min: +settings.memory.min * 1024,
-          max: +settings.memory.max * 1024
-        },
-        window: {
-          width: settings.resolution.width,
-          height: settings.resolution.height,
-          fullscreen: settings.resolution.fullscreen
-        }
-      })
+      launcher = new Launcher(
+        buildLauncherConfig({
+          slug,
+          admin,
+          account,
+          modpackDataUrl,
+          java: javaWithArgs,
+          memory: {
+            min: +settings.memory.min * 1024,
+            max: +settings.memory.max * 1024
+          },
+          window: {
+            width: settings.resolution.width,
+            height: settings.resolution.height,
+            fullscreen: settings.resolution.fullscreen
+          }
+        })
+      )
     } catch (err) {
       // Uma configuração inválida estoura aqui, antes de existir qualquer evento para a janela.
       logger.error('Could not create the launcher:', err)

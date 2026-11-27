@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import logger from 'electron-log/main'
 import { MODPACK_URL, DEFAULT_PROFILE, MINECRAFT } from '../const'
+import { adminToolManifestUrl, getAdminToolConfig } from '../admintool'
 import { getGameDir, getModsDir } from '../gamedir'
 import { scanModsDir, type IModScanResult } from '../modscan'
 import {
@@ -31,8 +32,8 @@ const DISABLED_STORE = 'disabled-mods.json'
 /** The modpack manifest changes only when a new modpack is published; a short cache avoids refetching it on every tab open. */
 const MANIFEST_TTL_MS = 60_000
 
-/** Cached successful fetch; `null` means nothing is cached yet. */
-let manifestCache: { at: number; manifest: IModpackManifest } | null = null
+/** Successful fetches, keyed by URL: the AdminTool and the GitHub release can be cached separately. */
+const manifestCache = new Map<string, { at: number; manifest: IModpackManifest }>()
 
 function getDisabledStorePath(slug: string = DEFAULT_PROFILE.slug): string {
   return path.join(getGameDir(slug), DISABLED_STORE)
@@ -71,39 +72,61 @@ export class ModpackUnavailableError extends Error {
   }
 }
 
-async function fetchManifest(force = false): Promise<IModpackManifest> {
-  if (!force && manifestCache && Date.now() - manifestCache.at < MANIFEST_TTL_MS) return manifestCache.manifest
+/**
+ * Sources for the manifest, in order. When the AdminTool is configured it is the primary source and
+ * the GitHub release remains the fallback: a local/offline panel must not stop the game from opening.
+ */
+function manifestUrls(slug: string): string[] {
+  const admin = getAdminToolConfig(slug)
+  if (!admin) return [MODPACK_URL]
+  return [adminToolManifestUrl(admin), MODPACK_URL]
+}
+
+async function downloadManifest(url: string): Promise<IModpackManifest> {
+  const manifestRes = await fetch(url)
+  if (!manifestRes.ok) throw new ModpackUnavailableError(`manifesto indisponível (HTTP ${manifestRes.status})`)
+
+  const bytes = Buffer.from(await manifestRes.arrayBuffer())
+  const parsed = parseManifest(JSON.parse(bytes.toString('utf8')))
+  if (!parsed) throw new ModpackUnavailableError('formato inesperado')
+  return parsed
+}
+
+async function fetchManifest(force = false, slug: string = DEFAULT_PROFILE.slug): Promise<IModpackManifest> {
+  const urls = manifestUrls(slug)
+  const cacheKey = urls[0]
+  const cached = manifestCache.get(cacheKey)
+  if (!force && cached && Date.now() - cached.at < MANIFEST_TTL_MS) return cached.manifest
 
   let manifest: IModpackManifest | null = null
   let failure: string | null = null
 
-  try {
-    const manifestRes = await fetch(MODPACK_URL)
-
-    if (!manifestRes.ok) {
-      failure = `manifesto indisponível (HTTP ${manifestRes.status})`
-    } else {
-      const bytes = Buffer.from(await manifestRes.arrayBuffer())
-      const parsed = parseManifest(JSON.parse(bytes.toString('utf8')))
-      if (!parsed) failure = 'formato inesperado'
-      else manifest = parsed
+  for (const url of urls) {
+    try {
+      manifest = await downloadManifest(url)
+      break
+    } catch (err) {
+      failure =
+        err instanceof ModpackUnavailableError
+          ? err.reason
+          : `não foi possível baixar o modpack: ${(err as Error).message}`
+      logger.warn(`Could not fetch modpack from ${url}: ${failure}`)
     }
-  } catch (err) {
-    logger.error('Failed to fetch modpack:', err)
-    failure = `não foi possível baixar o modpack: ${(err as Error).message}`
   }
 
-  if (manifest) manifestCache = { at: Date.now(), manifest }
-  else if (manifestCache) {
+  if (manifest) {
+    manifestCache.set(cacheKey, { at: Date.now(), manifest })
+    return manifest
+  }
+
+  if (cached) {
     // Offline or a release mid-publish: the last manifest still decides the files, so a hiccup costs
     // a moment of waiting instead of blocking the launch outright.
     logger.warn(`Using the last cached modpack manifest (${failure}).`)
-    return manifestCache.manifest
+    return cached.manifest
   }
 
-  if (!manifest) throw new ModpackUnavailableError(failure ?? 'modpack indisponível')
-
-  return manifest
+  throw new ModpackUnavailableError(failure ?? 'modpack indisponível')
 }
 
 /**
@@ -112,9 +135,9 @@ async function fetchManifest(force = false): Promise<IModpackManifest> {
  * Returns `null` when the modpack cannot be fetched, unlike `prepareMods`: the tab only lists what
  * the launcher would install, so with nothing to show it returns `null`.
  */
-export async function fetchModpack(force = false): Promise<IModpackManifest | null> {
+export async function fetchModpack(force = false, slug: string = DEFAULT_PROFILE.slug): Promise<IModpackManifest | null> {
   try {
-    return await fetchManifest(force)
+    return await fetchManifest(force, slug)
   } catch (err) {
     logger.error('Modpack manifest unavailable:', err)
     return null
@@ -122,7 +145,7 @@ export async function fetchModpack(force = false): Promise<IModpackManifest | nu
 }
 
 async function listMods(slug: string = DEFAULT_PROFILE.slug): Promise<{ mods: IModEntry[]; modsDir: string }> {
-  const manifest = await fetchModpack()
+  const manifest = await fetchModpack(false, slug)
   return { mods: buildModEntries(manifest, listDiskMods(getModsDir(slug)), readChoices(slug)), modsDir: getModsDir(slug) }
 }
 
@@ -256,7 +279,7 @@ export interface IPreparedMods {
  * launch rather than letting the game start without the modpack it expects.
  */
 export async function prepareMods(slug: string = DEFAULT_PROFILE.slug): Promise<IPreparedMods> {
-  const manifest = await fetchManifest()
+  const manifest = await fetchManifest(false, slug)
 
   migrateStrayMods(manifest, slug)
   pruneForeignMods(manifest, slug)

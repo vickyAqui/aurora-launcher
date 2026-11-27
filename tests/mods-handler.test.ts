@@ -64,6 +64,8 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  delete process.env.AURORA_ADMIN_URL
+  delete process.env.AURORA_ADMIN_SLUG
   vi.unstubAllGlobals()
   tmp.cleanup()
 })
@@ -168,6 +170,37 @@ describe('prepareMods', () => {
 
     // The tab has nothing to show without a manifest; only the launch refuses.
     await expect(fetchModpack()).resolves.toBeNull()
+  })
+
+  it('reads the manifest from the AdminTool when it is configured', async () => {
+    process.env.AURORA_ADMIN_URL = 'https://at.example.com'
+    const adminUrl = 'https://at.example.com/api/files-updater/aurora-studios'
+    const urls: string[] = []
+    fetchMock.mockImplementation(async (url: string) => {
+      urls.push(url)
+      if (url !== adminUrl) throw new Error(`unexpected fetch of ${url}`)
+      return okBytes(manifestOf(modEntry('a.jar')))
+    })
+    const { fetchModpack } = await loadHandler()
+
+    await expect(fetchModpack()).resolves.toMatchObject({ files: [{ name: 'a.jar' }] })
+    expect(urls).toEqual([adminUrl])
+  })
+
+  it('falls back to the GitHub release when the AdminTool is offline', async () => {
+    process.env.AURORA_ADMIN_URL = 'https://at.example.com'
+    const adminUrl = 'https://at.example.com/api/files-updater/aurora-studios'
+    const urls: string[] = []
+    fetchMock.mockImplementation(async (url: string) => {
+      urls.push(url)
+      if (url === adminUrl) return httpError(503)
+      if (url === MANIFEST_URL) return okBytes(manifestOf(modEntry('a.jar')))
+      throw new Error(`unexpected fetch of ${url}`)
+    })
+    const { fetchModpack } = await loadHandler()
+
+    await expect(fetchModpack(true)).resolves.toMatchObject({ files: [{ name: 'a.jar' }] })
+    expect(urls).toEqual([adminUrl, MANIFEST_URL])
   })
 })
 
