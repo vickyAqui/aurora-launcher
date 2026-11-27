@@ -44,37 +44,34 @@ Em **Settings**:
   News, Backgrounds nem permissões de perfil que não sejam o da Aurora.
 - Troque o PIN periodicamente (o novo PIN não afeta contas já aprovadas).
 
-## Sons custom para `/playsound`
+## Sons custom da Aurora
 
-Modelo em `server-patch/admintool/resourcepack/`. Para criar um som novo:
+O caminho oficial é pelo **Aurora Admin**: `/dashboard/aurora` → **Sons do Aurora**.
+O painel publica os arquivos na release `modpack` junto com o modpack, e o launcher os baixa
+para `<diretório do jogo>/kubejs/assets/aurora_vicky/` na próxima abertura.
 
-1. Coloque o arquivo em `assets/aurora_sounds/sounds/<nome>.ogg` (**`.ogg`, não `.mp3`**).
-2. Adicione a entrada em `assets/aurora_sounds/sounds.json`:
+1. Escolha um ID simples, por exemplo `entrada` (letras minúsculas, números e `_`).
+2. Selecione o arquivo `.ogg` (**não `.mp3`**, limite de 32 MB).
+3. Clique em **Enviar som**. O painel grava o arquivo em
+   `kubejs/assets/aurora_vicky/sounds/<id>.ogg` e mantém o
+   `kubejs/assets/aurora_vicky/sounds.json` com o evento `aurora_vicky:<id>`.
+4. Clique em **Publicar modpack.json** para levar os arquivos ao manifesto da release.
+5. Para tocar: `/playsound aurora_vicky:entrada @a` (use `@a`, evite `@s`).
+6. Para remover, use o botão da lista de sons e publique o manifesto novamente.
 
-```json
-{
-  "entrada": {
-    "category": "player",
-    "sounds": [{ "name": "aurora_sounds:entrada", "stream": false }]
-  }
-}
-```
+Não é preciso reiniciar o servidor, rodar `/reload` ou `/kubejs reload`, nem reconstruir o
+jar `aurora_vicky`. Quem já estiver no jogo precisa abrir pelo launcher de novo para receber
+os arquivos.
 
-3. Comprima o **conteúdo** da pasta `resourcepack` (não a pasta em si) em `aurora_sounds.zip`.
-4. No painel, **Files Updater** → envie o zip para `resourcepacks/aurora_sounds.zip`.
-5. Para tocar: `/playsound aurora_sounds:entrada @a` (use `@a`, evite `@s`).
+### Por que não o zip de resource pack
 
-### Ponto importante
+O modelo antigo em `resourcepack/` continua apenas como referência para testes locais. Um zip em
+`resourcepacks/` **não é ativado automaticamente** pelas jogadoras, e o force-pack do servidor
+foi descartado por problemas de cache e recusa de clientes. Por isso o painel agora usa os
+assets do KubeJS no namespace `aurora_vicky`.
 
-O launcher continua baixando o manifesto fixo do GitHub Releases, então **o zip enviado ao
-painel local não chega automaticamente nos clients**. Para que todo mundo ouça o som custom,
-escolha uma destas opções:
-
-- **Servidor força o pack:** hospede `aurora_sounds.zip` publicamente e configure
-  `resource-pack=<url>` e `require-resource-pack=true` no `server.properties` (restart manual seu).
-- **Som dentro do `aurora_vicky`:** os `.ogg` e o `sounds.json` entram no jar do mod; exige
-  rebuild e publicação de nova versão do jar (só com autorização sua).
-- **Instalação manual:** cada jogador coloca o zip em `resourcepacks/` e ativa o pack.
+O launcher não apaga arquivos antigos de som quando um ID é renomeado ou removido, porque a
+limpeza geral está desativada. Para **atualizar** um som, reenvie com o **mesmo ID**.
 
 Sons **vanilla** (`minecraft:ambient.cave`, etc.) já funcionam com `/playsound` hoje, sem pack.
 

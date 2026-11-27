@@ -55,6 +55,14 @@ Equipe -> Aurora Admin (fork do EML AdminTool)
   seguem desligados.
 - Rodízio do token e do PIN documentado no fork.
 
+## Sons
+
+A seção **Sons do Aurora** usa o mesmo storage do modpack: `.ogg` em
+`kubejs/assets/aurora_vicky/sounds/<id>.ogg` e `sounds.json` no mesmo namespace, ambos como
+`CONFIG` no manifesto. O launcher já baixa esses caminhos sem tratamento especial; o KubeJS
+carrega os assets no cliente. Detalhes e comando de uso em
+`server-patch/admintool/README.md`.
+
 ## O que NÃO muda agora
 
 - `package.json` continua `1.2.9`; sem tag/release.
