@@ -1,0 +1,47 @@
+# EML AdminTool 2.7.2 no Render (Blueprint).
+# A aplicação é a imagem oficial; o Dockerfile em server-patch/admintool/render/
+# só substitui o entrypoint que esperava o Postgres local (`dbs:5432`).
+#
+# Importante: o container `upd` (auto-update do painel) não vai para o Render —
+# ele exige /var/run/docker.sock, indisponível lá. Atualizações do AdminTool são
+# feitas trocando a tag no Dockerfile e sincronizando o Blueprint.
+
+databases:
+  - name: aurora-admintool-db
+    databaseName: eml_admintool
+    user: eml
+    plan: starter
+    postgresMajorVersion: "18"
+
+services:
+  - type: web
+    name: aurora-admintool
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./server-patch/admintool/render/Dockerfile
+    dockerContext: .
+    healthCheckPath: /login
+    disk:
+      name: aurora-admintool-data
+      mountPath: /app/storage
+      sizeGB: 10
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BODY_SIZE_LIMIT
+        value: Infinity
+      - key: TZ
+        value: America/Sao_Paulo
+      # Ajuste aqui (e no aurora-admin-tool.json dos clients) se a URL mudar.
+      - key: ORIGIN
+        value: https://aurora-admintool.onrender.com
+      - key: ALLOWED_ORIGINS
+        value: https://aurora-admintool.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aurora-admintool-db
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: UPDATER_HTTP_API_TOKEN
+        generateValue: true

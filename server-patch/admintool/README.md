@@ -1,7 +1,8 @@
 # EML AdminTool — instância local da Aurora
 
 Painel web da EML para gerenciar arquivos do launcher e dar acesso controlado à equipe.
-Esta instância é **local**: roda na sua máquina com Docker e não é exposta à internet.
+A instância local roda na sua máquina com Docker; há também um Blueprint para subir a mesma
+imagem no Render (`render.yaml` na raiz do repo). Nada foi aplicado em nuvem ainda.
 
 ## Subir o painel
 
@@ -119,18 +120,32 @@ preservado.
    `logs/`, `saves/` — o launcher reaplica esses arquivos e o upload sobrescreveria o jogador.
 4. Deleções no Files Updater também propagam. Cuidado ao remover arquivos.
 
-### Expor na internet
+### Expor na internet (Render)
 
-O painel hoje é local (`192.168.15.12` só existe na sua LAN). Para os jogadores receberem os
-arquivos, escolha uma destas opções:
+O `render.yaml` na raiz sobe a **mesma imagem oficial** do AdminTool `2.7.2`, com Postgres
+gerenciado e HTTPS em `https://aurora-admintool.onrender.com`. O único arquivo extra é um
+Dockerfile de 4 linhas em `server-patch/admintool/render/` que troca o entrypoint: o original
+fica preso esperando o host `dbs:5432`, que só existe no docker-compose local.
 
-- **Cloudflare Tunnel** (recomendado): sem abrir portas, HTTPS gratuito, aponta para
-  `http://localhost:8080`; exige domínio na Cloudflare.
-- **VPS + Caddy/Nginx**: Docker Compose na VPS, domínio e certificado TLS;
+Passo a passo:
 
-Em ambos, use `ORIGIN=https://painel.seudominio.com` no `.env` do Compose e reinicie o stack.
-Depois coloque a mesma URL no `aurora-admin-tool.json` de cada cliente (ou embuta na próxima
-versão do launcher).
+1. Render Dashboard → **New → Blueprint** → conecte este repo; ele encontra `render.yaml` na raiz.
+2. Use planos **Starter** para web e banco. O plano free hiberna (o primeiro fetch do launcher
+   levaria ~1 min ou falharia).
+3. Confira `ORIGIN` e `ALLOWED_ORIGINS` no Blueprint. Se o nome `aurora-admintool` já estiver
+   tomado, a URL muda — ajuste as duas variáveis e o JSON dos clients.
+4. Na primeira visita, faça o assistente inicial (senha do banco é gerada pelo Render; não anote).
+5. Crie o perfil `aurora-studios` e envie os arquivos pelo Files Updater.
+6. Coloque a URL em `%APPDATA%\aurora-admin-tool.json` e teste um cliente antes de falar para a
+   equipe.
+
+O disco persistente de 10 GB é montado em `/app/storage`; o entrypoint cria links para
+`/app/files`, `/app/env` e `/app/data` (o Render permite só um disco por serviço). O container
+`upd` **não** vai para o Render: ele precisa de `/var/run/docker.sock`. Para atualizar o painel,
+troque a tag no Dockerfile e sincronize o Blueprint.
+
+Alternativa sem nuvem: Cloudflare Tunnel apontando para `http://localhost:8080`, com `ORIGIN`
+igual à URL pública. O painel local continua intacto.
 
 ### Bootstraps
 
@@ -142,5 +157,6 @@ Bootstraps exigiria publicar os 3 arquivos por plataforma com `.yml` na versão 
 
 Código preparado: `electron/admintool.ts`, `electron/launchConfig.ts`, `electron/const.ts`,
 `electron/handlers/mods.ts` e `electron/handlers/launcher.ts`. Build e testes focados passaram.
+Blueprint Render preparado em `render.yaml` + `server-patch/admintool/render/`, sem aplicar.
 Nada foi enviado ao servidor de jogo; nenhuma versão/tag/release foi criada. A conexão só vale
 para quem tiver a URL configurada e o painel exposto.
