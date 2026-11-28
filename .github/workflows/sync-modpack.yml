@@ -1,0 +1,40 @@
+name: Sync modpack release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'modpack/**'
+      - 'scripts/build-modpack.mjs'
+      - 'scripts/modpack-utils.mjs'
+      - '.github/workflows/sync-modpack.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate manifest
+        run: node scripts/build-modpack.mjs
+
+      - name: Upload assets and manifest to the modpack release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload modpack \
+            "modpack/kubejs/assets/alexscaves/particles/totem_explosion.json#kubejs_assets_alexscaves_particles_totem_explosion.json" \
+            "modpack.json" \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber
