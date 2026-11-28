@@ -5,9 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'modpack/**'
-      - 'scripts/build-modpack.mjs'
-      - 'scripts/modpack-utils.mjs'
+      - 'modpack.json'
+      - 'release-assets/**'
       - '.github/workflows/sync-modpack.yml'
   workflow_dispatch:
 
@@ -21,20 +20,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+      - name: Validate manifest
+        run: node -e "const m=require('./modpack.json'); if(!Array.isArray(m.files)||m.files.length===0) process.exit(1); console.log('Manifest OK:',m.files.length,'entries')"
 
-      - name: Generate manifest
-        run: node scripts/build-modpack.mjs
-
-      - name: Upload assets and manifest to the modpack release
+      - name: Upload missing assets and the manifest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload modpack \
-            "modpack/kubejs/assets/alexscaves/particles/totem_explosion.json#kubejs_assets_alexscaves_particles_totem_explosion.json" \
-            "modpack.json" \
-            --repo "$GITHUB_REPOSITORY" \
-            --clobber
+          set -euo pipefail
+
+          node -e "const m=require('./modpack.json'); for (const f of m.files) if (f.type !== 'FOLDER') console.log(decodeURIComponent(f.url.split('/').pop())+'\t'+'release-assets/'+decodeURIComponent(f.url.split('/').pop()))" > "$RUNNER_TEMP/assets.tsv"
+          cut -f1 "$RUNNER_TEMP/assets.tsv" | sort -u > "$RUNNER_TEMP/expected.txt"
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases/tags/modpack" --jq '.assets[].name' | sort -u > "$RUNNER_TEMP/current.txt"
+          comm -23 "$RUNNER_TEMP/expected.txt" "$RUNNER_TEMP/current.txt" > "$RUNNER_TEMP/missing.txt"
+
+          while IFS=$'\t' read -r asset file; do
+            if grep -Fxq "$asset" "$RUNNER_TEMP/missing.txt" && [ -f "$file" ]; then
+              echo "Uploading missing asset: $asset"
+              gh release upload modpack "$file#$asset" --repo "$GITHUB_REPOSITORY" --clobber
+            fi
+          done < "$RUNNER_TEMP/assets.tsv"
+
+          gh release upload modpack modpack.json --repo "$GITHUB_REPOSITORY" --clobber

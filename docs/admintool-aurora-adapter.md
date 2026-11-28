@@ -70,6 +70,8 @@ carrega os assets no cliente. Detalhes e comando de uso em
 - `cleaning.enabled=false`, slider de RAM e args JVM extras intactos.
 - O launchConfig com AdminTool continua no código, mas inativo.
 - Modpack, configurações e sons continuam sendo publicados na tag de release `modpack`.
+- O workflow `.github/workflows/sync-modpack.yml` publica o `modpack.json` versionado e envia
+  automaticamente os assets novos que estejam em `release-assets/`.
 
 ## Fases
 

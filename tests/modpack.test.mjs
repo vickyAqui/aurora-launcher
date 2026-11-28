@@ -279,6 +279,9 @@ describe('the modpack.json shipped in this repo', () => {
   })
 
   it('has a matching file for every entry in the modpack folder', async () => {
+    // The folder is gitignored, so a clean CI checkout only has the manifest itself.
+    if (!existsSync(path.join(repoRoot, 'modpack'))) return
+
     // CONFIG entries (config/ and kubejs/) live in the manifest too; comparing only MOD names
     // falsely reports every KubeJS asset as missing.
     const declared = new Set(manifest.files.map((f) => `${f.path}${f.name}`))

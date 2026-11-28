@@ -1,0 +1,3920 @@
+{
+  "files": [
+    {
+      "name": "config",
+      "path": "",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "kubejs",
+      "path": "",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "assets",
+      "path": "kubejs/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "alexscaves",
+      "path": "kubejs/assets/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "particles",
+      "path": "kubejs/assets/alexscaves/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "minecraft",
+      "path": "kubejs/assets/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "blockstates",
+      "path": "kubejs/assets/minecraft/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "font",
+      "path": "kubejs/assets/minecraft/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "lang",
+      "path": "kubejs/assets/minecraft/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "models",
+      "path": "kubejs/assets/minecraft/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "block",
+      "path": "kubejs/assets/minecraft/models/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "item",
+      "path": "kubejs/assets/minecraft/models/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "optifine",
+      "path": "kubejs/assets/minecraft/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "shaders",
+      "path": "kubejs/assets/minecraft/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "core",
+      "path": "kubejs/assets/minecraft/shaders/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "textures",
+      "path": "kubejs/assets/minecraft/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "gui",
+      "path": "kubejs/assets/minecraft/textures/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "advancements",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "backgrounds",
+      "path": "kubejs/assets/minecraft/textures/gui/advancements/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "container",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "creative_inventory",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "title",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "background",
+      "path": "kubejs/assets/minecraft/textures/gui/title/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "icons",
+      "path": "kubejs/assets/minecraft/textures/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "item",
+      "path": "kubejs/assets/minecraft/textures/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "labels",
+      "path": "kubejs/assets/minecraft/textures/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "logo",
+      "path": "kubejs/assets/minecraft/textures/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "particle",
+      "path": "kubejs/assets/minecraft/textures/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "tags",
+      "path": "kubejs/assets/minecraft/textures/",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "mods",
+      "path": "",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modpack.json",
+      "type": "FOLDER"
+    },
+    {
+      "name": "craftpresence.json",
+      "path": "config/",
+      "size": 4429,
+      "sha1": "613ed0084ce7dd479dac435fac4c888f155980fc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/craftpresence.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "totem_explosion.json",
+      "path": "kubejs/assets/alexscaves/particles/",
+      "size": 535,
+      "sha1": "d67b18bf7769a2b2edd43cbde2edb3cb6fb5914c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_alexscaves_particles_totem_explosion.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "brewing_stand.json",
+      "path": "kubejs/assets/minecraft/blockstates/",
+      "size": 111,
+      "sha1": "cc00781483169f4cfc072cce1db000e9f059d576",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_blockstates_brewing_stand.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "default.json",
+      "path": "kubejs/assets/minecraft/font/",
+      "size": 9279,
+      "sha1": "6ee3b573df4d5f4b824602b66f8fc7876f02d42f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_font_default.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "en_us.json",
+      "path": "kubejs/assets/minecraft/lang/",
+      "size": 1229,
+      "sha1": "9a996ecec024a9b547156ea5195539ba810e0d0c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_lang_en_us.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "brewing_stand.json",
+      "path": "kubejs/assets/minecraft/models/block/",
+      "size": 21548,
+      "sha1": "d32e58e103ea0f6c38f9d99b6f32fa379d1f2ca8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_models_block_brewing_stand.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "brewing_stand.json",
+      "path": "kubejs/assets/minecraft/models/item/",
+      "size": 48,
+      "sha1": "f2947de9d342839c5565e7be5da3082f38865526",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_models_item_brewing_stand.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "color.properties",
+      "path": "kubejs/assets/minecraft/optifine/",
+      "size": 1368,
+      "sha1": "f8131ab1e0684a629f6f8586d4898811e89af597",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_optifine_color.properties",
+      "type": "CONFIG"
+    },
+    {
+      "name": "aurora_sky_window.fsh",
+      "path": "kubejs/assets/minecraft/shaders/core/",
+      "size": 170,
+      "sha1": "9b47740ae254619853e595ec894168396079768b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_shaders_core_aurora_sky_window.fsh",
+      "type": "CONFIG"
+    },
+    {
+      "name": "aurora_sky_window.json",
+      "path": "kubejs/assets/minecraft/shaders/core/",
+      "size": 725,
+      "sha1": "7ab15612fed1949700980ea17a247550cab2772f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_shaders_core_aurora_sky_window.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "aurora_sky_window.vsh",
+      "path": "kubejs/assets/minecraft/shaders/core/",
+      "size": 263,
+      "sha1": "767033edfd59a55c30b619245d2a6063e7e95380",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_shaders_core_aurora_sky_window.vsh",
+      "type": "CONFIG"
+    },
+    {
+      "name": "blockofsky_sky.fsh",
+      "path": "kubejs/assets/minecraft/shaders/core/",
+      "size": 170,
+      "sha1": "9b47740ae254619853e595ec894168396079768b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_shaders_core_blockofsky_sky.fsh",
+      "type": "CONFIG"
+    },
+    {
+      "name": "blockofsky_sky.json",
+      "path": "kubejs/assets/minecraft/shaders/core/",
+      "size": 719,
+      "sha1": "cb252c6999ed5c3810cb6b9c906f231c285c85bb",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_shaders_core_blockofsky_sky.json",
+      "type": "CONFIG"
+    },
+    {
+      "name": "blockofsky_sky.vsh",
+      "path": "kubejs/assets/minecraft/shaders/core/",
+      "size": 263,
+      "sha1": "767033edfd59a55c30b619245d2a6063e7e95380",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_shaders_core_blockofsky_sky.vsh",
+      "type": "CONFIG"
+    },
+    {
+      "name": "adventure.png",
+      "path": "kubejs/assets/minecraft/textures/gui/advancements/backgrounds/",
+      "size": 179,
+      "sha1": "63e2e4d9f1c1598d2e829b7f12ac7875066ee2e1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_advancements_backgrounds_adventure.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "end.png",
+      "path": "kubejs/assets/minecraft/textures/gui/advancements/backgrounds/",
+      "size": 200,
+      "sha1": "88955697192e4ecfa39692309129473732f34987",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_advancements_backgrounds_end.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "husbandry.png",
+      "path": "kubejs/assets/minecraft/textures/gui/advancements/backgrounds/",
+      "size": 186,
+      "sha1": "4f2efda6d98f26eb4911d8fefdbd1626cb9437ff",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_advancements_backgrounds_husbandry.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "nether.png",
+      "path": "kubejs/assets/minecraft/textures/gui/advancements/backgrounds/",
+      "size": 211,
+      "sha1": "12bbcbe5935f64dfcfcd70d8886d51142e240248",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_advancements_backgrounds_nether.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "stone.png",
+      "path": "kubejs/assets/minecraft/textures/gui/advancements/backgrounds/",
+      "size": 171,
+      "sha1": "208d3f5f6276556bf12b58801f2089518b6da235",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_advancements_backgrounds_stone.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "window.png",
+      "path": "kubejs/assets/minecraft/textures/gui/advancements/",
+      "size": 771,
+      "sha1": "8a4119343081e1562540f656ed661b8a51229a76",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_advancements_window.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "book.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 5299,
+      "sha1": "780fcc54ee406c64a3e172b0d417330b9d081542",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_book.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "anvil.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 8411,
+      "sha1": "2dbca04b9024ca5b7fc1f113d409fbd274804374",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_anvil.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "beacon.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1999,
+      "sha1": "5758dc9dfa2b1b94d552fb25e78732b04c0b280b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_beacon.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "blast_furnace.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1432,
+      "sha1": "8f844781274f5ce53eef8df18ac7433d1b1b240d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_blast_furnace.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "brewing_stand.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 2130,
+      "sha1": "fec10cb325828d77eb0475c0e4266c3924a46b16",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_brewing_stand.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "bundle.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 299,
+      "sha1": "766107e15ee0ca6eb8333bb9ca7ac01f8841a0c1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_bundle.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "cartography_table.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 3145,
+      "sha1": "f91a40c306627c84ea13fa74850dd93ebfb2d508",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_cartography_table.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "crafting_table.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 2298,
+      "sha1": "c126e4bc9edb5ec875879cd7a317b347049fe27c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_crafting_table.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "tabs.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/creative_inventory/",
+      "size": 5529,
+      "sha1": "58f9772af5d66a4687f96f835b125e467f775b07",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_creative_inventory_tabs.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "tab_inventory.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/creative_inventory/",
+      "size": 8656,
+      "sha1": "90da9f47f74e6cd02be9265734bca0f105c798b6",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_creative_inventory_tab_inventory.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "tab_items.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/creative_inventory/",
+      "size": 14200,
+      "sha1": "d156aa05b1d89d9644cd7be69d53ab6d5cb997f7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_creative_inventory_tab_items.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "tab_item_search.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/creative_inventory/",
+      "size": 12842,
+      "sha1": "181345f79efad48c8322a29f0ef24163ff92df19",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_creative_inventory_tab_item_search.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "dispenser.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1539,
+      "sha1": "a60b8ca599c305d7da5604a7e2dee62b038e17d0",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_dispenser.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "enchanting_table.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 2318,
+      "sha1": "f795c49fae1f7ba49ee6836c1c5e21bbe89ace64",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_enchanting_table.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "furnace.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1432,
+      "sha1": "8f844781274f5ce53eef8df18ac7433d1b1b240d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_furnace.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "gamemode_switcher.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1868,
+      "sha1": "09069c5291db9c439f44674ef9a3ccd833a7747c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_gamemode_switcher.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "generic_54.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1060,
+      "sha1": "f84b538d7a7233059bd05ba23eebc355bcceecf9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_generic_54.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "grindstone.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 774,
+      "sha1": "a7ced260f07a0355f9febacc717eea3df4882dd6",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_grindstone.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "hopper.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1164,
+      "sha1": "112e02ea174ec669dc8fa36a5e84fe956fbc4d6e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_hopper.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "horse.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1273,
+      "sha1": "0b3d04cb83c9c751e3c7fde2fade700c73a53935",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_horse.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "inventory.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 9452,
+      "sha1": "4f18c2ea9cb786b9f16a3cd132269dd149090374",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_inventory.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "legacy_smithing.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1893,
+      "sha1": "b13b0cad3e93def7b4bc27e886b84358f07c3e64",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_legacy_smithing.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "loom.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1836,
+      "sha1": "b3c770e818efa9c043f88d091a244690c4f32a48",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_loom.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "shulker_box.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 920,
+      "sha1": "fa519dc408b78b88f1cd3796f8fb0f1827dec2d8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_shulker_box.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "smithing.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1533,
+      "sha1": "1e4ecd7d2cfe97f39eaa133871c868328fcd63f5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_smithing.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "smoker.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1432,
+      "sha1": "8f844781274f5ce53eef8df18ac7433d1b1b240d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_smoker.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "stats_icons.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1227,
+      "sha1": "66463fa6664396f7057548d6aeb862081023a599",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_stats_icons.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "stonecutter.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 1432,
+      "sha1": "876d1271e6934749a2ba124b8e6d3ff918fa5dc6",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_stonecutter.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "villager2.png",
+      "path": "kubejs/assets/minecraft/textures/gui/container/",
+      "size": 3010,
+      "sha1": "8956aab6d20415d97f3c3832124986ffce6f4c89",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_container_villager2.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "demo_background.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 260,
+      "sha1": "a3ededbd9f7665d99c880078bae4d53d6de9dabd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_demo_background.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "footer_separator.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 101,
+      "sha1": "69cf8b2d321a7d2ddefe924a8deff947c2f8483d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_footer_separator.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "header_separator.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 107,
+      "sha1": "4d16ecf39b66194490cdd5bccee592368869cdef",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_header_separator.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "icons.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 10754,
+      "sha1": "aa9ae28fe11b4382b6a624ef49d79c01532678ec",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_icons.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "inworld_footer_separator.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 101,
+      "sha1": "69cf8b2d321a7d2ddefe924a8deff947c2f8483d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_inworld_footer_separator.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "inworld_header_separator.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 107,
+      "sha1": "4d16ecf39b66194490cdd5bccee592368869cdef",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_inworld_header_separator.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "inworld_menu_background.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 96,
+      "sha1": "773853e54def949d349246ab855f726fffb7f3dc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_inworld_menu_background.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "inworld_menu_list_background.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 96,
+      "sha1": "2201afd4470f7c2eb42bdfec31e3d4adac52c1d5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_inworld_menu_list_background.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "light_dirt_background.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 482,
+      "sha1": "cd8099f47b789e460838c1588013559cd5589993",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_light_dirt_background.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "menu_background.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 96,
+      "sha1": "773853e54def949d349246ab855f726fffb7f3dc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_menu_background.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "menu_list_background.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 96,
+      "sha1": "2201afd4470f7c2eb42bdfec31e3d4adac52c1d5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_menu_list_background.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "options_background.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 482,
+      "sha1": "cd8099f47b789e460838c1588013559cd5589993",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_options_background.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "recipe_book.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 394,
+      "sha1": "e7c97a3baca5649ba082a52133b244775f7c694a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_recipe_book.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "sliders.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 3805,
+      "sha1": "19bfb5c4faf8e8337a16a547fb103acd6e25bee8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_sliders.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "tab_header_background.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 99,
+      "sha1": "d87eb231628c1a24b00eb3eaa5670c856a2737bd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_tab_header_background.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "panorama_0.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/background/",
+      "size": 85,
+      "sha1": "c714ca5481ef89c1dbb98b5ab11a396920adcbfa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_background_panorama_0.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "panorama_1.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/background/",
+      "size": 85,
+      "sha1": "c714ca5481ef89c1dbb98b5ab11a396920adcbfa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_background_panorama_1.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "panorama_2.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/background/",
+      "size": 85,
+      "sha1": "c714ca5481ef89c1dbb98b5ab11a396920adcbfa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_background_panorama_2.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "panorama_3.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/background/",
+      "size": 85,
+      "sha1": "c714ca5481ef89c1dbb98b5ab11a396920adcbfa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_background_panorama_3.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "panorama_4.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/background/",
+      "size": 85,
+      "sha1": "c714ca5481ef89c1dbb98b5ab11a396920adcbfa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_background_panorama_4.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "panorama_5.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/background/",
+      "size": 85,
+      "sha1": "c714ca5481ef89c1dbb98b5ab11a396920adcbfa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_background_panorama_5.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "panorama_overlay.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/background/",
+      "size": 85,
+      "sha1": "c714ca5481ef89c1dbb98b5ab11a396920adcbfa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_background_panorama_overlay.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "edition.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/",
+      "size": 1834,
+      "sha1": "95c436abaecfd0a495e16cd6e42eece30e351a2e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_edition.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "minecraft.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/",
+      "size": 85,
+      "sha1": "c714ca5481ef89c1dbb98b5ab11a396920adcbfa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_minecraft.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "mojangstudios.png",
+      "path": "kubejs/assets/minecraft/textures/gui/title/",
+      "size": 137755,
+      "sha1": "f551bd1fae7cd6f9ee09a3eb7d1b2830998d9631",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_title_mojangstudios.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "widgets.png",
+      "path": "kubejs/assets/minecraft/textures/gui/",
+      "size": 9281,
+      "sha1": "775dc7cf9e2c3b885a28c0d4bf57d6287c4bd62e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_gui_widgets.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "assesibilidade.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 934,
+      "sha1": "a880ede6a0f5ba95b58fe009e9e364b6a43550df",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_assesibilidade.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "audio.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 987,
+      "sha1": "ce7bb95aa72759d50fbebe2a98ab0752747669b2",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_audio.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "auroralogo.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 196373,
+      "sha1": "dedb963c4f110fca27fc5807869d0b6ca305f7ac",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_auroralogo.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "backtogame.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 964,
+      "sha1": "6c7a8c1defe821db5af3b3697a2a3aad0b75c0c1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_backtogame.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "bug.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 990,
+      "sha1": "91e334b4657d2cca4a0f9811619e21d89b5a8105",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_bug.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "chat.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 932,
+      "sha1": "81914799b728a996e78d2e64e5cbb4683317bf0e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_chat.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "conquistas.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 966,
+      "sha1": "ef8f70b8904ef050afa3a2183eed3a3995e8896d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_conquistas.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "controls.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 942,
+      "sha1": "64dab681f3ed03e077e37510b6150fa61478a04c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_controls.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "creditos.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 1073,
+      "sha1": "64137d259a99c5f4a221b9c85fecbd95e255fa8c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_creditos.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "customskin.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 970,
+      "sha1": "b751eb475bcde608dc8dc7bfe1d74db49f01b3be",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_customskin.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "discord.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 337,
+      "sha1": "d5d3ecf6dd698d1bef22575d154e938d4d5df4a1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_discord.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "estatistica.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 987,
+      "sha1": "a68c19c30bdc01ed21c782279ae3a70a797ec2f9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_estatistica.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "feed.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 968,
+      "sha1": "ff553e046f96c55906f97edacbafb26b00f5e61c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_feed.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "fov.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 966,
+      "sha1": "254383649f6214b10630e4a0fa5f887a1ebc5ab1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_fov.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "idiomas.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 1011,
+      "sha1": "aa25db19de4894d270a2eddd10092f2e2d5a6955",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_idiomas.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "lan.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 967,
+      "sha1": "f1e1ed0975bd920d4eafda689a9c81fe09a76ff5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_lan.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "multiplayer.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 487,
+      "sha1": "5cb4d76ec74c750c27b312553fd2aa43a69398ac",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_multiplayer.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "online.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 990,
+      "sha1": "9ed35a14235e555dcba561314b9b02c522ddf420",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_online.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "openfolder.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 429,
+      "sha1": "f2e274a05e496de553650d7fbc516236007fb199",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_openfolder.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "options.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 484,
+      "sha1": "7c98ed510a4dc82f4737d50fefc467fa67aa77f0",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_options.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "quit.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 416,
+      "sha1": "d3b9e9efaa5ed6f04406dceb0e66453652e166be",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_quit.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "realms.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 427,
+      "sha1": "d919765e02537482fba996142dd98e72b143940d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_realms.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "resource_packs.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 956,
+      "sha1": "9fac03daf00683a560970621bce7b23fa06b4ef8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_resource_packs.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "salvar.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 952,
+      "sha1": "b2bf2154f546fb7a111ce8284cf0697d04fedf44",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_salvar.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "singleplayer.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 282,
+      "sha1": "94d128b2bc2cfc0b52cb47a461ad5ba7c73f4447",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_singleplayer.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "site.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 664,
+      "sha1": "f5093b716b4182809f07c23f53d996e2e359f2aa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_site.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "telimetria.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 983,
+      "sha1": "65d17e3e3fa1f934daf56c0aba4fd7f20b5347f3",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_telimetria.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "tiktok.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 487,
+      "sha1": "c83a4b9d3a5d0207e639967bacfe6dea34158d2a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_tiktok.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "video.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 973,
+      "sha1": "8fdc42a5d19c0fbed908438ecdf5c6826e03a653",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_video.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "x.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 356,
+      "sha1": "6104d60f9b62743ca63d57a5f384c6c54076dfc9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_x.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "youtube.png",
+      "path": "kubejs/assets/minecraft/textures/icons/",
+      "size": 456,
+      "sha1": "4940d3176053baaf944ea9fdc3db52bfe84dab51",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_icons_youtube.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "totem_of_undying.png",
+      "path": "kubejs/assets/minecraft/textures/item/",
+      "size": 864,
+      "sha1": "c51fdf89c274542fa22e92d6aa9c7314f038647b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_item_totem_of_undying.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "moeda.png",
+      "path": "kubejs/assets/minecraft/textures/labels/",
+      "size": 224,
+      "sha1": "196b836ed98bf6352050d0a603c39f6bae8fae24",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_labels_moeda.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "shield.png",
+      "path": "kubejs/assets/minecraft/textures/labels/",
+      "size": 296,
+      "sha1": "c44b2289285a316091717cd6f35876121d42ee3b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_labels_shield.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "logo.png",
+      "path": "kubejs/assets/minecraft/textures/logo/",
+      "size": 15670,
+      "sha1": "cbc0d10054915efba56649d1c93a0e0c2ac5db7a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_logo_logo.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "moreinfo.png",
+      "path": "kubejs/assets/minecraft/textures/logo/",
+      "size": 3492,
+      "sha1": "a93795e73c54895b109b6ffa292bee40d9a5c569",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_logo_moreinfo.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "title.png",
+      "path": "kubejs/assets/minecraft/textures/logo/",
+      "size": 26159,
+      "sha1": "901f447c45da9b5e16abf691922c4d27d7765b7a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_logo_title.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "glitter_0.png",
+      "path": "kubejs/assets/minecraft/textures/particle/",
+      "size": 130,
+      "sha1": "279fc5d1f86b583d672c7f85a60002e9faa5457e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_particle_glitter_0.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "glitter_1.png",
+      "path": "kubejs/assets/minecraft/textures/particle/",
+      "size": 151,
+      "sha1": "5f51a235e5696e1cfd8af80c82ddf553998aa365",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_particle_glitter_1.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "glitter_2.png",
+      "path": "kubejs/assets/minecraft/textures/particle/",
+      "size": 148,
+      "sha1": "6647507eb02cceb5b7a31341cdcc3ddbf63fb612",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_particle_glitter_2.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "glitter_3.png",
+      "path": "kubejs/assets/minecraft/textures/particle/",
+      "size": 171,
+      "sha1": "dfd0ff0ca8b644868fda7ce3631dda8e1a04916d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_particle_glitter_3.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "glitter_4.png",
+      "path": "kubejs/assets/minecraft/textures/particle/",
+      "size": 185,
+      "sha1": "903e788b6f7b22f10b73920c4cddb308bb8f0996",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_particle_glitter_4.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "glitter_5.png",
+      "path": "kubejs/assets/minecraft/textures/particle/",
+      "size": 185,
+      "sha1": "8b10c69197d24665f0f32bef2e1556bbbbea4f1a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_particle_glitter_5.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "glitter_6.png",
+      "path": "kubejs/assets/minecraft/textures/particle/",
+      "size": 199,
+      "sha1": "4f66a72457b0a11b19e433850efc5951d2c8fa10",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_particle_glitter_6.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "glitter_7.png",
+      "path": "kubejs/assets/minecraft/textures/particle/",
+      "size": 182,
+      "sha1": "b66f508134d3bab3ea0127d29c924c8396ff3922",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_particle_glitter_7.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "astros_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 3465,
+      "sha1": "3dd92033def093f6619d58daa24b8891cfbe7dd4",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_astros_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "caos_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 1886,
+      "sha1": "88be0b4d8edb1885950199e1459fa9b5421d2ab1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_caos_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "criatividade_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 5308,
+      "sha1": "efcc149f9c206ac344aff72e866f4ed40a80b351",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_criatividade_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "futuro_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 2903,
+      "sha1": "62a0a215aab306cf84bdbe48449759e1866f03cd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_futuro_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "ilusao_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 2711,
+      "sha1": "47cafde21a8dae8b769d88b651e3671e99d31e8d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_ilusao_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "imaginarios_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 4118,
+      "sha1": "4374b0df79e7f54791be586f22bab6b8c3d0074e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_imaginarios_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "logo.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 15670,
+      "sha1": "cbc0d10054915efba56649d1c93a0e0c2ac5db7a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_logo.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "nostalgia_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 3496,
+      "sha1": "b1daeb59f48c3ef42215e38df95c826617590058",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_nostalgia_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "npc_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 1996,
+      "sha1": "12178051284f4e61c36840ddc75fb88a528a7d36",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_npc_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "oniricos_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 3221,
+      "sha1": "a769a4571e37b6bc79cb44b29916f9b6672978c5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_oniricos_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "pesadelo_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 2670,
+      "sha1": "dbb9b20796899368cd04fc1c79c61e612b37b614",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_pesadelo_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "pilares_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 3515,
+      "sha1": "2286738eacada6ad9dbe3283499a9671cf7d28b3",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_pilares_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "realidade_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 3603,
+      "sha1": "ed7b14c7845091bc248c09a3be03c0452ef50a9a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_realidade_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "repeticao_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 2730,
+      "sha1": "69aba7c63b7f4dd2f4e3bad5d2796ad941bc4f6e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_repeticao_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "stars_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 2433,
+      "sha1": "84894e9787eec33e9ac24883628ace35eed3b6b7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_stars_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "uni-nicos_tag.png",
+      "path": "kubejs/assets/minecraft/textures/tags/",
+      "size": 4073,
+      "sha1": "f5d90f4a48f15d94f4c047f97ee88cb454aae497",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs_assets_minecraft_textures_tags_uni-nicos_tag.png",
+      "type": "CONFIG"
+    },
+    {
+      "name": "abyssal_decor_1.20.1_0.11.0_Forge.jar",
+      "path": "mods/",
+      "size": 11280208,
+      "sha1": "957a93807de2b53339631a10fdb357cfb7f1c720",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/abyssal_decor_1.20.1_0.11.0_Forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "accessories-neoforge-1.0.0-beta.48+1.20.1.jar",
+      "path": "mods/",
+      "size": 1080048,
+      "sha1": "22d8aed468ce41b78389b801cec1cd33faa5edb5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/accessories-neoforge-1.0.0-beta.48%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "additionallanterns-1.1.2-forge-mc1.20.2.jar",
+      "path": "mods/",
+      "size": 3157057,
+      "sha1": "c30053984d1d0e329ae92db99bd6c1b0ee60d6e5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/additionallanterns-1.1.2-forge-mc1.20.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "AI-Improvements-1.20-0.5.2.jar",
+      "path": "mods/",
+      "size": 29553,
+      "sha1": "11ad483d1fd1f7ebd84b4940b1dc0926b3e9daa8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/AI-Improvements-1.20-0.5.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "alexscaves-2.0.2.jar",
+      "path": "mods/",
+      "size": 74871657,
+      "sha1": "a1e5c7b7c7eadda4c8e954acbcbaf75a7b500d53",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/alexscaves-2.0.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "alexsmobs-1.22.9.jar",
+      "path": "mods/",
+      "size": 26350793,
+      "sha1": "dbf93d2f1da19e16739e91e8ea0fc6f4bc2f228f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/alexsmobs-1.22.9.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "alltheleaks-1.1.1+1.20.1-forge.jar",
+      "path": "mods/",
+      "size": 1187126,
+      "sha1": "3c43c2e76093dc7ef5ad6e456d20da9674c653aa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/alltheleaks-1.1.1%2B1.20.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "almanac-1.20.x-forge-1.0.2.jar",
+      "path": "mods/",
+      "size": 15906,
+      "sha1": "f0b711df59cd589b088e536ca4134c5e6e73fd58",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/almanac-1.20.x-forge-1.0.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "alshanex_familiars-1.20.1_v3.8_HOTFIX.jar",
+      "path": "mods/",
+      "size": 23131109,
+      "sha1": "47884d7680396fff177a19ad9a19a7bf032d8b24",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/alshanex_familiars-1.20.1_v3.8_HOTFIX.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "another_furniture-forge-1.20.1-3.0.4.jar",
+      "path": "mods/",
+      "size": 2463633,
+      "sha1": "bffc5f4d6ae0a906222990c9d0fa8a632b2aa8ed",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/another_furniture-forge-1.20.1-3.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "antiswapfix-1.1.0.jar",
+      "path": "mods/",
+      "size": 10962,
+      "sha1": "27d18a97a97391a2dbfb7d7983765790f5993bea",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/antiswapfix-1.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ApothicAttributes-1.20.1-1.3.7.jar",
+      "path": "mods/",
+      "size": 227511,
+      "sha1": "1dc0744d17f0861fe6b067798d39abce9d8e0e86",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ApothicAttributes-1.20.1-1.3.7.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "appleskin-forge-mc1.20.1-2.5.1.jar",
+      "path": "mods/",
+      "size": 47428,
+      "sha1": "81919356f84eab14258db98924b66c3c38e372b1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/appleskin-forge-mc1.20.1-2.5.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "aquamirae-forge-1.20.1-6.4.0.jar",
+      "path": "mods/",
+      "size": 19073985,
+      "sha1": "f802327ab6c738ff3c29e4b39a28c224ee7b29fa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aquamirae-forge-1.20.1-6.4.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "architectury-9.2.14-forge.jar",
+      "path": "mods/",
+      "size": 580602,
+      "sha1": "a52918a500ff421180a1cbd1a0cabee712134ec4",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/architectury-9.2.14-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "artifacts-forge-9.5.18.jar",
+      "path": "mods/",
+      "size": 850964,
+      "sha1": "fac07c939841b0e931d0fc14076af35ca06572da",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/artifacts-forge-9.5.18.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "arts_and_crafts-forge-1.20.1-1.5.1.jar",
+      "path": "mods/",
+      "size": 5185017,
+      "sha1": "afe0671281f6b20e1ecae5dc5d873d4cf1acca9f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/arts_and_crafts-forge-1.20.1-1.5.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "astikorcarts-1.20.1-1.1.8.jar",
+      "path": "mods/",
+      "size": 231706,
+      "sha1": "49a8ac1c23282fe86420f0b4527e522421f2f692",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/astikorcarts-1.20.1-1.1.8.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "athena-forge-1.20.1-3.1.2.jar",
+      "path": "mods/",
+      "size": 91808,
+      "sha1": "2acee24454af859988a691f0506271a465f68f7b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/athena-forge-1.20.1-3.1.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "AttributeFix-Forge-1.20.1-21.0.5.jar",
+      "path": "mods/",
+      "size": 19499,
+      "sha1": "76d6b2d0f2a3c9842587ad20666ba419cd8c1efa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/AttributeFix-Forge-1.20.1-21.0.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Aurora-CPM-Emote-0.1.0.jar",
+      "path": "mods/",
+      "size": 55860,
+      "sha1": "cb1530e928707047acd9914cbf2e978b6313e1a6",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Aurora-CPM-Emote-0.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "auroraevents-1.0.0.jar",
+      "path": "mods/",
+      "size": 866390,
+      "sha1": "0b0261918a517cdf0edd21e98a4d281e6f17985c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/auroraevents-1.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "auroramortiscompat-0.0.3-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 135101,
+      "sha1": "f706d2185b345da3fbdcc550e997ad4463075458",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/auroramortiscompat-0.0.3-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "auroramortis_ex-1.20.1-1.0.0 (6).jar",
+      "path": "mods/",
+      "size": 8834755,
+      "sha1": "d21c4c03e103383516359656c6820ef79df8fdc8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/auroramortis_ex-1.20.1-1.0.0.6.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "aurora_mortis_biomes-1.0.3-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 19748099,
+      "sha1": "167cfab4e7df1f5f61986cc8a2fe93384bb9dce3",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_mortis_biomes-1.0.3-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "aurora_mortis_blocks-0.4-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 2797872,
+      "sha1": "525505acb170b43f613557b4c4075a7d339607fb",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_mortis_blocks-0.4-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "aurora_mortis_lib-0.0.9-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 32119045,
+      "sha1": "0a1572956928c77f162e6b45a07aef0c9063ac77",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_mortis_lib-0.0.9-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "aurora_vicky-1.0.5.jar",
+      "path": "mods/",
+      "size": 296509,
+      "sha1": "41d76222bde0846e6d5dd6740891142aed27e97f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/aurora_vicky-1.0.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Axiom-6.0.5-for-MC1.20.1.jar",
+      "path": "mods/",
+      "size": 47163660,
+      "sha1": "545bb635cea1b3c7b0d4976f8373161ab86b13a9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Axiom-6.0.5-for-MC1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "babel_core-2.0.0.jar",
+      "path": "mods/",
+      "size": 17402448,
+      "sha1": "6cf972da31f876a2c5ff44205cf37ed72bd5d0fa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/babel_core-2.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "BadMobs-1.20.1-19.0.4.jar",
+      "path": "mods/",
+      "size": 10425,
+      "sha1": "100f29f6c425688bcbd77d1a3b99b12e18f019cd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/BadMobs-1.20.1-19.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "BadOptimizations-2.4.1-1.20.1.jar",
+      "path": "mods/",
+      "size": 460234,
+      "sha1": "304007dcb0fb15ed1a1bc3771736470dafc5be0f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/BadOptimizations-2.4.1-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "baguettelib-1.20.1-Forge-1.1.6.jar",
+      "path": "mods/",
+      "size": 31898,
+      "sha1": "8d3c9551bbed4c2f2e8cb2b9a10d31bad4edb52d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/baguettelib-1.20.1-Forge-1.1.6.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "balm-forge-1.20.1-7.3.38-all.jar",
+      "path": "mods/",
+      "size": 591397,
+      "sha1": "515905f87268f1eb5af2a9878a84914517efe552",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/balm-forge-1.20.1-7.3.38-all.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "beautify-2.0.2.jar",
+      "path": "mods/",
+      "size": 838292,
+      "sha1": "497ab2ebccbf89f15845428cf0e26ca5d9c4ce76",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/beautify-2.0.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "bellsandwhistles-0.4.5-1.20.x-Create6.0+.jar",
+      "path": "mods/",
+      "size": 199902,
+      "sha1": "2487eea5f1368d70e16c7c6a08c18be3b5d3c0d0",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/bellsandwhistles-0.4.5-1.20.x-Create6.0%2B.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "bendy-lib-forge-4.0.0.jar",
+      "path": "mods/",
+      "size": 50745,
+      "sha1": "d1e77cc4534cecc753a7d2ba4e84dec412a55025",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/bendy-lib-forge-4.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "BetterCompatibilityChecker-forge-4.0.8+mc1.20.1.jar",
+      "path": "mods/",
+      "size": 26540,
+      "sha1": "c5407cfd0b38d8db6d6f1c0088397f4c5616c7ae",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/BetterCompatibilityChecker-forge-4.0.8%2Bmc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "betterfpsdist-1.20.1-6.0.jar",
+      "path": "mods/",
+      "size": 19917,
+      "sha1": "8e4fe2cd85c08c24ab363b47a63d1c872fc3cc1e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/betterfpsdist-1.20.1-6.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "BiomesOPlenty-1.20.1-18.0.0.592.jar",
+      "path": "mods/",
+      "size": 21800460,
+      "sha1": "15072eb39c35a3f845d4bb04690d4b7f1808a980",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/BiomesOPlenty-1.20.1-18.0.0.592.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "blahaj-forge-1.20.1-0.1.8.jar",
+      "path": "mods/",
+      "size": 96287,
+      "sha1": "6c863b00ccbf5ef93e7a1ae7cc5c6546970707a0",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/blahaj-forge-1.20.1-0.1.8.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "bloodmoon-1.20.1-1.4.1-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 2125548,
+      "sha1": "a08477ec4464632b905ce3c354001adebd4ef5d0",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/bloodmoon-1.20.1-1.4.1-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "blueprint-1.20.1-7.1.3.jar",
+      "path": "mods/",
+      "size": 1151213,
+      "sha1": "fdf9cb568546e80485ea4402a39656ed9acfa991",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/blueprint-1.20.1-7.1.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Bookshelf-Forge-1.20.1-20.2.15.jar",
+      "path": "mods/",
+      "size": 343925,
+      "sha1": "9df4908f606c6dc62a358b3e04e3fdedba59a12c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Bookshelf-Forge-1.20.1-20.2.15.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "born_in_chaos_[Forge]1.20.1_1.7.4.jar",
+      "path": "mods/",
+      "size": 11833732,
+      "sha1": "11cfb515ee921daf3f008748a641d08aab02ebe9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/born_in_chaos_.Forge.1.20.1_1.7.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Botania-1.20.1-451-FORGE.jar",
+      "path": "mods/",
+      "size": 12201393,
+      "sha1": "6edbc705ccb1ca075c8155f99144646a8168e8ee",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Botania-1.20.1-451-FORGE.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "braziliandelight-forge-2.0.3+1.20.1.jar",
+      "path": "mods/",
+      "size": 2813612,
+      "sha1": "77750debc1c73910747e872b2bb899c9a0ca49f8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/braziliandelight-forge-2.0.3%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "bubblifymod-2.0.jar",
+      "path": "mods/",
+      "size": 91779,
+      "sha1": "eed889df12a08e00ccdb20318fbbc75bab37368a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/bubblifymod-2.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "call_of_yucutan-1.0.13-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 3614819,
+      "sha1": "63e0e47cfc41dbd591affac52e7787b7122257dc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/call_of_yucutan-1.0.13-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "camera-forge-1.20.1-1.0.20.jar",
+      "path": "mods/",
+      "size": 299726,
+      "sha1": "299cc4fa41a12a247cc73024259247574bfa5d0e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/camera-forge-1.20.1-1.0.20.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "carryon-forge-1.20.1-2.1.2.7.jar",
+      "path": "mods/",
+      "size": 439457,
+      "sha1": "9999714ca3dd2f2401f0396ca44f3b27c3784c4f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/carryon-forge-1.20.1-2.1.2.7.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "celestisynth-1.20.1-1.3.4-all.jar",
+      "path": "mods/",
+      "size": 2664860,
+      "sha1": "1e0b3462ff81b012fb7914110e68a386aca3a316",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/celestisynth-1.20.1-1.3.4-all.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "chipped-forge-1.20.1-3.0.7.jar",
+      "path": "mods/",
+      "size": 15060263,
+      "sha1": "25ee2a0846059d8f21d28b94b7e0229b60cb5499",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/chipped-forge-1.20.1-3.0.7.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "chisel_chipped_integration-v1.1.6-1.20.1.jar",
+      "path": "mods/",
+      "size": 2804717,
+      "sha1": "d8f3a48f768585a3f2b513f037929ac1e9f37b94",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/chisel_chipped_integration-v1.1.6-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "chloride-FORGE-mc1.20.1-v1.7.5.jar",
+      "path": "mods/",
+      "size": 956080,
+      "sha1": "b5f658b9328cda4b03080fa0164cf26be23a3e75",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/chloride-FORGE-mc1.20.1-v1.7.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "christmas_culinary_decorations-2.0.0-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 3612066,
+      "sha1": "8f6c4b89a858dda36d40c6d4bf5b01599ef3b1c6",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/christmas_culinary_decorations-2.0.0-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Chunky-1.3.146.jar",
+      "path": "mods/",
+      "size": 341451,
+      "sha1": "0b782d12b4ac3b03a94c28f32e9b2d5587d1dd50",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Chunky-1.3.146.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "citadel-2.6.3-1.20.1.jar",
+      "path": "mods/",
+      "size": 3185275,
+      "sha1": "fb0b1fa96ce28e4be77b38ad95d83c3da7ec8316",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/citadel-2.6.3-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "clay-1.0.0-forge-1.20.1-1.20.4.jar",
+      "path": "mods/",
+      "size": 428995,
+      "sha1": "d33ad7d4f59edc1eafbca4e2c087642452859fa8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/clay-1.0.0-forge-1.20.1-1.20.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "cloth-config-11.1.136-forge.jar",
+      "path": "mods/",
+      "size": 1181413,
+      "sha1": "c65d07748acc57ceb45d53b3964368b84f34d54f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/cloth-config-11.1.136-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Clumps-forge-1.20.1-12.0.0.4.jar",
+      "path": "mods/",
+      "size": 20299,
+      "sha1": "97cc669f68dbe812cb77cc3631339334fc28b877",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Clumps-forge-1.20.1-12.0.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "cluttered-[Forge]-3.0.3-1.20.1.jar",
+      "path": "mods/",
+      "size": 5551679,
+      "sha1": "c1dca582de21cc540f1a84188db40d65d14c8153",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/cluttered-.Forge.-3.0.3-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "CMDCam_FORGE_v2.2.0_mc1.20.1.jar",
+      "path": "mods/",
+      "size": 138723,
+      "sha1": "77efad128734603800f65fe4c21c8958d74aff2a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/CMDCam_FORGE_v2.2.0_mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "colorfulhearts-forge-1.20.1-4.3.16.jar",
+      "path": "mods/",
+      "size": 122868,
+      "sha1": "840036c824edfe6e155f4488337e5f5aec26a17f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/colorfulhearts-forge-1.20.1-4.3.16.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "comforts-forge-6.4.0+1.20.1.jar",
+      "path": "mods/",
+      "size": 382083,
+      "sha1": "e7b9fe89566bb1ee013e33745f22f309f679536e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/comforts-forge-6.4.0%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "companions-forge-1.20.1-1.3.7.jar",
+      "path": "mods/",
+      "size": 7225421,
+      "sha1": "f5fbbf2e484613337b354c3101de3749e21e0524",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/companions-forge-1.20.1-1.3.7.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "configured-forge-1.20.1-2.2.3.jar",
+      "path": "mods/",
+      "size": 418929,
+      "sha1": "065c2d287a52f52fc8d33d780192325ee6f4b6ae",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/configured-forge-1.20.1-2.2.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "connectedglass-1.1.14-forge-mc1.20.1.jar",
+      "path": "mods/",
+      "size": 873714,
+      "sha1": "2f65edcf4faed33979d5dec81597b472abf17325",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/connectedglass-1.1.14-forge-mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "connectivity-1.20.1-7.6.jar",
+      "path": "mods/",
+      "size": 120598,
+      "sha1": "ae69a0712c73411a2d804eec7abce271529e273d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/connectivity-1.20.1-7.6.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Connector-1.0.0-beta.49+1.20.1.jar",
+      "path": "mods/",
+      "size": 5046108,
+      "sha1": "328ed70459bbae96e8f9cf4d90d7a4169decaf1d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Connector-1.0.0-beta.49%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "constructionwand-1.20.1-2.11.jar",
+      "path": "mods/",
+      "size": 210312,
+      "sha1": "80bd5223cd8984dc1038cb9f2d1cb6b97f31998a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/constructionwand-1.20.1-2.11.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Controlling-forge-1.20.1-12.0.2.jar",
+      "path": "mods/",
+      "size": 115280,
+      "sha1": "f6d3cdd3ec68c5590cf5b2e89c38dbf031824bfd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Controlling-forge-1.20.1-12.0.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Corgilib-Forge-1.20.1-4.0.3.4.jar",
+      "path": "mods/",
+      "size": 360700,
+      "sha1": "4b08e5f8f2580842eacd5388458a0b52411a9fb2",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Corgilib-Forge-1.20.1-4.0.3.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "corpse-forge-1.20.1-1.0.23.jar",
+      "path": "mods/",
+      "size": 245644,
+      "sha1": "843b16ca88bc5c390bb22a2a84437e6bffdd43dd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/corpse-forge-1.20.1-1.0.23.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "corpsecurioscompat-1.20.1-Forge-3.1.3.jar",
+      "path": "mods/",
+      "size": 23655,
+      "sha1": "3b36538ca8c6cc16982788c8e058cb726357a90c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/corpsecurioscompat-1.20.1-Forge-3.1.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "cosmeticarmorreworked-1.20.1-v1a.jar",
+      "path": "mods/",
+      "size": 88752,
+      "sha1": "afd9fa3fe95e8c086e8d439df403ed1e5ea5cbea",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/cosmeticarmorreworked-1.20.1-v1a.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "cotiiui-forge-1.0.9+1.20.1.jar",
+      "path": "mods/",
+      "size": 87427,
+      "sha1": "e6807640791abca8e06d83c32e6f9bd8a3d95673",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/cotiiui-forge-1.0.9%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "cpm-svc-compat-1.2.1.jar",
+      "path": "mods/",
+      "size": 29437,
+      "sha1": "11d954eb33ddb8f15a4332139e441f242bbe9f6d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/cpm-svc-compat-1.2.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "CraftPresence-2.7.1+1.20.1-forge.jar",
+      "path": "mods/",
+      "size": 1310126,
+      "sha1": "c354216e78b6688c9bcbe67043b8f5e2156a4dde",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/CraftPresence-2.7.1%2B1.20.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "create-1.20.1-6.0.8.jar",
+      "path": "mods/",
+      "size": 19170905,
+      "sha1": "b13d912b9247a38d66d11598c121442585a1c1e9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/create-1.20.1-6.0.8.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "create-confectionery1.20.1_v1.1.0.jar",
+      "path": "mods/",
+      "size": 2123089,
+      "sha1": "75b39587e643a2af31e5d0db822a94aaa5d13f08",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/create-confectionery1.20.1_v1.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "create-stuff-additions1.20.1_v2.1.2.jar",
+      "path": "mods/",
+      "size": 1358197,
+      "sha1": "8c0bd41a7e97ade5342af72b35cc60242fe0cb45",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/create-stuff-additions1.20.1_v2.1.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "createaddition-1.20.1-1.3.3.jar",
+      "path": "mods/",
+      "size": 1577313,
+      "sha1": "c7d464c451fdc2979bc29a67d7eec2a30858af12",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/createaddition-1.20.1-1.3.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "createbetterfps-1.20.1-1.1.1.jar",
+      "path": "mods/",
+      "size": 24819,
+      "sha1": "519f436f67c316db546cbab54a03fdbfd17fe9f1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/createbetterfps-1.20.1-1.1.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "createdeco-2.0.3-1.20.1-forge.jar",
+      "path": "mods/",
+      "size": 3509013,
+      "sha1": "54c8ad5686b846310bca9e69982a455e668dede3",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/createdeco-2.0.3-1.20.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "createutilities-0.3.2+1.20.1.jar",
+      "path": "mods/",
+      "size": 358535,
+      "sha1": "60eff24cdd0f167643e75f14062845c584245e80",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/createutilities-0.3.2%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "CreativeCore_FORGE_v2.12.35_mc1.20.1.jar",
+      "path": "mods/",
+      "size": 1143788,
+      "sha1": "f2324c43cd0bbb856b115ce1a688c33bff999294",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/CreativeCore_FORGE_v2.12.35_mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "creeperoverhaul-3.0.2-forge.jar",
+      "path": "mods/",
+      "size": 1456860,
+      "sha1": "01e3275d3eb586c953ac786b1afee6e473eef947",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/creeperoverhaul-3.0.2-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "cristellib-1.1.6-forge.jar",
+      "path": "mods/",
+      "size": 431318,
+      "sha1": "524ecf0f93f28be2f5db21d87dd81bdbc1a450e1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/cristellib-1.1.6-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Croptopia-1.20.1-FORGE-3.0.4.jar",
+      "path": "mods/",
+      "size": 2099945,
+      "sha1": "2008e6887b9490c491ddb471e87cfb6d26684dc5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Croptopia-1.20.1-FORGE-3.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "CullLessLeaves-Reforged-1.20.1-1.0.5.jar",
+      "path": "mods/",
+      "size": 22474,
+      "sha1": "71b1603071461e036a3ba2aaeeb52cc10fa3d348",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/CullLessLeaves-Reforged-1.20.1-1.0.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "cupboard-1.20.1-3.5.jar",
+      "path": "mods/",
+      "size": 29505,
+      "sha1": "638d720173b6a156663f84c1a6d3ac66797456fb",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/cupboard-1.20.1-3.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "curios-forge-5.14.1+1.20.1.jar",
+      "path": "mods/",
+      "size": 398066,
+      "sha1": "452175b95ad3db6ff58bb8968f6bf7a9d1e0f480",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/curios-forge-5.14.1%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "customlights-forge-1.20.1-1.0.5 (1).jar",
+      "path": "mods/",
+      "size": 976390,
+      "sha1": "0a0e82f350b4de34bb97878afb79a1ee1e0a9afc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/customlights-forge-1.20.1-1.0.5.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "CustomPlayerModels-1.20-0.6.27a.jar",
+      "path": "mods/",
+      "size": 2805930,
+      "sha1": "4652dee093c796799756f5f6c89314c6d601ae65",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/CustomPlayerModels-1.20-0.6.27a.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "customskyboxes-forge-mc1.20.1-1.0.5 (1).jar",
+      "path": "mods/",
+      "size": 1204461,
+      "sha1": "dccae36bf5fb9a763485b19b742a10fe555ceeda",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/customskyboxes-forge-mc1.20.1-1.0.5.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "cyberspace 2.2.0 (F1.20.1).jar",
+      "path": "mods/",
+      "size": 686923,
+      "sha1": "66edf03c8429782e674378b4fa89364c233103cd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/cyberspace.2.2.0.F1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "decorationx_christmas-1.1.1+forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 4154664,
+      "sha1": "6bb2c0eb60280c2bb95b2ca2c5075fc1345e10b5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/decorationx_christmas-1.1.1%2Bforge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "deltaboxlib-forge-2.2.0+1.20.1.jar",
+      "path": "mods/",
+      "size": 804529,
+      "sha1": "8f5cd619b02eaccd936cc6a3e1e47fe558a728b7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/deltaboxlib-forge-2.2.0%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "diegesis-forge-1.20.1-1.0.0-beta.18.jar",
+      "path": "mods/",
+      "size": 1233688,
+      "sha1": "2d1697003e83071cb9e0e3ec65ca275a0c0cba09",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/diegesis-forge-1.20.1-1.0.0-beta.18.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "displaydelight-1.4.0.jar",
+      "path": "mods/",
+      "size": 1018387,
+      "sha1": "06d5a5fcdc70d0a1b90017f5695dc65da16c370f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/displaydelight-1.4.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "doomsday_decoration-1.1.3-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 9658884,
+      "sha1": "b5250979fb0c79e8ea93742bfab9c67d4a886cad",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/doomsday_decoration-1.1.3-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "doomsday_functionality-1.20.1-0.1.0-hotfix.jar",
+      "path": "mods/",
+      "size": 190592,
+      "sha1": "99b478bbf365ecca31cdcc2acb6d3ddfc20d4fa9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/doomsday_functionality-1.20.1-0.1.0-hotfix.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "DramaticDoors-QuiFabrge-1.20.1-3.3.3.jar",
+      "path": "mods/",
+      "size": 14210380,
+      "sha1": "26be5d33ff11263476fdff781b48a13208b22fa1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/DramaticDoors-QuiFabrge-1.20.1-3.3.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "duclib-1.20-1.1.4.jar",
+      "path": "mods/",
+      "size": 157125,
+      "sha1": "5cc919a229f599625aeac7f95d508e4b6b74f936",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/duclib-1.20-1.1.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "dummmmmmy-1.20-2.0.9.jar",
+      "path": "mods/",
+      "size": 363044,
+      "sha1": "782d16edca6fa22fb72fa825cec39117bbb7e78a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/dummmmmmy-1.20-2.0.9.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "DustyDecorations_1.20.1Forge_V1.12.1.jar",
+      "path": "mods/",
+      "size": 4944791,
+      "sha1": "cc57608bdb5dd41c520af319566924d95345a4e4",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/DustyDecorations_1.20.1Forge_V1.12.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "dynamic-fps-3.11.4+minecraft-1.20.0-forge.jar",
+      "path": "mods/",
+      "size": 402345,
+      "sha1": "43b3e0766a9e7a30651cc01756476657b865b7a2",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/dynamic-fps-3.11.4%2Bminecraft-1.20.0-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "earthquake-1.0.0.jar",
+      "path": "mods/",
+      "size": 32994,
+      "sha1": "3e6363cb2b9ac29de28b447f97c08f6914b70eec",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/earthquake-1.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "EasyPaxel1.20.1(Forge)vs1.0.3.jar",
+      "path": "mods/",
+      "size": 40161,
+      "sha1": "55c14eb6198cd72588931d2b1ae27cfb19d813c2",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/EasyPaxel1.20.1.Forge.vs1.0.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "easy_npc-forge-1.20.1-5.9.0.jar",
+      "path": "mods/",
+      "size": 1610362,
+      "sha1": "acc9eeb82cbdc975527f10dbde34985d8936908a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/easy_npc-forge-1.20.1-5.9.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "eclipse_arcana-1.20.1-1.5.0.jar",
+      "path": "mods/",
+      "size": 1528846,
+      "sha1": "5da63fd22d8c1c97a02cea8fa2f5d536da620dbb",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/eclipse_arcana-1.20.1-1.5.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "elevatorid-1.20.1-1.9.1-forge.jar",
+      "path": "mods/",
+      "size": 187868,
+      "sha1": "9117fbb20ce0b3b9abd25e19b3d5987a53be30c9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/elevatorid-1.20.1-1.9.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "embeddium-0.3.31+mc1.20.1.jar",
+      "path": "mods/",
+      "size": 1320675,
+      "sha1": "bb2fa8f3e493af16af9160d049f96c614a1faf2f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/embeddium-0.3.31%2Bmc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Emojiful-Forge-1.20.1-4.2.0.jar",
+      "path": "mods/",
+      "size": 262412,
+      "sha1": "3a715b0c8e9244a0d6aace3e3d2f863a62ddc3bc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Emojiful-Forge-1.20.1-4.2.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "emotecraft-for-MC1.20.1-2.2.7-b.build.50-forge.jar",
+      "path": "mods/",
+      "size": 680255,
+      "sha1": "fcff067375cfe917cbf235218f49ceb58e598a5c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/emotecraft-for-MC1.20.1-2.2.7-b.build.50-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "EnchantmentDescriptions-Forge-1.20.1-17.1.21.jar",
+      "path": "mods/",
+      "size": 66883,
+      "sha1": "0328a8350cf0a6d1c44265367a077649088b354b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/EnchantmentDescriptions-Forge-1.20.1-17.1.21.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "entityculling-forge-1.10.1-mc1.20.1.jar",
+      "path": "mods/",
+      "size": 1583021,
+      "sha1": "764617346e7231c4d3189465deefc9071f51b55e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/entityculling-forge-1.10.1-mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "EpheroLib-1.20.1-FORGE-1.2.0.jar",
+      "path": "mods/",
+      "size": 756864,
+      "sha1": "1eca21b906d38321bf60919dd3b12d160e5e6935",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/EpheroLib-1.20.1-FORGE-1.2.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "etched-3.0.4.jar",
+      "path": "mods/",
+      "size": 611496,
+      "sha1": "4f440ac41309993a46e0ffcb2dd6106d7b92b3e2",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/etched-3.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "everlasting_leaves-1.20.1-1.0.0 (1).jar",
+      "path": "mods/",
+      "size": 12435,
+      "sha1": "c94780cb4cae90570b123cbcfed5623cede6f9e9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/everlasting_leaves-1.20.1-1.0.0.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "exposure-forge-1.20.1-1.9.20.jar",
+      "path": "mods/",
+      "size": 2249505,
+      "sha1": "043407042adf752c896f5be123676d702a843457",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/exposure-forge-1.20.1-1.9.20.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "exposure_polaroid-forge-1.20.1-1.1.3.jar",
+      "path": "mods/",
+      "size": 346668,
+      "sha1": "c36e71c3a88077373171d61d64a4d6d8af2276f9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/exposure_polaroid-forge-1.20.1-1.1.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "fairylights-7.0.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 821317,
+      "sha1": "7b392b908492be1dbfc84b72ae6445db8bb891dd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/fairylights-7.0.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "fakename-1.20.1-1.3.1.jar",
+      "path": "mods/",
+      "size": 57569,
+      "sha1": "dd42ccd6a7d3b15e3cfd437092156aea2c0f1f96",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/fakename-1.20.1-1.3.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "familiarslib-1.20.1-1.6.jar",
+      "path": "mods/",
+      "size": 336013,
+      "sha1": "9d02581ff108ce370a78a0f75332197fe4fe9ade",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/familiarslib-1.20.1-1.6.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "fantasyfurniture-1.20.1-9.0.0.jar",
+      "path": "mods/",
+      "size": 3202951,
+      "sha1": "85b51d883025413c89ce52ae5e9a7071bc4e53a3",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/fantasyfurniture-1.20.1-9.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "FarmersDelight-1.20.1-1.3.1.jar",
+      "path": "mods/",
+      "size": 3275517,
+      "sha1": "7df4f6ae04e4a24488f388080fd3171476bc9c57",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/FarmersDelight-1.20.1-1.3.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "fastboot-1.20.x-1.2.jar",
+      "path": "mods/",
+      "size": 24477,
+      "sha1": "0820d6611bdf664cc84bf351089e75998a9f1962",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/fastboot-1.20.x-1.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "FastFurnace-1.20.1-8.0.2.jar",
+      "path": "mods/",
+      "size": 6170,
+      "sha1": "b144b8599acd3fac3f8f9d31fa217a4a5b942f61",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/FastFurnace-1.20.1-8.0.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "FastLeafDecay-32.jar",
+      "path": "mods/",
+      "size": 9835,
+      "sha1": "4a76af4ca71dd9939d3c21206792c0d5f75b93a7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/FastLeafDecay-32.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Fastload-Reforged-mc1.20.1-3.4.0.jar",
+      "path": "mods/",
+      "size": 66989,
+      "sha1": "27d58f123951e0404c94caf16ff9b96b442f371c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Fastload-Reforged-mc1.20.1-3.4.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "FastSuite-1.20.1-5.1.2.jar",
+      "path": "mods/",
+      "size": 26600,
+      "sha1": "32ea4495b0e646f8f060e4e97d17044dd9fdefbd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/FastSuite-1.20.1-5.1.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "FastWorkbench-1.20.1-8.0.4.jar",
+      "path": "mods/",
+      "size": 28188,
+      "sha1": "1a322a85e7c7024b8a0715c12d27b5ed0930d729",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/FastWorkbench-1.20.1-8.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "faunify-forge-1.20.1-1.3.1.jar",
+      "path": "mods/",
+      "size": 1986194,
+      "sha1": "30c5fc9ccceabfed0a178f8e1f1bf41e411f8656",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/faunify-forge-1.20.1-1.3.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "fazcraft-4.6.2.9-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 19441413,
+      "sha1": "f71c1974c58113ab3a2ff2fc719080aabcbe4622",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/fazcraft-4.6.2.9-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ferritecore-6.0.1-forge.jar",
+      "path": "mods/",
+      "size": 123034,
+      "sha1": "417fb6ce8f52abf40bd9d0390371790f9576f8ba",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ferritecore-6.0.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "FpsReducer2-forge-1.20.1-2.5.1.jar",
+      "path": "mods/",
+      "size": 125660,
+      "sha1": "4920a2e1d17090007179a568181624847fba0993",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/FpsReducer2-forge-1.20.1-2.5.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "FramedBlocks-9.4.3.jar",
+      "path": "mods/",
+      "size": 4251314,
+      "sha1": "740c0feaab75455f32df7e137389f77c83fb490c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/FramedBlocks-9.4.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "framework-forge-1.20.1-0.8.0.jar",
+      "path": "mods/",
+      "size": 383868,
+      "sha1": "27347879f8760a7bc0b4bd71977abc50e498811c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/framework-forge-1.20.1-0.8.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "freecam-forge-1.2.1+1.20.jar",
+      "path": "mods/",
+      "size": 75389,
+      "sha1": "e4224b56750a1fe3956ae73a65f4470be3e0df3b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/freecam-forge-1.2.1%2B1.20.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ftb-essentials-forge-2001.2.4.jar",
+      "path": "mods/",
+      "size": 157732,
+      "sha1": "4f898578e3cc321397dbc59a0c44e2927000bd32",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ftb-essentials-forge-2001.2.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ftb-library-forge-2001.2.12.jar",
+      "path": "mods/",
+      "size": 780523,
+      "sha1": "7f36ec4af42ad1d69872c58022e93a9d1b9c82b7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ftb-library-forge-2001.2.12.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ftb-quests-forge-2001.4.22.jar",
+      "path": "mods/",
+      "size": 1255469,
+      "sha1": "70f3bd771ab3b5921ce1ff5f14166fab694ca1aa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ftb-quests-forge-2001.4.22.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ftb-teams-forge-2001.3.2.jar",
+      "path": "mods/",
+      "size": 252579,
+      "sha1": "c49023f5d471aa1ba7fc624d2565fe9e82b7117e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ftb-teams-forge-2001.3.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "fusion-1.2.12-forge-mc1.20.1.jar",
+      "path": "mods/",
+      "size": 544586,
+      "sha1": "ec5c8a552493297842543140fed1b0a327c217f4",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/fusion-1.2.12-forge-mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "fzzy_config-0.7.6+1.20.1+forge.jar",
+      "path": "mods/",
+      "size": 2374667,
+      "sha1": "2e9ca1c5f028c251e1bc18b9ebaa06d401c8e624",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/fzzy_config-0.7.6%2B1.20.1%2Bforge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "geckolib-forge-1.20.1-4.8.3.jar",
+      "path": "mods/",
+      "size": 1039046,
+      "sha1": "5428765c6c2e2135da6ee01f2f0478fa0db6aee7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/geckolib-forge-1.20.1-4.8.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "genshinstrument-1.20-1.20.1-5.0.jar",
+      "path": "mods/",
+      "size": 7062280,
+      "sha1": "fb9b4c71539c6e78ca561ef40c0227a8c6bc5596",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/genshinstrument-1.20-1.20.1-5.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "gpumemleakfix-1.20.1-1.8.jar",
+      "path": "mods/",
+      "size": 7997,
+      "sha1": "54301c2db5467e0f9f5c504887436f358335331f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/gpumemleakfix-1.20.1-1.8.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "GPUTape-1.18x-1.21x-1.0.5.1-forge.jar",
+      "path": "mods/",
+      "size": 20295,
+      "sha1": "db4a84db628dd668e08898e42e881615d34f0629",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/GPUTape-1.18x-1.21x-1.0.5.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "gtbcs_geomancy_plus-2.0.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 671054,
+      "sha1": "1387448af86e9bcad1a612b7e97c0d5ee95dadfd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/gtbcs_geomancy_plus-2.0.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "gtbcs_spell_lib-1.5.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 135012,
+      "sha1": "56e3e339077cffb4da2aed516ee37a99400a3e6e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/gtbcs_spell_lib-1.5.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "handcrafted-forge-1.20.1-3.0.6.jar",
+      "path": "mods/",
+      "size": 7111059,
+      "sha1": "f1b9a009529134c736c59d6d192d53a4a25e5e5f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/handcrafted-forge-1.20.1-3.0.6.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "handson_delight-forge-1.20.1-1.7.0.jar",
+      "path": "mods/",
+      "size": 1657280,
+      "sha1": "e43c2c693775e9a5797be1485baa10c954b34ca1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/handson_delight-forge-1.20.1-1.7.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "handson_furniture-forge-1.20.1-1.2.1.jar",
+      "path": "mods/",
+      "size": 449131,
+      "sha1": "b935725a52981a00d9fcfb1caac5252a3143332d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/handson_furniture-forge-1.20.1-1.2.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "heartpouch-1.20.1-2.0.1.jar",
+      "path": "mods/",
+      "size": 78237,
+      "sha1": "a7e3160095a917aaac6962ea5d96a800b1daac40",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/heartpouch-1.20.1-2.0.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "heartstone-1.20-1.3.0.jar",
+      "path": "mods/",
+      "size": 256101,
+      "sha1": "c79a1b7d4757e9d171251e374e02fc77de8a255a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/heartstone-1.20-1.3.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "herios_floral_expansion-1.2.2-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 3744228,
+      "sha1": "59445e03231d120db747d066c8dd6c261f27e12b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/herios_floral_expansion-1.2.2-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "hexerei-0.4.2.2.jar",
+      "path": "mods/",
+      "size": 11376755,
+      "sha1": "b8ae064ccfbdefa12718f97ae80e220ff6801ed5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/hexerei-0.4.2.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "IAS-Forge-1.20.1-9.0.0.jar",
+      "path": "mods/",
+      "size": 312332,
+      "sha1": "e28ee7039a28bc008e55316bd490ebf42e9d2d17",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/IAS-Forge-1.20.1-9.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "IBEEditor-1.20-2.2.8-forge.jar",
+      "path": "mods/",
+      "size": 974923,
+      "sha1": "666c4005f17e28c24015d4dcf11a2cbc81e28169",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/IBEEditor-1.20-2.2.8-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ImmediatelyFast-Forge-1.5.4+1.20.4.jar",
+      "path": "mods/",
+      "size": 538992,
+      "sha1": "e2e60485a0c3efa72f1948c952b095150e3ba4fc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ImmediatelyFast-Forge-1.5.4%2B1.20.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "immersivepaintings-exposure-1.0.0.jar",
+      "path": "mods/",
+      "size": 36958,
+      "sha1": "c00be5b595c512d18b9a3e05bc3725079fb8e2fd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/immersivepaintings-exposure-1.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "immersive_melodies-0.6.0+1.20.1-forge.jar",
+      "path": "mods/",
+      "size": 5517578,
+      "sha1": "688f2b905c99a2d2c86f016eb09712d978f99102",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/immersive_melodies-0.6.0%2B1.20.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "immersive_paintings-0.6.11+1.20.1-forge.jar",
+      "path": "mods/",
+      "size": 4855090,
+      "sha1": "99ffd1b03beb8a0ef362baf89cc25cc5c24afe14",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/immersive_paintings-0.6.11%2B1.20.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "improvedmobs-1.20.1-1.13.6-forge.jar",
+      "path": "mods/",
+      "size": 335525,
+      "sha1": "e24ff44724300d441b2d615c2c7bf010bc8436f5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/improvedmobs-1.20.1-1.13.6-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "inv_view_forge-2.1.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 85516,
+      "sha1": "1de4e82a887438ff1ea3030b1182391218d6de32",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/inv_view_forge-2.1.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "irons_lib-1.20.1-1.0.2.jar",
+      "path": "mods/",
+      "size": 392806,
+      "sha1": "5cf41e8d809f5e8b0173770cdb959dc7dca23ca0",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/irons_lib-1.20.1-1.0.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "irons_spellbooks-1.20.1-3.15.6.jar",
+      "path": "mods/",
+      "size": 15178473,
+      "sha1": "07ea5760b40bdbb1854b85f144ae0d6bef915321",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/irons_spellbooks-1.20.1-3.15.6.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "itemeditor-2.0.0.jar",
+      "path": "mods/",
+      "size": 315851,
+      "sha1": "4545f52d18c609cdbfa151b9d2f80dcfe2a4dced",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/itemeditor-2.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Jade-1.20.1-Forge-11.13.2.jar",
+      "path": "mods/",
+      "size": 552486,
+      "sha1": "1997e5fe2db3a0575ca79bfe4720019f01fd2b8c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Jade-1.20.1-Forge-11.13.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "jei-1.20.1-forge-15.20.0.112.jar",
+      "path": "mods/",
+      "size": 1385600,
+      "sha1": "f12b3781af6337794ae6e010420a97585360ea2f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/jei-1.20.1-forge-15.20.0.112.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "JinxedLib-forge-1.20.1-1.0.3.jar",
+      "path": "mods/",
+      "size": 67431,
+      "sha1": "d2ee8b85b152a16f8d395a3860375278f5b2caf7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/JinxedLib-forge-1.20.1-1.0.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "journeymap-1.20.1-5.10.3-forge.jar",
+      "path": "mods/",
+      "size": 7160405,
+      "sha1": "d0bbe7c23049892b154b6417904dd027fb53a37a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/journeymap-1.20.1-5.10.3-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "kaleidoscopecookery-1.3.0-forge+mc1.20.1.jar",
+      "path": "mods/",
+      "size": 3057804,
+      "sha1": "866cada93f7aade610d3866427b3d62af755c558",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kaleidoscopecookery-1.3.0-forge%2Bmc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "kaleidoscopetavern-1.1.2-forge+mc1.20.1.jar",
+      "path": "mods/",
+      "size": 1157339,
+      "sha1": "c04f19a268d0135c18f1dce041b0624c38015263",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kaleidoscopetavern-1.1.2-forge%2Bmc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Kiwi-1.20.1-Forge-11.10.1.jar",
+      "path": "mods/",
+      "size": 1677051,
+      "sha1": "f8d2fdd1cda71b7b60d8e4ad68ee0070b255b74f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Kiwi-1.20.1-Forge-11.10.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "knightlib-forge-1.20.1-2.0.5.jar",
+      "path": "mods/",
+      "size": 1081342,
+      "sha1": "9b8d89d2e3128ca061208d8f7b725a65c26a8928",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/knightlib-forge-1.20.1-2.0.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "konkrete_forge_1.8.0_MC_1.20-1.20.1.jar",
+      "path": "mods/",
+      "size": 625185,
+      "sha1": "2019d821bed9071daabed43979433a5473ceee49",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/konkrete_forge_1.8.0_MC_1.20-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "kotlinforforge-4.12.0-all.jar",
+      "path": "mods/",
+      "size": 7442998,
+      "sha1": "962fdb760409d6d71cbf079235f1ca94e3863a22",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kotlinforforge-4.12.0-all.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ksmp_utilities-1.20.1-1.0.0.jar",
+      "path": "mods/",
+      "size": 81348,
+      "sha1": "14c2ed4d7502adcc0a0e2d7f1473573a8188c755",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ksmp_utilities-1.20.1-1.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "kubejs-forge-2001.6.5-build.16.jar",
+      "path": "mods/",
+      "size": 1654660,
+      "sha1": "93fcf0eacc5dc08a4f719eaaed1dc93f0dc80f66",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/kubejs-forge-2001.6.5-build.16.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "letsdo-API-forge-1.2.15-forge.jar",
+      "path": "mods/",
+      "size": 1440591,
+      "sha1": "a261043a45097d861a13a63ebdbb0ca350e06a63",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/letsdo-API-forge-1.2.15-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "letsdo-bakery-forge-2.0.6.jar",
+      "path": "mods/",
+      "size": 1222186,
+      "sha1": "75f35ba47c07d4af5b8b4e05fcffb74fc1583685",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/letsdo-bakery-forge-2.0.6.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "letsdo-beachparty-forge-2.0.3.jar",
+      "path": "mods/",
+      "size": 7463557,
+      "sha1": "7348f2a932c425a23c8950cb2956e11c32afb340",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/letsdo-beachparty-forge-2.0.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "letsdo-candlelight-forge-2.0.5.jar",
+      "path": "mods/",
+      "size": 2507744,
+      "sha1": "67b5560125db588cb1d87c042cc9dce9833861d7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/letsdo-candlelight-forge-2.0.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "letsdo-farm_and_charm-forge-1.0.14.jar",
+      "path": "mods/",
+      "size": 2328624,
+      "sha1": "4db017c18fff8356e1aa5f0e9c683f1af30bec2b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/letsdo-farm_and_charm-forge-1.0.14.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "letsdo-furniture-forge-1.0.4.jar",
+      "path": "mods/",
+      "size": 2816299,
+      "sha1": "272cdaa252b23888ad7fae6959bdfe89317a35bd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/letsdo-furniture-forge-1.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "letsdo-herbalbrews-forge-1.0.12.jar",
+      "path": "mods/",
+      "size": 735868,
+      "sha1": "3de7feb383868a0db45351580d6ef5b05b776f16",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/letsdo-herbalbrews-forge-1.0.12.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "letsdo-vinery-forge-1.4.41.jar",
+      "path": "mods/",
+      "size": 2041283,
+      "sha1": "68ed3fa9524bef601064f49f60a30423db2f8fdc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/letsdo-vinery-forge-1.4.41.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "lionfishapi-2.4-Fix.jar",
+      "path": "mods/",
+      "size": 162767,
+      "sha1": "b198f38fb27dfc6db490b496d56aa1622d5a5b87",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/lionfishapi-2.4-Fix.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "lithostitched-forge-1.20.1-1.4.11.jar",
+      "path": "mods/",
+      "size": 476347,
+      "sha1": "d1a755de84ee5d8910ff1e65e815473056e93ece",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/lithostitched-forge-1.20.1-1.4.11.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "lodestone-1.20.1-1.6.4.1.jar",
+      "path": "mods/",
+      "size": 670934,
+      "sha1": "e6346060ae70cbf103b231d8a1536bcd044c84a8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/lodestone-1.20.1-1.6.4.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "lootr-forge-1.20-0.7.35.94.jar",
+      "path": "mods/",
+      "size": 463485,
+      "sha1": "1ec77a7df8adbf3290a296bf25b8f99f37a60020",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/lootr-forge-1.20-0.7.35.94.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "L_Enders_Cataclysm-3.16.jar",
+      "path": "mods/",
+      "size": 127993805,
+      "sha1": "25d84c486a817ba54362ea1f4b82b6d3802cc074",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/L_Enders_Cataclysm-3.16.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "magiccircles-1.2.2-1.20.1.jar",
+      "path": "mods/",
+      "size": 7658528,
+      "sha1": "cf7d8d202a668541045ed0351032850fdabc74c5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/magiccircles-1.2.2-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "malum-1.20.1-1.6.7.jar",
+      "path": "mods/",
+      "size": 26296223,
+      "sha1": "ecf1d9a6e4e69119f9583f90b9587107a75d8195",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/malum-1.20.1-1.6.7.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "manors_bounty-0.3.3.2-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 14352013,
+      "sha1": "9b92eab1f9987c16b4e2036a20b2afd3a979467c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/manors_bounty-0.3.3.2-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Mantle-1.20.1-1.11.104.jar",
+      "path": "mods/",
+      "size": 1625005,
+      "sha1": "8a3f948f8c505ee92dae915ec0a1593594eb2667",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Mantle-1.20.1-1.11.104.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ManyIdeasCore-1.20.1-1.4.2.jar",
+      "path": "mods/",
+      "size": 933519,
+      "sha1": "132bb3770464d4af3696e09d23d9a6d3a9ee78ee",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ManyIdeasCore-1.20.1-1.4.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ManyIdeasDoors-1.20.1-1.2.3.jar",
+      "path": "mods/",
+      "size": 3261131,
+      "sha1": "881413e58ac266dc07f43058b2b076f73a82322f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ManyIdeasDoors-1.20.1-1.2.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "mcw-bridges-3.1.2-mc1.20.1forge.jar",
+      "path": "mods/",
+      "size": 693579,
+      "sha1": "24f30313977ec61520a2adab321188b51c208d16",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/mcw-bridges-3.1.2-mc1.20.1forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "mcw-doors-1.1.5-mc1.20.1forge.jar",
+      "path": "mods/",
+      "size": 1246753,
+      "sha1": "fe6a9eb2fbc78300a6286fd25854c9f087e689a6",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/mcw-doors-1.1.5-mc1.20.1forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "mcw-holidays-1.1.2-mc1.20.1forge.jar",
+      "path": "mods/",
+      "size": 1054907,
+      "sha1": "dd125b79755ebd99aac3354b4670a5dd3c8086bd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/mcw-holidays-1.1.2-mc1.20.1forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "mcw-mcwwindows-2.4.2-mc1.20.1forge.jar",
+      "path": "mods/",
+      "size": 1320692,
+      "sha1": "214da89b2153d496343bde8626283975e358edbd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/mcw-mcwwindows-2.4.2-mc1.20.1forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "mcw-trapdoors-1.1.5-mc1.20.1forge.jar",
+      "path": "mods/",
+      "size": 604510,
+      "sha1": "1b3b4b40041346b19bc9ab280b288a9f6b77b513",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/mcw-trapdoors-1.1.5-mc1.20.1forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "meds_and_herbs-1.20.1-2.0.3.jar",
+      "path": "mods/",
+      "size": 3881655,
+      "sha1": "9fcfc73470c7c45387f768fb3e7fa16dc8a6bb6f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/meds_and_herbs-1.20.1-2.0.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "melody_forge_1.0.3_MC_1.20.1-1.20.4.jar",
+      "path": "mods/",
+      "size": 37178,
+      "sha1": "e0942d396a70c09038e6c2e5e1da6505178249b8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/melody_forge_1.0.3_MC_1.20.1-1.20.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "memorysettings-1.20.1-5.9.jar",
+      "path": "mods/",
+      "size": 23538,
+      "sha1": "022884114477302ed0304db5b857295f6951ae8b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/memorysettings-1.20.1-5.9.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor ART 1.20.1.jar",
+      "path": "mods/",
+      "size": 1067543,
+      "sha1": "7366648d7c9e78eb3823b692293dea59469dc10f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.ART.1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor BATH 1.20.1.jar",
+      "path": "mods/",
+      "size": 1196202,
+      "sha1": "857d3ff8173cdacb0aa45964a8ebcb9a4167c8a7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.BATH.1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor COOKERY 1.20.2.jar",
+      "path": "mods/",
+      "size": 1537747,
+      "sha1": "3092ecd33b49cc108543070f23e50fba48c00939",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.COOKERY.1.20.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor ELECTRONICS 1.20.1.A.jar",
+      "path": "mods/",
+      "size": 1140709,
+      "sha1": "3872fef55f75009bc029dbb1826dc10d10cd21cf",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.ELECTRONICS.1.20.1.A.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor GARDEN 1.20.1.jar",
+      "path": "mods/",
+      "size": 1206143,
+      "sha1": "e1b8226e16fe5a6cc43643c7a56e976c9869e1e1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.GARDEN.1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor HOLIDAYS 1.20.1.jar",
+      "path": "mods/",
+      "size": 1189873,
+      "sha1": "56b6aec6e78701e9660b353564fb8ea61c057a8b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.HOLIDAYS.1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor LIGHTS 1.20.1.jar",
+      "path": "mods/",
+      "size": 1026120,
+      "sha1": "eae5640879cb0b84ba9c70e318ad67609f0f968e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.LIGHTS.1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor SCIENCE 1.20.1.jar",
+      "path": "mods/",
+      "size": 1040771,
+      "sha1": "4ad9e1bb7b28842c8678fc242b8ed71a1f55bfc8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.SCIENCE.1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MOAdecor TOYS 1.20.1.jar",
+      "path": "mods/",
+      "size": 1119976,
+      "sha1": "834ede174dd4a072397c7fba81293c11c7c63a8f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MOAdecor.TOYS.1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "modernfix-forge-5.26.2+mc1.20.1.jar",
+      "path": "mods/",
+      "size": 826829,
+      "sha1": "0adfc122e9f632d8847688c4c3ed20a1af182afa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/modernfix-forge-5.26.2%2Bmc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "monolib-forge-1.20.1-2.1.0.jar",
+      "path": "mods/",
+      "size": 173882,
+      "sha1": "b600741540e7a417ff851d5fe3add8014dc43f0f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/monolib-forge-1.20.1-2.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "moonlight-1.20-2.16.28-forge.jar",
+      "path": "mods/",
+      "size": 1393921,
+      "sha1": "c2def460fc3b99804331228b9ca0e48063578c57",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/moonlight-1.20-2.16.28-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "morevillagers-forge-1.20.1-5.0.0.jar",
+      "path": "mods/",
+      "size": 233335,
+      "sha1": "a6a22e3c7e6ca4a389ce72f82c90144f0a485cf5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/morevillagers-forge-1.20.1-5.0.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "mortiscount-0.1.0.jar",
+      "path": "mods/",
+      "size": 40398,
+      "sha1": "90d714e303a25aa125d980317ba660308d0c0c06",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/mortiscount-0.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MouseTweaks-forge-mc1.20.1-2.25.1.jar",
+      "path": "mods/",
+      "size": 76237,
+      "sha1": "d751153e722a4e014691c83f39f5b07c6ec5333c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MouseTweaks-forge-mc1.20.1-2.25.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "mowziesmobs-1.8.2.jar",
+      "path": "mods/",
+      "size": 36033850,
+      "sha1": "25ffcd175cc03650e38e60d3cb7b3e038d9d3345",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/mowziesmobs-1.8.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "MyServerIsCompatible-1.20-1.0.jar",
+      "path": "mods/",
+      "size": 3482,
+      "sha1": "a53abcabc6c3531667049be249b3fb165aad5468",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/MyServerIsCompatible-1.20-1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "mysticsbiomes-1.20.1-3.4.2.jar",
+      "path": "mods/",
+      "size": 1540347,
+      "sha1": "77f1f5408da7ccd79199ef67a64adfa45eb1c849",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/mysticsbiomes-1.20.1-3.4.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "nenus_pop_plushies-2.4.0-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 3040624,
+      "sha1": "0841b254863bc5d722480432b040b04e6447b8ef",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/nenus_pop_plushies-2.4.0-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "nightlights-1.20.1-1.1.jar",
+      "path": "mods/",
+      "size": 377881,
+      "sha1": "2b5c261e6287858bd221f2a11756774a4398ce8e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/nightlights-1.20.1-1.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "obscure_api-18.jar",
+      "path": "mods/",
+      "size": 1128392,
+      "sha1": "d395153341a9a732fc80463c475b202d78675e28",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/obscure_api-18.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "OctoLib-FORGE-0.5.0.1+1.20.1.jar",
+      "path": "mods/",
+      "size": 424035,
+      "sha1": "9eab28baff36942e1c924489e34753df10f40208",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/OctoLib-FORGE-0.5.0.1%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "oculus-mc1.20.1-1.8.0.jar",
+      "path": "mods/",
+      "size": 2814530,
+      "sha1": "a1a83d218d1274eb4e4889186b0ca80b2e664a11",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/oculus-mc1.20.1-1.8.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Oh-The-Biomes-Weve-Gone-Forge-1.7.5.jar",
+      "path": "mods/",
+      "size": 19308698,
+      "sha1": "a0ffaf9086974ab6d63ade0e9d73e8446b4166a3",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Oh-The-Biomes-Weve-Gone-Forge-1.7.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Oh-The-Trees-Youll-Grow-forge-1.20.1-1.6.0.jar",
+      "path": "mods/",
+      "size": 168345,
+      "sha1": "fdb62f927153a827f5605474e25759e485480e46",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Oh-The-Trees-Youll-Grow-forge-1.20.1-1.6.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "packetfixer-3.3.2-1.18-1.20.4-merged.jar",
+      "path": "mods/",
+      "size": 188661,
+      "sha1": "79ebc5e66a5ee3ce92afb340e693d506e97361a0",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/packetfixer-3.3.2-1.18-1.20.4-merged.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Paraglider-forge-20.1.3.jar",
+      "path": "mods/",
+      "size": 589055,
+      "sha1": "51fdf94686fc847515e6de8a6c9fd4dab3466ea5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Paraglider-forge-20.1.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "particle_core-0.3.3+1.20.1+forge.jar",
+      "path": "mods/",
+      "size": 773448,
+      "sha1": "1da5744853d17979033d5ee3cd4251b8340ea7be",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/particle_core-0.3.3%2B1.20.1%2Bforge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Patchouli-1.20.1-85-FORGE.jar",
+      "path": "mods/",
+      "size": 642732,
+      "sha1": "d4614507d6e4c7cb464bba5eca891978272062ef",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Patchouli-1.20.1-85-FORGE.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Pehkui-3.8.2+1.20.1-forge.jar",
+      "path": "mods/",
+      "size": 671605,
+      "sha1": "4bc816efdd8e5e2a97423313674401351710e403",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Pehkui-3.8.2%2B1.20.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "personality-1.20.1-4.1.0.jar",
+      "path": "mods/",
+      "size": 321702,
+      "sha1": "906085fe43d4f2701b61bae291dba3cdafbdbf18",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/personality-1.20.1-4.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "PickUpNotifier-v8.0.0-1.20.1-Forge.jar",
+      "path": "mods/",
+      "size": 102164,
+      "sha1": "378cc9730d1f11cd4c50add96263baccacdb4942",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/PickUpNotifier-v8.0.0-1.20.1-Forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "pipez-forge-1.20.1-1.2.26.jar",
+      "path": "mods/",
+      "size": 431615,
+      "sha1": "1c32e2fff406f1e8ee6b0689eca257f6bc28e4c7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/pipez-forge-1.20.1-1.2.26.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Placebo-1.20.1-8.6.3.jar",
+      "path": "mods/",
+      "size": 282474,
+      "sha1": "e85f53de2e582a79ce25ff1df1e7b5b5fc08440f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Placebo-1.20.1-8.6.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "player-animation-lib-forge-1.0.2-rc1+1.20.jar",
+      "path": "mods/",
+      "size": 181437,
+      "sha1": "16808f94a41d45d8e986b4e4ea6b02ba57fa058a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/player-animation-lib-forge-1.0.2-rc1%2B1.20.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "PlayerRevive_FORGE_v2.0.31_mc1.20.1.jar",
+      "path": "mods/",
+      "size": 5298162,
+      "sha1": "84c039f20b8f048c835c429c2c4a9fd82a5e65f6",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/PlayerRevive_FORGE_v2.0.31_mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "polymorph-forge-0.49.10+1.20.1.jar",
+      "path": "mods/",
+      "size": 299601,
+      "sha1": "e4afd6f512cc06311320357ed974cee586e031c3",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/polymorph-forge-0.49.10%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "PuzzlesLib-v8.1.33-1.20.1-Forge.jar",
+      "path": "mods/",
+      "size": 1342987,
+      "sha1": "285b7c7616971338ccbe0022c9ea0f8ad3036aaf",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/PuzzlesLib-v8.1.33-1.20.1-Forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "quicktime_events-forge-1.0.0+1.20.1.jar",
+      "path": "mods/",
+      "size": 1112662,
+      "sha1": "9f23c12a15f633dd34694d45836d8005a0bb6141",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/quicktime_events-forge-1.0.0%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "raccooncore-1.20.1-forge-2.6.0.jar",
+      "path": "mods/",
+      "size": 224948,
+      "sha1": "8f3133493db96416ad483a011649bc8ae126f274",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/raccooncore-1.20.1-forge-2.6.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "rechiseled-1.2.4-forge-mc1.20.1.jar",
+      "path": "mods/",
+      "size": 11860511,
+      "sha1": "75e7e428ba93fb0fe72ebe15ec5f14b7d95e1663",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/rechiseled-1.2.4-forge-mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "rechiseled_chipped-2.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 182898,
+      "sha1": "afb24ee1e9f872de2e8f56dd64f5f67958626039",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/rechiseled_chipped-2.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "RecipesLibrary-1.20.1-2.0.1.jar",
+      "path": "mods/",
+      "size": 100251,
+      "sha1": "e03b505cc5be2711e0f5c6c0c591b0019a95d226",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/RecipesLibrary-1.20.1-2.0.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "recrafted_creatures-1.4.6-1.20.1.jar",
+      "path": "mods/",
+      "size": 2165748,
+      "sha1": "205440faf101a275807075fcbafcb8f5e0098718",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/recrafted_creatures-1.4.6-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "redeco-1.14.1-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 3216552,
+      "sha1": "edbdd3ecfacb8bec82cb42878e3999582c3bd53d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/redeco-1.14.1-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "redirected-forge-1.0.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 416660,
+      "sha1": "804cb20635bec6d708617fb22e6bd62bed27a7a7",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/redirected-forge-1.0.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "refurbished_furniture-forge-1.20.1-1.0.20.jar",
+      "path": "mods/",
+      "size": 6689588,
+      "sha1": "ffb68135b88bdbb25224378c76daf922c3f4c322",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/refurbished_furniture-forge-1.20.1-1.0.20.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "RegionsUnexploredForge-0.5.6+1.20.1.jar",
+      "path": "mods/",
+      "size": 5726781,
+      "sha1": "990b4b9492a8fd7cd150598e3e02a466efa913fb",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/RegionsUnexploredForge-0.5.6%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "resourcefulconfig-forge-1.20.1-2.1.3.jar",
+      "path": "mods/",
+      "size": 136923,
+      "sha1": "597d40920dcc935f963842c817dcc4901862ab14",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/resourcefulconfig-forge-1.20.1-2.1.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "resourcefullib-forge-1.20.1-2.1.29.jar",
+      "path": "mods/",
+      "size": 432753,
+      "sha1": "6fc590a7c56a720fec57e290cbb0a106efbb3ffa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/resourcefullib-forge-1.20.1-2.1.29.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "rhino-forge-2001.2.3-build.10.jar",
+      "path": "mods/",
+      "size": 1798244,
+      "sha1": "c83c9b719a6bab33fbd2b3f2f680eb3adbfc1aa1",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/rhino-forge-2001.2.3-build.10.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "rubidium-extra-0.5.4.4+mc1.20.1-build.131.jar",
+      "path": "mods/",
+      "size": 568608,
+      "sha1": "bb422d5626bf69841e444a3e545c8e71b6928cf8",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/rubidium-extra-0.5.4.4%2Bmc1.20.1-build.131.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "sanitydim-mc1.20-1.1.0.jar",
+      "path": "mods/",
+      "size": 6066975,
+      "sha1": "de9c9193289abfcdfcc2f36446f0b4cbf5577b63",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/sanitydim-mc1.20-1.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "SanityJS-1.2.0.jar",
+      "path": "mods/",
+      "size": 272575,
+      "sha1": "2b5952874295d1d69e1563a2300e593b4b30bcb9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/SanityJS-1.2.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "scholar-1.20.1-1.1.9-forge.jar",
+      "path": "mods/",
+      "size": 692365,
+      "sha1": "7ff0ac67e8872fdf9d2e5ddbd5f2b144706cb1ff",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/scholar-1.20.1-1.1.9-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "screentext-forge-1.20.1-v4.5.jar",
+      "path": "mods/",
+      "size": 176610,
+      "sha1": "27c8e78dfdbd47c86b28ed00b2109ceea66fcc50",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/screentext-forge-1.20.1-v4.5.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Searchables-forge-1.20.1-1.0.3.jar",
+      "path": "mods/",
+      "size": 77732,
+      "sha1": "ed5a23ec30c90fd06b3f1d8140614028e1fafaee",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Searchables-forge-1.20.1-1.0.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "SignPlates-Forge-1.20.1-1.1.2.jar",
+      "path": "mods/",
+      "size": 904950,
+      "sha1": "797aa63b4717ae40e92987f841e8944ba4d1447e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/SignPlates-Forge-1.20.1-1.1.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "simplehats-forge-1.20.1-0.4.0a.jar",
+      "path": "mods/",
+      "size": 1404910,
+      "sha1": "73a28ae9919c0d1e953805f0f2e8463a34b92fcc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/simplehats-forge-1.20.1-0.4.0a.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "simplymore-forge-1.1.3.jar",
+      "path": "mods/",
+      "size": 1570304,
+      "sha1": "a7ceb754c9e6c98f13e6243af49f3b409b656c1e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/simplymore-forge-1.1.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "simplyswords-forge-1.56.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 15202091,
+      "sha1": "ff801e939da0f9afc2d96cce4375d8c4bb368533",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/simplyswords-forge-1.56.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "SnowRealMagic-1.20.1-Forge-10.7.0.jar",
+      "path": "mods/",
+      "size": 346619,
+      "sha1": "c7fdaf6c9851106c0cedc02b98949ea229ca3f53",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/SnowRealMagic-1.20.1-Forge-10.7.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "snowyspirit-1.20-3.0.12.jar",
+      "path": "mods/",
+      "size": 5357128,
+      "sha1": "98c5d03a00ba29d77b0c04657d90bd1738cb990d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/snowyspirit-1.20-3.0.12.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "sodiumdynamiclights-forge-1.0.10-1.20.1.jar",
+      "path": "mods/",
+      "size": 511601,
+      "sha1": "d27524e85bed0f0af83c03be46f9ca3eb02a1be9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/sodiumdynamiclights-forge-1.0.10-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "sodiumoptionsapi-forge-1.0.10-1.20.1.jar",
+      "path": "mods/",
+      "size": 443978,
+      "sha1": "7529fbf938787ed13a251cbf40936f8c29ec4b6c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/sodiumoptionsapi-forge-1.0.10-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "sodiumoptionsmodcompat-forge-1.0.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 181056,
+      "sha1": "214e96498ac1c840e3eee553fc69ba721e4f9a64",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/sodiumoptionsmodcompat-forge-1.0.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "sophisticatedbackpacks-1.20.1-3.24.32.1645.jar",
+      "path": "mods/",
+      "size": 1016596,
+      "sha1": "a235ee73681218c6730a77b17b142768908a0c18",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/sophisticatedbackpacks-1.20.1-3.24.32.1645.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "sophisticatedcore-1.20.1-1.3.20.1670.jar",
+      "path": "mods/",
+      "size": 1430255,
+      "sha1": "eb6ffefe12364353f50719eef69f84cbfd51f59a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/sophisticatedcore-1.20.1-1.3.20.1670.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "sophisticatedstorage-1.20.1-1.4.35.1613.jar",
+      "path": "mods/",
+      "size": 1671805,
+      "sha1": "44b5eeec5d9b67d414b49d2f6247fe46244eced4",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/sophisticatedstorage-1.20.1-1.4.35.1613.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "soundtrackplayer-forge-1.0.1+1.20.1.jar",
+      "path": "mods/",
+      "size": 443374,
+      "sha1": "0dd02da3f24ddfcafedf520963e93ae4a3aae337",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/soundtrackplayer-forge-1.0.1%2B1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "starcatcher-2.2.1-FORGE-1.20.1.jar",
+      "path": "mods/",
+      "size": 3744519,
+      "sha1": "1e9345a91af6e11fd43216c58d8e1a616cde346e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/starcatcher-2.2.1-FORGE-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Steam_Rails-1.7.2+forge-mc1.20.1.jar",
+      "path": "mods/",
+      "size": 16819720,
+      "sha1": "15d317afd2459368b19c23f2bdfefdeb87708bdd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Steam_Rails-1.7.2%2Bforge-mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "supermartijn642configlib-1.1.8-forge-mc1.20.jar",
+      "path": "mods/",
+      "size": 206584,
+      "sha1": "f80f9eed728966adcfbcc848633e789645057281",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/supermartijn642configlib-1.1.8-forge-mc1.20.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "supermartijn642corelib-1.1.21-forge-mc1.20.1.jar",
+      "path": "mods/",
+      "size": 554977,
+      "sha1": "8a403876730a7186165e109f7f5292d31c6c3f4c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/supermartijn642corelib-1.1.21-forge-mc1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "supplementaries-1.20-3.1.43-forge.jar",
+      "path": "mods/",
+      "size": 13667742,
+      "sha1": "326d65a29981de28016e3828370d68a8f63e1798",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/supplementaries-1.20-3.1.43-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "svc-control-0.1.0 (1).jar",
+      "path": "mods/",
+      "size": 32965,
+      "sha1": "147d9146e7d968afdd0775ff227a42673946ce9c",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/svc-control-0.1.0.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "tanukidecor-20.1.1.0.jar",
+      "path": "mods/",
+      "size": 3012590,
+      "sha1": "efc650df395d938bb67058d848d0b35cb9df32bb",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/tanukidecor-20.1.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "TConstruct-1.20.1-3.11.2.166.jar",
+      "path": "mods/",
+      "size": 21572031,
+      "sha1": "94d07ec0ff45c49f5908beff7acb9fbec43fdde5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/TConstruct-1.20.1-3.11.2.166.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "tectonic-3.0.17-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 322575,
+      "sha1": "07bfe13bc1bd75a6277f3d62bf92a549b33067a9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/tectonic-3.0.17-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "tenshilib-1.20.1-1.7.6-forge.jar",
+      "path": "mods/",
+      "size": 465737,
+      "sha1": "4a8f6ac745297430e64b50466f338c2b2aa8b101",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/tenshilib-1.20.1-1.7.6-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "TerraBlender-forge-1.20.1-3.0.1.10.jar",
+      "path": "mods/",
+      "size": 107532,
+      "sha1": "3bd99fb59e8b06b04e78b5153790c1e08b2be5dc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/TerraBlender-forge-1.20.1-3.0.1.10.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "textiles_and_trinkets-1.1.3-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 6099058,
+      "sha1": "b45b8055ea26b7d1965adab57c2a85ca42e3e29e",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/textiles_and_trinkets-1.1.3-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "theimpossiblelibrary-0.4.7.jar",
+      "path": "mods/",
+      "size": 8165646,
+      "sha1": "f59b779fb4c563b0fb1ceddb39af09fbaf492109",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/theimpossiblelibrary-0.4.7.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "the_deep_void-1.96.13.2-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 57256893,
+      "sha1": "5877c9bbe61e68fec06577d4af917dabb5c96e33",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/the_deep_void-1.96.13.2-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "timecontrol-1.20.1-1.6.0.jar",
+      "path": "mods/",
+      "size": 137147,
+      "sha1": "955afd02aaf486dd5417f08e902584ddd954de1f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/timecontrol-1.20.1-1.6.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "torchmaster-20.1.9.jar",
+      "path": "mods/",
+      "size": 119348,
+      "sha1": "9a7f4ffdfe0dfe0a8071ac6501e52b1b4e208758",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/torchmaster-20.1.9.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "trade-cycling-forge-1.20.1-1.0.7.jar",
+      "path": "mods/",
+      "size": 53897,
+      "sha1": "b22b1bfb4381dd8f758b4e2878842c073683ca9d",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/trade-cycling-forge-1.20.1-1.0.7.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "transmog-forge-1.3.0+1.20.jar",
+      "path": "mods/",
+      "size": 104088,
+      "sha1": "fb009825144e608895e0c5e52d4fdbcc80b1105f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/transmog-forge-1.3.0%2B1.20.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "trashslot-forge-1.20.1-15.1.4.jar",
+      "path": "mods/",
+      "size": 117934,
+      "sha1": "c50867bb2222066ab36b251ab7fe7348f6c5a162",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/trashslot-forge-1.20.1-15.1.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "traveloptics-6.3.0-1.20.1.jar",
+      "path": "mods/",
+      "size": 27486118,
+      "sha1": "e1a52c88a538e62a4b739ebcef81ab9cf5e19b20",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/traveloptics-6.3.0-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "trotting_wagons-1.0.4.jar",
+      "path": "mods/",
+      "size": 1399413,
+      "sha1": "5fea9ad2835a3164bc29ad4c708a50bcd7b0a153",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/trotting_wagons-1.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Twigs-1.20.1-3.1.0.jar",
+      "path": "mods/",
+      "size": 2766476,
+      "sha1": "704711f8abebf051945dca2ae2a1eba9c3405c57",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Twigs-1.20.1-3.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "txnilib-forge-1.0.24-1.20.1.jar",
+      "path": "mods/",
+      "size": 3743339,
+      "sha1": "a1e16b7d61f0f16a162d429ee1eab9b4e3eeb9ef",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/txnilib-forge-1.0.24-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "UniLib-1.2.1+1.20.1-forge.jar",
+      "path": "mods/",
+      "size": 1657890,
+      "sha1": "bf4bd0346650ad95dcd13867793da99a639f31fa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/UniLib-1.2.1%2B1.20.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "unlocked_typing-merged-1.20.1-1.1.0.jar",
+      "path": "mods/",
+      "size": 434550,
+      "sha1": "05228d9fc02128e889f587ebd826ceae5a35d734",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/unlocked_typing-merged-1.20.1-1.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "untamedwilds-1.20.1-4.0.4.jar",
+      "path": "mods/",
+      "size": 2894716,
+      "sha1": "c156f9e8730c39650fe13c8f612de87529d4abcf",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/untamedwilds-1.20.1-4.0.4.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "unusualend-2.3.0-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 20034506,
+      "sha1": "7890560426e90703285fa0301d170139b483d9c9",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/unusualend-2.3.0-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "unusual_furniture-1.1.1-forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 2907462,
+      "sha1": "e825024be7e6f1a11023737c7627a508e2fe0935",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/unusual_furniture-1.1.1-forge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Vanishmod-1.20.1-1.1.21.jar",
+      "path": "mods/",
+      "size": 75336,
+      "sha1": "cdac3e891269a5522061ce78f3a4948a8b1ae22b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Vanishmod-1.20.1-1.1.21.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "voicechat-forge-1.20.1-2.6.15.jar",
+      "path": "mods/",
+      "size": 4902630,
+      "sha1": "295b2745fe22603b127cb9fa262e896824a6a530",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/voicechat-forge-1.20.1-2.6.15.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "walkietalkie-forge-1.20.1-1.3.0.jar",
+      "path": "mods/",
+      "size": 169451,
+      "sha1": "d24badc63364806f2878de5438d5f841a09b25bc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/walkietalkie-forge-1.20.1-1.3.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "Wallpapercraft-1.20.1-1.1.0.jar",
+      "path": "mods/",
+      "size": 6477514,
+      "sha1": "150468fc5709f2bdfe5cfcdfa0997925829fe437",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/Wallpapercraft-1.20.1-1.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "waterframes-FORGE-mc1.20.1-v2.1.22.jar",
+      "path": "mods/",
+      "size": 255481,
+      "sha1": "b8683a49deee67a153bdc647ad70b5fc464b2b23",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/waterframes-FORGE-mc1.20.1-v2.1.22.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "watermedia-2.1.37.jar",
+      "path": "mods/",
+      "size": 37046674,
+      "sha1": "4a91d20d9a3aa8d66e01f7962d77c974ad538f4f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/watermedia-2.1.37.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "watermedia_youtube_plugin-2.1.2.jar",
+      "path": "mods/",
+      "size": 3830072,
+      "sha1": "1f4d208ed9292189dd99147a9dae7c1d4bc95ad5",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/watermedia_youtube_plugin-2.1.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "watervision-FG-mc1.20.1-v0.1.0-alpha.jar",
+      "path": "mods/",
+      "size": 82079,
+      "sha1": "504baa01e0a46a878187faad3d99bf0c30d08e40",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/watervision-FG-mc1.20.1-v0.1.0-alpha.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "waystones-forge-1.20.1-14.1.20.jar",
+      "path": "mods/",
+      "size": 533738,
+      "sha1": "cde06d0f1e9042fb2e0b536a4d2c5443d129dd51",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/waystones-forge-1.20.1-14.1.20.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "weaponmaster_ydm-forge-1.20.1-4.2.3.jar",
+      "path": "mods/",
+      "size": 283977,
+      "sha1": "9fe819dc110461f55909dabbed73e4fe3bdde158",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/weaponmaster_ydm-forge-1.20.1-4.2.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "wind_spellbooks-1.20.1-1.0.3.jar",
+      "path": "mods/",
+      "size": 491179,
+      "sha1": "03514598805ea8e550110d240837c0c007885a6a",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/wind_spellbooks-1.20.1-1.0.3.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "wings-2.1.4-all.jar",
+      "path": "mods/",
+      "size": 424964,
+      "sha1": "ccfc8ed7d571d76b043f8ea4eafaab3789ee2790",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/wings-2.1.4-all.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "worldedit-mod-7.2.15.jar",
+      "path": "mods/",
+      "size": 5825402,
+      "sha1": "9c52765ca56f917ef8cbafc20e9a4f45c346508f",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/worldedit-mod-7.2.15.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "xaerominimap-forge-1.20.1-26.6.0.jar",
+      "path": "mods/",
+      "size": 2196194,
+      "sha1": "ee73886f2f5f27bf28cffa7cc8f2b9b4540df2aa",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/xaerominimap-forge-1.20.1-26.6.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "XaeroPlus-2.36.5+forge-1.20.1-WM1.47.0-MM26.6.0.jar",
+      "path": "mods/",
+      "size": 8766545,
+      "sha1": "a98e2027d86d580ee0b0021c35ebd8267b99939b",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/XaeroPlus-2.36.5%2Bforge-1.20.1-WM1.47.0-MM26.6.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "xaeroworldmap-forge-1.20.1-1.47.0.jar",
+      "path": "mods/",
+      "size": 1429424,
+      "sha1": "6715c1d3758a3805589d82c41dc581537fe185cd",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/xaeroworldmap-forge-1.20.1-1.47.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "xercapaint-1.20.1-1.1.0.jar",
+      "path": "mods/",
+      "size": 403594,
+      "sha1": "278e859d83bc44325e7ad8ac3ccbbca75e115039",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/xercapaint-1.20.1-1.1.0.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "yet-another-furniture-1.0pre3+forge-1.20.1.jar",
+      "path": "mods/",
+      "size": 3977379,
+      "sha1": "01df9a0b0e806f5735458b98bda50800a929fdef",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/yet-another-furniture-1.0pre3%2Bforge-1.20.1.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "yet_another_config_lib_v3-3.6.6+1.20.1-forge.jar",
+      "path": "mods/",
+      "size": 1105891,
+      "sha1": "644731e321c53a35a0b3177a3cc6347fe38002f4",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/yet_another_config_lib_v3-3.6.6%2B1.20.1-forge.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "YungsApi-1.20-Forge-4.0.6.jar",
+      "path": "mods/",
+      "size": 370524,
+      "sha1": "af584b690f5646c6032002b58abc4591beed3833",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/YungsApi-1.20-Forge-4.0.6.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "YungsMenuTweaks-1.20.1-Forge-1.0.2.jar",
+      "path": "mods/",
+      "size": 157602,
+      "sha1": "b43a0bc054d3974076d36b5cfec6aeab968d24a6",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/YungsMenuTweaks-1.20.1-Forge-1.0.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "ZcoperKarts-forge-1.20.1-1.2.jar",
+      "path": "mods/",
+      "size": 5459185,
+      "sha1": "e50f332f451a5754d5b3a1d7fba7f847190ea484",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/ZcoperKarts-forge-1.20.1-1.2.jar",
+      "type": "MOD"
+    },
+    {
+      "name": "[1.20.1] SecurityCraft v1.10.1.jar",
+      "path": "mods/",
+      "size": 4769715,
+      "sha1": "98e4af60aa0f272105b7ffcdf154d7ab670a73bc",
+      "url": "https://github.com/vickyAqui/aurora-launcher/releases/download/modpack/1.20.1.SecurityCraft.v1.10.1.jar",
+      "type": "MOD"
+    }
+  ]
+}

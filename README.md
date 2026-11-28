@@ -64,18 +64,19 @@ O manifest do modpack e os arquivos são distribuídos via GitHub Releases.
 
 #### Como Atualizar o Modpack
 
-O modpack é sincronizado entre o repositório e os clientes via um arquivo `modpack.json` (manifest). Cada mod tem hash SHA1 e tamanho registrados, garantindo integridade.
+O modpack é sincronizado entre o repositório e os clientes via `modpack.json` (manifest versionado). Cada arquivo tem SHA-1 e tamanho registrados, garantindo integridade. Os arquivos em si ficam na release `modpack`, não no Git (`./modpack` é ignorado).
 
 **Fluxo rápido (dia a dia)**:
 
-1.  Adicione/remova `.jar` na pasta `./modpack/mods`.
-2.  Gere o manifest localmente:
+1.  Adicione/remova arquivos na pasta local `./modpack/` (ignorada pelo Git).
+2.  Gere o manifest:
 
     ```bash
     npm run modpack:build
     ```
 
-3.  Faça commit e push do `modpack.json` atualizado — o launcher baixa automaticamente.
+3.  Faça commit e push do `modpack.json`. O workflow **Sync modpack release** publica o manifesto na release automaticamente.
+4.  Se o arquivo ainda não existe na release, coloque uma cópia em `release-assets/<nome do asset>` antes do push. O workflow envia só os assets que faltam.
 
 > **Os mods precisam ficar em `modpack/mods/`.** O launcher baixa cada entrada do manifest em
 > `<gameDir>/<path><nome>` e o Forge só carrega o que está em `<gameDir>/mods`. Um mod na raiz do
@@ -96,7 +97,7 @@ O modpack é sincronizado entre o repositório e os clientes via um arquivo `mod
     npm run modpack:publish
     ```
 
-3.  Copie o `modpack.json` gerado pra raiz do repo e faça commit + push.
+3.  O `modpack.json` gerado na raiz do repo entra no commit e é publicado pelo workflow.
 
 > **Scripts disponíveis**:
 >
