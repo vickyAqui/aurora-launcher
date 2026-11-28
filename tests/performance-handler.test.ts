@@ -1,7 +1,8 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { tmpdir } from 'node:os'
+import os, { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { suggestMemoryGB } from '../src/performancePresets'
 import { useTempGame, type TempGame } from './helpers'
 
 /** Folder returned by `app.getPath('userData')`; each test points it at its own folder. */
@@ -72,8 +73,10 @@ describe('performance:get', () => {
 
     expect(response.state).toBeNull()
     expect(response.currentMemory).toEqual({ min: 1, max: 4 })
-    expect(response.hardware.suggestedMemory).toBeGreaterThanOrEqual(1)
-    expect(response.hardware.suggestedMemory).toBeLessThanOrEqual(8)
+    const totalMemGB = Math.round(os.totalmem() / 1024 / 1024 / 1024)
+    expect(response.hardware.totalMemGB).toBe(totalMemGB)
+    // A recomendação depende da RAM da máquina de teste; nunca limitamos a RAM da jogadora.
+    expect(response.hardware.suggestedMemory).toBe(suggestMemoryGB(totalMemGB))
     expect(response.gameDir).toBe(tmp.gameDir)
   })
 })

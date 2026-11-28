@@ -9,8 +9,8 @@ servidor. Assim o painel pode rodar em hosting gratuito sem disco persistente e 
 O launcher continua lendo `MODPACK_URL`
 (`.../releases/download/modpack/modpack.json`) como fallback. A integração de `4024699` agora
 aponta para `https://aurora-admin-0gu0.onrender.com` por padrão (`DEFAULT_ADMIN_URL`): o manifesto
-vem do painel quando ele estiver online e volta para o GitHub se falhar. O binário v1.2.9 já
-publicado **não contém** essa integração — ela entra no build da próxima release.
+vem do painel quando ele estiver online e volta para o GitHub se falhar. A integração passa a
+fazer parte do binário da release `v1.4.0`.
 
 ## Por que o GitHub
 
@@ -63,12 +63,13 @@ A seção **Sons do Aurora** usa o mesmo storage do modpack: `.ogg` em
 carrega os assets no cliente. Detalhes e comando de uso em
 `server-patch/admintool/README.md`.
 
-## O que NÃO muda agora
+## Estado da release `v1.4.0`
 
-- `package.json` continua `1.2.9`; sem tag/release.
+- `package.json` e `package-lock.json` em `1.4.0`; release publicada por tag.
 - Nenhum restart do servidor de jogo, `/reload` ou upload para o servidor.
 - `cleaning.enabled=false`, slider de RAM e args JVM extras intactos.
 - O launchConfig com AdminTool continua no código, mas inativo.
+- Modpack, configurações e sons continuam sendo publicados na tag de release `modpack`.
 
 ## Fases
 
@@ -79,7 +80,7 @@ carrega os assets no cliente. Detalhes e comando de uso em
 3. **Nuvem**: Render free + Neon free; configurar `ORIGIN`, `ALLOWED_ORIGINS`, `DATABASE_URL`,
    `GH_TOKEN`; validar HTTPS e login.
 4. **Equipe**: criar contas com PIN e aprovar só `Files Updater`.
-5. **Só com aval depois**: bump/release do launcher, se um dia quisermos embutir a URL do painel.
+5. **Release `v1.4.0`**: bump do launcher com a URL do painel e o fluxo de sons.
 
 ## Pendências para começar
 

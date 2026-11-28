@@ -279,10 +279,16 @@ describe('the modpack.json shipped in this repo', () => {
   })
 
   it('has a matching file for every entry in the modpack folder', async () => {
-    const declared = new Set(manifest.files.filter((f) => f.type === 'MOD').map((f) => f.name))
+    // CONFIG entries (config/ and kubejs/) live in the manifest too; comparing only MOD names
+    // falsely reports every KubeJS asset as missing.
+    const declared = new Set(manifest.files.map((f) => `${f.path}${f.name}`))
     const { files } = await walk(path.join(repoRoot, 'modpack'))
 
-    expect(files.filter((f) => !declared.has(f.name)).map((f) => f.name)).toEqual([])
+    const missing = files
+      .filter((f) => !declared.has(`${toManifestPath(f.rel)}${f.name}`))
+      .map((f) => f.rel)
+
+    expect(missing).toEqual([])
   })
 
   it('matches the recorded size and hash of a sample of mods', async () => {
